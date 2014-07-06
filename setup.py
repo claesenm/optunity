@@ -10,7 +10,7 @@ setup(
     url='http://pypi.python.org/pypi/Optunity/',
     license='LICENSE.txt',
     description='Optimization routines for hyperparameter tuning.',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     install_requires=[
     ],
 )
