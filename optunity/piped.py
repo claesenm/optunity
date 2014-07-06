@@ -61,8 +61,8 @@ if startup_msg.get('manual', False):
     comm.send(comm.json_encode(msg))
     exit(0)
 
-elif startup_msg.get('cross_validation', False):
-    cv_opts = startup_msg['cross_validation']
+elif startup_msg.get('generate_folds', False):
+    cv_opts = startup_msg['generate_folds']
 
     try:
         num_instances = cv_opts['num_instances']

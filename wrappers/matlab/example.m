@@ -6,7 +6,7 @@ f = @(pars) - pars.x^2 - pars.y^2;
 
 %% cross-validation example
 strata = {[1,2,3], [6,7,8,9]};
-folds = optunity.cross_validation(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
+folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
 
 %% optimize using grid-search
 solver_config = struct('x', -5:0.5:5, 'y', -5:0.5:5);
