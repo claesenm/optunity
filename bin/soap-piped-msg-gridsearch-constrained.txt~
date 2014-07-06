@@ -1,0 +1,2 @@
+{"solver": "grid-search", "config": {"x": [1, 2, 3]}, "return_call_log": true, "constraints": {"ub_c": {"x": 2}}, "default": 0}
+{"value": 1}

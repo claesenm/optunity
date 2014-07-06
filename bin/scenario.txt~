@@ -1,0 +1,1 @@
+{"cross_validation": {"num_instances": 20, "num_folds": 10, "num_iter": 2, "strata": [[1,2,3],[6,7,8,9]]}}

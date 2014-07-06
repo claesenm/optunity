@@ -1,0 +1,4 @@
+papers/
+__pycache__/
+*.py[co]
+
