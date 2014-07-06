@@ -9,7 +9,8 @@ defaults = struct('constraints', NaN, ...
 options = optunity.process_varargin(defaults, varargin);
 
 %% launch SOAP subprocess
-[m2py, py2m, stderr, subprocess] = optunity.comm.launch();
+[m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
+
 pipe_send = @(data) optunity.comm.writepipe(m2py, optunity.comm.json_encode(data));
 pipe_receive = @() optunity.comm.json_decode(optunity.comm.readpipe(py2m));
 
@@ -57,7 +58,7 @@ if isfield(reply, 'report')
 end
 
 %% clean up
-m2py.close();
-py2m.close();
-stderr.close();
-subprocess.destroy();
+% m2py.close();
+% py2m.close();
+% stderr.close();
+% subprocess.destroy();

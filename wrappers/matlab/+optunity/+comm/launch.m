@@ -1,4 +1,4 @@
-function [ m2py, py2m, stderr, handle ] = launch()
+function [ m2py, py2m, stderr, handle, cleaner ] = launch()
 %LAUNCH Wrapper around all logic involving the launching of Optunity.
 %   Optunity is launched through a Java Runtime().exec() call.
 %   To enable Optunity to locate installed libraries and necessary
@@ -29,4 +29,6 @@ end
 
 cmd = 'python -m optunity.piped';
 [m2py, py2m, stderr, handle] = optunity.comm.popen( cmd, env );
+cleaner = onCleanup(@()optunity.comm.close_subprocess(m2py, py2m, stderr, ...
+    handle));
 end

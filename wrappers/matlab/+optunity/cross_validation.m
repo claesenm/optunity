@@ -20,7 +20,7 @@ end
 assert(options.num_instances > options.num_folds, ...
     'Number of instances less than number of folds!');
 
-[m2py, py2m, stderr, subprocess] = optunity.comm.launch();
+[m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
 
 init = struct('cross_validation', options);
 json_request = optunity.comm.json_encode(init);
@@ -42,11 +42,5 @@ for ii=1:niter
         folds(1+reply.folds{ii}{jj}, ii) = jj;
     end
 end
-
-%% clean up
-m2py.close();
-py2m.close();
-stderr.close();
-subprocess.destroy();
 
 end
