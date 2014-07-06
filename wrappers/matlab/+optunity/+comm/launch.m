@@ -29,6 +29,9 @@ end
 
 cmd = 'python -m optunity.piped';
 [m2py, py2m, stderr, handle] = optunity.comm.popen( cmd, env );
+
+% provide RAII-style automatic cleanup when cleaner goes out of scope
+% e.g. both upon normal caller exit or an error
 cleaner = onCleanup(@()optunity.comm.close_subprocess(m2py, py2m, stderr, ...
     handle));
 end

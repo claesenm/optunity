@@ -57,8 +57,4 @@ if isfield(reply, 'report')
     report = reply.report;
 end
 
-%% clean up
-% m2py.close();
-% py2m.close();
-% stderr.close();
-% subprocess.destroy();
+end
