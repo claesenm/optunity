@@ -11,5 +11,4 @@ setup(
     license='LICENSE.txt',
     description='Optimization routines for hyperparameter tuning.',
     long_description=open('README.rst').read(),
-    install_requires=[],
 )
