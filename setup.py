@@ -5,12 +5,11 @@ setup(
     version='0.1.0',
     author='Marc Claesen',
     author_email='marc.claesen@esat.kuleuven.be',
-    packages=['optunity'],
-    scripts=['bin/blah'],
-    url='http://pypi.python.org/pypi/Optunity/',
+    packages=['optunity', 'optunity.test'],
+    scripts=[],
+    url='https://github.com/claesenm/optunity',
     license='LICENSE.txt',
     description='Optimization routines for hyperparameter tuning.',
-    long_description=open('README.md').read(),
-    install_requires=[
-    ],
+    long_description=open('README.rst').read(),
+    install_requires=[],
 )
