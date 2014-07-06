@@ -12,6 +12,16 @@ https://github.com/claesenm/optunity/wiki
 The Optunity library is implemented in Python and allows straightforward
 integration in other machine learning environments, including R, MATLAB.
 
+To get started with Optunity on Linux, issue the following commands::
+
+    git clone https://github.com/claesenm/optunity.wiki.git
+    echo "export PYTHONPATH=$PYTHONPATH:$(pwd)/optunity" >> ~/.bashrc
+
+Afterwards, importing optunity should work in Python::
+
+    #!/usr/bin/env python
+    import optunity
+
 Optunity is developed at the STADIUS lab of the dept. of electrical engineering
 at KU Leuven (ESAT). Optunity is free software, using a BSD license.
 
