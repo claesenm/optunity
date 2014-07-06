@@ -14,7 +14,7 @@ integration in other machine learning environments, including R, MATLAB.
 
 To get started with Optunity on Linux, issue the following commands::
 
-    git clone https://github.com/claesenm/optunity.wiki.git
+    git clone https://github.com/claesenm/optunity.git
     echo "export PYTHONPATH=$PYTHONPATH:$(pwd)/optunity" >> ~/.bashrc
 
 Afterwards, importing optunity should work in Python::
