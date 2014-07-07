@@ -34,6 +34,7 @@
 
 
 import functools
+import collections
 
 # optunity imports
 from . import functions as fun
@@ -52,18 +53,23 @@ def manual_request(solver_name=None):
     else:
         return solver_registry.manual(), solver_registry.solver_names()
 
+maximize_results = collections.namedtuple('maximize_results',
+                                          ['solution', 'optimum',
+                                           'num_evals', 'call_log',
+                                           'report'])
+
 
 def maximize(solver, func):
     """Maximizes func with given solver.
 
-    Returns the following:
+    Returns a namedtuple with the following attributes:
         - solution: optimal argument tuple
         - optimum: f(solution)
         - num_evals: number of evaluations of f performed during maximization
         - call_log: record of all historical function evaluations of f
             returned as dict {'args': {'argname': []}, 'values': []}
             note: len(call_log) >= num_evals
-        - solver report, can be None
+        - report: solver report, can be None
 
     Raises KeyError if
         - <solver_name> is not registered
@@ -81,7 +87,7 @@ def maximize(solver, func):
     num_evals += len(f.call_log)
 
     call_dict = fun.call_log2dict(f.call_log)
-    return solution, optimum, num_evals, call_dict, report
+    return maximize_results(solution, optimum, num_evals, call_dict, report)
 
 
 def make_solver(solver_name, solver_config):

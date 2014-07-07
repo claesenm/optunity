@@ -116,20 +116,21 @@ else:  # solving a given problem
 
     # solve and send result
     try:
-        solution, optimum, num_evals, call_log, report = optunity.maximize(solver, func)
+#        solution, optimum, num_evals, call_log, report = optunity.maximize(solver, func)
+        rslt = optunity.maximize(solver, func)
     except EOFError:
         msg = {'error_msg': 'Broken pipe.'}
         comm.send(comm.json_encode(msg))
         exit(1)
 
-    result = {'solution': solution, 'optimum': optimum,
-              'num_evals': num_evals}
+    result = {'solution': rslt.solution, 'optimum': rslt.optimum,
+              'num_evals': rslt.num_evals}
 
-    if report:
-        result['report'] = report
+    if rslt.report:
+        result['report'] = rslt.report
 
     if startup_msg.get('return_call_log', False):
-        result['call_log'] = call_log
+        result['call_log'] = rslt.call_log
 
     result_json = comm.json_encode(result)
     comm.send(result_json)
