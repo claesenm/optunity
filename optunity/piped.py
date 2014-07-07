@@ -116,7 +116,6 @@ else:  # solving a given problem
 
     # solve and send result
     try:
-#        solution, optimum, num_evals, call_log, report = optunity.maximize(solver, func)
         rslt = optunity.maximize(solver, func)
     except EOFError:
         msg = {'error_msg': 'Broken pipe.'}

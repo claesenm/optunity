@@ -59,7 +59,6 @@ solve <- function(solver_name, solver_config, f,
         if ("solution" %in% names(reply)) break
 
         value <- do.call(f, reply)
-        value
         send(cons$r2py, list(value=value))
     }
 
