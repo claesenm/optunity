@@ -1,4 +1,4 @@
 from .api import *
-from .cross_validation import cross_validated
+from .cross_validation import cross_validated, generate_folds
 
 __all__ = ['functions', 'solvers', 'api', 'cross_validated']

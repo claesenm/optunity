@@ -62,6 +62,7 @@ if startup_msg.get('manual', False):
     exit(0)
 
 elif startup_msg.get('generate_folds', False):
+    import optunity.cross_validation as cv
     cv_opts = startup_msg['generate_folds']
 
     try:
@@ -78,12 +79,16 @@ elif startup_msg.get('generate_folds', False):
     num_iter = cv_opts.get('num_iter', 1)
     x = [None] * num_instances
 
-    @optunity.cross_validated(x, num_folds, strata=strata, clusters=clusters,
-                              num_iter=num_iter)
-    def f():
-        pass
+    idx2cluster = None
+    if clusters:
+        idx2cluster = cv.map_clusters(clusters)
 
-    msg = {'folds': f.folds}
+    folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
+                                     strata=strata, clusters=clusters,
+                                     idx2cluster=idx2cluster)
+             for _ in range(num_iter)]
+
+    msg = {'folds': folds}
     comm.send(comm.json_encode(msg))
     exit(0)
 

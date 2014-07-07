@@ -137,7 +137,7 @@ class cross_validated_callable(object):
             self._folds = folds
         else:
             self._folds = [generate_folds(len(x), num_folds, self.strata,
-                                          self.clusters)
+                                          self.clusters, self.idx2cluster)
                            for _ in range(num_iter)]
         functools.update_wrapper(self, f)
 
