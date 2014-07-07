@@ -94,8 +94,8 @@ elif startup_msg.get('generate_folds', False):
 
 else:  # solving a given problem
     func = optunity.wrap_constraints(comm.piped_function_eval,
-                                startup_msg.get('constraints', None),
-                                startup_msg.get('default', None))
+                                     startup_msg.get('constraints', None),
+                                     startup_msg.get('default', None))
 
     if startup_msg.get('call_log', False):
         func = optunity.wrap_call_log(func, startup_msg['call_log'])
@@ -103,7 +103,7 @@ else:  # solving a given problem
     # instantiate solver
     try:
         solver = optunity.make_solver(startup_msg['solver'],
-                                 startup_msg['config'])
+                                      startup_msg['config'])
     except KeyError:
         msg = {'error_msg': 'Unable to instantiate solver.'}
         comm.send(comm.json_encode(msg))

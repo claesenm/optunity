@@ -1,10 +1,10 @@
 library("rjson")
 
-# TODO: fix me
-py2r_name = "/data/svn/claesenm/python/pipes/py2r_pipe"
+# TODO: fix hardcoded path
+py2r_name = "/tmp/py2r_pipe"
 
 readpipe <- function(pipe){
-    reply <- readLines(pipe)
+    reply <- readLines(pipe, n=1)
     if (length(reply)==0) stop('Optunity error: broken pipe.')
     return (reply)
 }
@@ -30,12 +30,12 @@ launch <- function(){
     cmd <- paste('python -m optunity.piped >',py2r_name,sep=' ')
     r2py <- pipe(cmd, 'w')
     py2r <- fifo(py2r_name,'r', blocking=TRUE)
-    conn <- list(py2r = py2r, r2py = r2py)
+    conn <- list(py2r = py2r, r2py = r2py, py2r_name=py2r_name)
     return (conn)
 }
 
-close_pipes <- function(r2py, py2r){
-    close(py2r)
-    close(r2py)
-    system(paste('rm -f ',py2r_name,sep=''))
+close_pipes <- function(cons){
+    close(cons$py2r)
+    close(cons$r2py)
+    system(paste('rm -f ',cons$py2r_name,sep=''))
 }

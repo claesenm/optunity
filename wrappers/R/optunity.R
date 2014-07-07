@@ -1,11 +1,8 @@
 source("comm.R")
 
 manual <- function(solver_name=''){
-    # kludgy RAII, since R doesn't support it properly
     cons <- launch()
-    on.exit(close(cons$py2r))
-    on.exit(close(cons$r2py))
-    on.exit(system(paste('rm -f ',py2r_name,sep='')))
+    on.exit(close_pipes(cons))
 
     msg <- c()
     msg$manual <- TRUE
@@ -20,11 +17,8 @@ manual <- function(solver_name=''){
 generate_folds <- function(num_instances, num_folds=10,
                            num_iter=1, strata=list(),
                            clusters=list()){
-    # kludgy RAII, since R doesn't support it properly
     cons <- launch()
-    on.exit(close(cons$py2r))
-    on.exit(close(cons$r2py))
-    on.exit(system(paste('rm -f ',py2r_name,sep='')))
+    on.exit(close_pipes(cons))
 
     # create solver config
     cfg <- list(num_instances = num_instances, 
@@ -37,4 +31,41 @@ generate_folds <- function(num_instances, num_folds=10,
 
     reply <- receive(cons$py2r)
     return (reply$folds)
+}
+
+solve <- function(solver_name, solver_config, f,
+                  constraints = NaN, call_log = NaN,
+                  return_call_log = FALSE,
+                  default = NaN){
+    cons <- launch()
+    on.exit(close_pipes(cons))
+
+    msg <- list(solver=solver_name, config=solver_config,
+               return_call_log = return_call_log)
+    if (!is.nan(call_log)) msg$call_log <- call_log
+    if (!is.nan(constraints)) msg$constraints <- constraints
+    if (!is.nan(default)) msg$default <- default
+
+    send(cons$r2py, msg)
+    repeat{
+        reply <- receive(cons$py2r)
+        if ("solution" %in% names(reply)) break
+
+        value <- do.call(f, reply)
+        value
+        send(cons$r2py, list(value=value))
+    }
+
+    result = list(solution = reply$solution,
+                  optimum = reply$optimum,
+                  num_evals = reply$num_evals,
+                  call_log = c(),
+                  report = c())
+    if ("call_log" %in% names(reply)){
+        result$call_log <- reply$call_log
+    }
+    if ("report" %in% names(reply)){
+        result$report <- reply$report
+    }
+    return (result)
 }
