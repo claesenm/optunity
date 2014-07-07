@@ -77,7 +77,6 @@ elif startup_msg.get('generate_folds', False):
     strata = cv_opts.get('strata', None)
     clusters = cv_opts.get('clusters', None)
     num_iter = cv_opts.get('num_iter', 1)
-    x = [None] * num_instances
 
     idx2cluster = None
     if clusters:
