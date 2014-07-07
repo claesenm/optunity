@@ -21,7 +21,7 @@ generate_folds <- function(num_instances, num_folds=10,
     on.exit(close_pipes(cons))
 
     # create solver config
-    cfg <- list(num_instances = num_instances, 
+    cfg <- list(num_instances = num_instances,
                 num_folds = num_folds, num_iter = num_iter)
     if (length(strata) > 0) cfg$strata <- strata
     if (length(clusters) > 0) cfg$clusters <- clusters
@@ -30,7 +30,14 @@ generate_folds <- function(num_instances, num_folds=10,
     send(cons$r2py, msg)
 
     reply <- receive(cons$py2r)
-    return (reply$folds)
+
+    folds <- array(0, dim=c(num_instances, num_iter))
+    for (iter in 1:num_iter){
+        for (fold in 1:num_folds){
+            folds[1+reply$folds[[iter]][[fold]], iter] <- fold
+        }
+    }
+    return (folds)
 }
 
 solve <- function(solver_name, solver_config, f,
