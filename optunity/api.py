@@ -54,24 +54,22 @@ def manual_request(solver_name=None):
     else:
         return solver_registry.manual(), solver_registry.solver_names()
 
-maximize_results = DocTup("""Results of a call to optunity.maximize().
-
-                          This tuple contains the following fields:
-                          - solution: the optimal solution
-                          - optimum: optimal function value f(solution)
-                          - stats: statistics about the solving process
-                                refer to docs of optunity.maximize_stats
-                          - call_log: the call log
-                          - report: solver report, can be None
+maximize_results = DocTup("""
+The result is a tuple with following fields:
+- solution: the optimal solution
+- optimum: optimal function value f(solution)
+- stats: statistics about the solving process
+    (see below)
+- call_log: the call log
+- report: solver report, can be None
                           """,
                           'maximize_results', ['solution', 'optimum',
                                                'stats',
                                                'call_log',  'report'])
-maximize_stats = DocTup("""Statistics gathered while solving a problem.
-
-                        This tuple contains the following fields:
-                        - num_evals: number of function evaluations
-                        - time: wall clock time needed to solve
+maximize_stats = DocTup("""
+Statistics gathered while solving a problem:
+- num_evals: number of function evaluations
+- time: wall clock time needed to solve
                         """,
                         'maximize_stats', ['num_evals', 'time'])
 
@@ -79,7 +77,8 @@ maximize_stats = DocTup("""Statistics gathered while solving a problem.
 def maximize(solver, func):
     """Maximizes func with given solver.
 
-    Returns a namedtuple. Please refer to docs of optunity.maximize_results.
+    Returns a namedtuple. Please refer to docs of optunity.maximize_results
+    and optunity.maximize_stats.
 
     Raises KeyError if
         - <solver_name> is not registered
@@ -105,6 +104,15 @@ def maximize(solver, func):
     call_dict = fun.call_log2dict(f.call_log)
     return maximize_results(solution, optimum, stats._asdict(),
                             call_dict, report)
+
+
+maximize.__doc__ = '''
+Maximizes func with given solver.
+
+Raises KeyError if
+    - <solver_name> is not registered
+    - <solver_config> is invalid to instantiate <solver_name>
+''' + maximize_results.__doc__ + maximize_stats.__doc__
 
 
 def make_solver(solver_name, solver_config):
