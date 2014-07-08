@@ -35,6 +35,7 @@
 
 import functools
 import collections
+import timeit
 
 # optunity imports
 from . import functions as fun
@@ -55,8 +56,8 @@ def manual_request(solver_name=None):
 
 maximize_results = collections.namedtuple('maximize_results',
                                           ['solution', 'optimum',
-                                           'num_evals', 'call_log',
-                                           'report'])
+                                           'num_evals', 'time',
+                                           'call_log',  'report'])
 
 
 def maximize(solver, func):
@@ -66,6 +67,7 @@ def maximize(solver, func):
         - solution: optimal argument tuple
         - optimum: f(solution)
         - num_evals: number of evaluations of f performed during maximization
+        - time: wall clock time needed to solve
         - call_log: record of all historical function evaluations of f
             returned as dict {'args': {'argname': []}, 'values': []}
             note: len(call_log) >= num_evals
@@ -82,12 +84,16 @@ def maximize(solver, func):
 
     num_evals = -len(f.call_log)
 
+    time = timeit.default_timer()
     solution, report = solver.maximize(f)
+    time = timeit.default_timer() - time
+
     optimum = f(**solution)
     num_evals += len(f.call_log)
 
     call_dict = fun.call_log2dict(f.call_log)
-    return maximize_results(solution, optimum, num_evals, call_dict, report)
+    return maximize_results(solution, optimum, num_evals, time,
+                            call_dict, report)
 
 
 def make_solver(solver_name, solver_config):

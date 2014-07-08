@@ -1,4 +1,4 @@
-function [solution, optimum, num_evals, call_log, report] = solve( solver_name, solver_config, f, varargin)
+function [solution, optimum, num_evals, time, call_log, report] = solve( solver_name, solver_config, f, varargin)
 %SOLVE TODO: write me
 
 %% process varargin
@@ -51,6 +51,8 @@ if isfield(reply, 'call_log')
 else
     call_log = struct();    
 end
+
+time = reply.time;
 
 report = struct();
 if isfield(reply, 'report')

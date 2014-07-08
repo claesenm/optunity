@@ -121,15 +121,7 @@ else:  # solving a given problem
         comm.send(comm.json_encode(msg))
         exit(1)
 
-    result = {'solution': rslt.solution, 'optimum': rslt.optimum,
-              'num_evals': rslt.num_evals}
-
-    if rslt.report:
-        result['report'] = rslt.report
-
-    if startup_msg.get('return_call_log', False):
-        result['call_log'] = rslt.call_log
-
+    result = rslt._asdict()
     result_json = comm.json_encode(result)
     comm.send(result_json)
     exit(0)
