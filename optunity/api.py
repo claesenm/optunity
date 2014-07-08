@@ -34,13 +34,13 @@
 
 
 import functools
-import collections
 import timeit
 
 # optunity imports
 from . import functions as fun
 from . import solvers
 from . import solver_registry
+from .util import DocumentedNamedTuple as DocTup
 
 
 def manual_request(solver_name=None):
@@ -54,24 +54,32 @@ def manual_request(solver_name=None):
     else:
         return solver_registry.manual(), solver_registry.solver_names()
 
-maximize_results = collections.namedtuple('maximize_results',
-                                          ['solution', 'optimum',
-                                           'num_evals', 'time',
-                                           'call_log',  'report'])
+maximize_results = DocTup("""Results of a call to optunity.maximize().
+
+                          This tuple contains the following fields:
+                          - solution: the optimal solution
+                          - optimum: optimal function value f(solution)
+                          - stats: statistics about the solving process
+                                refer to docs of optunity.maximize_stats
+                          - call_log: the call log
+                          - report: solver report, can be None
+                          """,
+                          'maximize_results', ['solution', 'optimum',
+                                               'stats',
+                                               'call_log',  'report'])
+maximize_stats = DocTup("""Statistics gathered while solving a problem.
+
+                        This tuple contains the following fields:
+                        - num_evals: number of function evaluations
+                        - time: wall clock time needed to solve
+                        """,
+                        'maximize_stats', ['num_evals', 'time'])
 
 
 def maximize(solver, func):
     """Maximizes func with given solver.
 
-    Returns a namedtuple with the following attributes:
-        - solution: optimal argument tuple
-        - optimum: f(solution)
-        - num_evals: number of evaluations of f performed during maximization
-        - time: wall clock time needed to solve
-        - call_log: record of all historical function evaluations of f
-            returned as dict {'args': {'argname': []}, 'values': []}
-            note: len(call_log) >= num_evals
-        - report: solver report, can be None
+    Returns a namedtuple. Please refer to docs of optunity.maximize_results.
 
     Raises KeyError if
         - <solver_name> is not registered
@@ -91,8 +99,11 @@ def maximize(solver, func):
     optimum = f(**solution)
     num_evals += len(f.call_log)
 
+    # use namedtuple to enforce uniformity in case of changes
+    stats = maximize_stats(num_evals, time)
+
     call_dict = fun.call_log2dict(f.call_log)
-    return maximize_results(solution, optimum, num_evals, time,
+    return maximize_results(solution, optimum, stats._asdict(),
                             call_dict, report)
 
 

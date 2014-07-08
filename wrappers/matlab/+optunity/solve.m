@@ -1,4 +1,4 @@
-function [solution, optimum, num_evals, time, call_log, report] = solve( solver_name, solver_config, f, varargin)
+function [solution, details] = solve( solver_name, solver_config, f, varargin)
 %SOLVE TODO: write me
 
 %% process varargin
@@ -44,19 +44,19 @@ if isfield(reply, 'error_msg')
 end
 
 solution = reply.solution;
-optimum = reply.optimum;
-num_evals = reply.num_evals;
-if isfield(reply, 'call_log')
-    call_log = reply.call_log;
-else
-    call_log = struct();    
-end
-
-time = reply.time;
-
-report = struct();
-if isfield(reply, 'report')
-    report = reply.report;
-end
+details = reply;
+% optimum = reply.optimum;
+% stats = reply.stats;
+% if isfield(reply, 'call_log')
+%     call_log = reply.call_log;
+% else
+%     call_log = struct();    
+% end
+% 
+% 
+% report = struct();
+% if isfield(reply, 'report')
+%     report = reply.report;
+% end
 
 end

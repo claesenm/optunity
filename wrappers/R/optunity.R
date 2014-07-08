@@ -60,17 +60,5 @@ solve <- function(solver_name, solver_config, f,
         value <- do.call(f, reply)
         send(cons$r2py, list(value=value))
     }
-
-    result = list(solution = reply$solution,
-                  optimum = reply$optimum,
-                  num_evals = reply$num_evals,
-                  call_log = c(),
-                  report = c())
-    if ("call_log" %in% names(reply)){
-        result$call_log <- reply$call_log
-    }
-    if ("report" %in% names(reply)){
-        result$report <- reply$report
-    }
-    return (result)
+    return (reply)
 }
