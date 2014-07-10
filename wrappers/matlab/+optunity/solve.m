@@ -45,18 +45,5 @@ end
 
 solution = reply.solution;
 details = reply;
-% optimum = reply.optimum;
-% stats = reply.stats;
-% if isfield(reply, 'call_log')
-%     call_log = reply.call_log;
-% else
-%     call_log = struct();    
-% end
-% 
-% 
-% report = struct();
-% if isfield(reply, 'report')
-%     report = reply.report;
-% end
 
 end

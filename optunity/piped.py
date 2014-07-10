@@ -102,7 +102,7 @@ else:  # solving a given problem
     # instantiate solver
     try:
         solver = optunity.make_solver(startup_msg['solver'],
-                                      startup_msg['config'])
+                                      **startup_msg['config'])
     except KeyError:
         msg = {'error_msg': 'Unable to instantiate solver.'}
         comm.send(comm.json_encode(msg))

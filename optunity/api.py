@@ -59,7 +59,6 @@ The result is a tuple with following fields:
 - solution: the optimal solution
 - optimum: optimal function value f(solution)
 - stats: statistics about the solving process
-    (see below)
 - call_log: the call log
 - report: solver report, can be None
                           """,
@@ -115,10 +114,10 @@ Raises KeyError if
 ''' + maximize_results.__doc__ + maximize_stats.__doc__
 
 
-def make_solver(solver_name, solver_config):
+def make_solver(solver_name, *args, **kwargs):
     """Creates a Solver from given parameters."""
     solvercls = solver_registry.get(solver_name)
-    return solvercls(**solver_config)
+    return solvercls(*args, **kwargs)
 
 
 def wrap_call_log(f, call_dict):
