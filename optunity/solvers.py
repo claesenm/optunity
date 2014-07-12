@@ -36,7 +36,8 @@ import itertools
 import collections
 import abc
 import functools
-import random as rnd
+import random
+import operator
 
 # optunity imports
 from . import functions as fun
@@ -154,7 +155,7 @@ class RandomSearch(Solver):
         """
 
         def generate_rand_args():
-            return dict([(par, rnd.uniform(bounds[0], bounds[1]))
+            return dict([(par, random.uniform(bounds[0], bounds[1]))
                          for par, bounds in self.bounds.items()])
 
         parameter_tuples = [generate_rand_args()
@@ -246,7 +247,7 @@ class Direct(Solver):
         TODO
         """
         def generate_rand_args():
-            return dict([(par, rnd.uniform(bounds[0], bounds[1]))
+            return dict([(par, random.uniform(bounds[0], bounds[1]))
                          for par, bounds in self.bounds.items()])
 
         parameter_tuples = [generate_rand_args()
@@ -328,16 +329,137 @@ except ImportError:
 
 try:
     import deap
+    import deap.creator
+    import deap.base
+    import deap.tools
+    import operator
 
-    def genetic_algorithm(f):
-        toolbox = deap.base.toolbox()
-        toolbox.register("mate", tools.cxTwoPoint)
-        toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
-        toolbox.register("select", tools.selTournament, tournsize=3)
-        toolbox.register("evaluate", evaluate)
-        deap.algorithms.eaMuPlusLambda(population, toolbox, mu, lambda_,
-                                       cxpb, mutpb, ngen)
-        pass  # TODO
+# http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
+# https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
+    @register_solver('particle-swarm',
+                     'particle swarm optimization',
+                     ['TODO'])
+    class ParticleSwarm(Solver):
+
+        # TODO: limit smin and smax based on box constraints
+        def __init__(self, num_particles, num_generations,
+                     smin, smax, **kwargs):
+            """blah"""
+            assert all([len(v) == 2 and v[0] <= v[1]
+                        for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
+            self._bounds = kwargs
+            self._ttype = collections.namedtuple('ttype', kwargs.keys())
+            self._num_particles = num_particles
+            self._num_generations = num_generations
+            self._smin = smin
+            self._smax = smax
+
+            deap.creator.create("FitnessMax", deap.base.Fitness,
+                                weights=(1.0,))
+            deap.creator.create("Particle", list,
+                                fitness=deap.creator.FitnessMax, speed=list,
+                                smin=None, smax=None, best=None)
+            self._toolbox = deap.base.Toolbox()
+            self._toolbox.register("particle", self.generate)
+            self._toolbox.register("population", deap.tools.initRepeat, list,
+                                   self.toolbox.particle)
+            self._toolbox.register("update", ParticleSwarm.updateParticle,
+                                   phi1=2.0, phi2=2.0)
+
+        @property
+        def num_particles(self):
+            return self._num_particles
+
+        @property
+        def num_generations(self):
+            return self._num_generations
+
+        @property
+        def toolbox(self):
+            return self._toolbox
+
+        @property
+        def smin(self):
+            return self._smin
+
+        @property
+        def smax(self):
+            return self._smax
+
+        @property
+        def bounds(self):
+            return self._bounds
+
+        @property
+        def ttype(self):
+            return self._ttype
+
+        def generate(self):
+            part = deap.creator.Particle(random.uniform(bounds[0], bounds[1])
+                                         for _, bounds in self.bounds.items())
+            part.speed = [random.uniform(self.smin, self.smax)
+                          for _ in range(len(self.bounds))]
+            part.smin = self.smin
+            part.smax = self.smax
+            return part
+
+        @staticmethod
+        def updateParticle(part, best, phi1, phi2):
+            u1 = (random.uniform(0, phi1) for _ in range(len(part)))
+            u2 = (random.uniform(0, phi2) for _ in range(len(part)))
+            v_u1 = map(operator.mul, u1,
+                       map(operator.sub, part.best, part))
+            v_u2 = map(operator.mul, u2,
+                       map(operator.sub, best, part))
+            part.speed = list(map(operator.add, part.speed,
+                                  map(operator.add, v_u1, v_u2)))
+            for i, speed in enumerate(part.speed):
+                if speed < part.smin:
+                    part.speed[i] = part.smin
+                elif speed > part.smax:
+                    part.speed[i] = part.smax
+            part[:] = list(map(operator.add, part, part.speed))
+
+        def maximize(self, f):
+            """
+            TODO
+            """
+            def evaluate(individual):
+                return (f(**dict([(k, v)
+                                  for k, v in zip(self.bounds.keys(),
+                                                  individual)])),)
+            self._toolbox.register("evaluate", evaluate)
+
+            pop = self.toolbox.population(self.num_particles)
+#            stats = deap.tools.Statistics(lambda ind: ind.fitness.values)
+#            stats.register("avg", numpy.mean)
+#            stats.register("std", numpy.std)
+#            stats.register("min", numpy.min)
+#            stats.register("max", numpy.max)
+
+#            logbook = tools.Logbook()
+#            logbook.header = ["gen", "evals"] + stats.fields
+
+            best = None
+
+            for g in range(self.num_generations):
+                for part in pop:
+                    part.fitness.values = self.toolbox.evaluate(part)
+                    if not part.best or part.best.fitness < part.fitness:
+                        part.best = deap.creator.Particle(part)
+                        part.best.fitness.values = part.fitness.values
+                    if not best or best.fitness < part.fitness:
+                        best = deap.creator.Particle(part)
+                        best.fitness.values = part.fitness.values
+                for part in pop:
+                    self.toolbox.update(part, best)
+
+                # Gather all the fitnesses in one list and print the stats
+#                logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
+#                print(logbook.stream)
+
+            return dict([(k, v)
+                         for k, v in zip(self.bounds.keys(), best)]), None
 
 except ImportError:
     pass

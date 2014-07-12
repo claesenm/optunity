@@ -55,14 +55,13 @@ def manual_request(solver_name=None):
         return solver_registry.manual(), solver_registry.solver_names()
 
 maximize_results = DocTup("""
-The result is a tuple with following fields:
-- solution: the optimal solution
+Result details includes the following:
 - optimum: optimal function value f(solution)
 - stats: statistics about the solving process
 - call_log: the call log
 - report: solver report, can be None
                           """,
-                          'maximize_results', ['solution', 'optimum',
+                          'maximize_results', ['optimum',
                                                'stats',
                                                'call_log',  'report'])
 maximize_stats = DocTup("""
@@ -76,7 +75,8 @@ Statistics gathered while solving a problem:
 def maximize(solver, func):
     """Maximizes func with given solver.
 
-    Returns a namedtuple. Please refer to docs of optunity.maximize_results
+    Returns the solution and a namedtuple with further details.
+    Please refer to docs of optunity.maximize_results
     and optunity.maximize_stats.
 
     Raises KeyError if
@@ -101,8 +101,8 @@ def maximize(solver, func):
     stats = maximize_stats(num_evals, time)
 
     call_dict = fun.call_log2dict(f.call_log)
-    return maximize_results(solution, optimum, stats._asdict(),
-                            call_dict, report)
+    return solution, maximize_results(optimum, stats._asdict(),
+                                      call_dict, report)
 
 
 maximize.__doc__ = '''
@@ -111,6 +111,8 @@ Maximizes func with given solver.
 Raises KeyError if
     - <solver_name> is not registered
     - <solver_config> is invalid to instantiate <solver_name>
+
+Returns the solution and a namedtuple with further details.
 ''' + maximize_results.__doc__ + maximize_stats.__doc__
 
 

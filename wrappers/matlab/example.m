@@ -29,6 +29,15 @@ if nm_available
         optunity.solve('nelder-mead', solver_config, f, 'return_call_log', true);
 end
 
+%% check if PSO is available
+pso_available = any(arrayfun(@(x) strcmp(x, 'particle-swarm'), solvers));
+if pso_available
+    solver_config = struct('num_particles', 20, 'num_generations', 10, ...
+        'x', [-5, 5], 'y', [-5, 5], 'smin', -1, 'smax', 1);
+    [pso_solution, pso_details] = ...
+        optunity.solve('particle-swarm', solver_config, f, 'return_call_log', true);
+end
+
 %% draw a figure to illustrate the call log of all solvers
 if drawfig
     figure; hold on;
@@ -37,6 +46,9 @@ if drawfig
     if nm_available
         plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'b', 'LineWidth', 3);
     end
+    if pso_available
+        plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'go', 'LineWidth', 2);
+    end    
     [X,Y] = meshgrid(-5:0.1:5);
     Z = arrayfun(@(idx) f(struct('x',X(idx),'y',Y(idx))), 1:numel(X));
     Z = reshape(Z, size(X,1), size(X,1));
@@ -45,14 +57,17 @@ if drawfig
     xlabel('x');
     ylabel('y');
     title('f(x,y) = -x^2-y^2');
-    if nm_available
-        legend(['grid search (',num2str(grid_details.stats.num_evals),' evals)'], ...
+    legends = {['grid search (',num2str(grid_details.stats.num_evals),' evals)'], ...
              ['random search (',num2str(rnd_details.stats.num_evals),' evals)'], ...
-             ['Nelder-Mead (',num2str(nm_details.stats.num_evals),' evals)']);
-            
-    else
-        legend('grid search', 'random search');
+        };
+    
+    if nm_available
+        legends{end+1} = ['Nelder-Mead (',num2str(nm_details.stats.num_evals),' evals)'];
     end
+    if pso_available
+        legends{end+1} = ['particle swarm (',num2str(pso_details.stats.num_evals),' evals)'];
+    end
+    legend(legends);
 end
 
 %% grid-search with constraints and defaulted function value -> see call log 

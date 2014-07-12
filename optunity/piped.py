@@ -115,13 +115,14 @@ else:  # solving a given problem
 
     # solve and send result
     try:
-        rslt = optunity.maximize(solver, func)
+        solution, rslt = optunity.maximize(solver, func)
     except EOFError:
         msg = {'error_msg': 'Broken pipe.'}
         comm.send(comm.json_encode(msg))
         exit(1)
 
     result = rslt._asdict()
+    result['solution'] = solution
     result_json = comm.json_encode(result)
     comm.send(result_json)
     exit(0)
