@@ -332,7 +332,6 @@ try:
     import deap.creator
     import deap.base
     import deap.tools
-    import operator
 
 # http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
 # https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
@@ -341,9 +340,9 @@ try:
                      ['TODO'])
     class ParticleSwarm(Solver):
 
-        # TODO: limit smin and smax based on box constraints
+        # TODO: implement warm start
         def __init__(self, num_particles, num_generations,
-                     smin, smax, **kwargs):
+                     max_speed, **kwargs):
             """blah"""
             assert all([len(v) == 2 and v[0] <= v[1]
                         for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
@@ -351,19 +350,21 @@ try:
             self._ttype = collections.namedtuple('ttype', kwargs.keys())
             self._num_particles = num_particles
             self._num_generations = num_generations
-            self._smin = smin
-            self._smax = smax
+            self._max_speed = max_speed
+            self._smax = [self.max_speed * (b[1] - b[0])
+                          for _, b in self.bounds.items()]
+            self._smin = map(operator.neg, self.smax)
 
             deap.creator.create("FitnessMax", deap.base.Fitness,
                                 weights=(1.0,))
             deap.creator.create("Particle", list,
                                 fitness=deap.creator.FitnessMax, speed=list,
-                                smin=None, smax=None, best=None)
+                                best=None)
             self._toolbox = deap.base.Toolbox()
             self._toolbox.register("particle", self.generate)
             self._toolbox.register("population", deap.tools.initRepeat, list,
                                    self.toolbox.particle)
-            self._toolbox.register("update", ParticleSwarm.updateParticle,
+            self._toolbox.register("update", self.updateParticle,
                                    phi1=2.0, phi2=2.0)
 
         @property
@@ -379,12 +380,16 @@ try:
             return self._toolbox
 
         @property
-        def smin(self):
-            return self._smin
+        def max_speed(self):
+            return self._max_speed
 
         @property
         def smax(self):
             return self._smax
+
+        @property
+        def smin(self):
+            return self._smin
 
         @property
         def bounds(self):
@@ -397,14 +402,11 @@ try:
         def generate(self):
             part = deap.creator.Particle(random.uniform(bounds[0], bounds[1])
                                          for _, bounds in self.bounds.items())
-            part.speed = [random.uniform(self.smin, self.smax)
-                          for _ in range(len(self.bounds))]
-            part.smin = self.smin
-            part.smax = self.smax
+            part.speed = [random.uniform(smin, smax)
+                          for smin, smax in zip(self.smin, self.smax)]
             return part
 
-        @staticmethod
-        def updateParticle(part, best, phi1, phi2):
+        def updateParticle(self, part, best, phi1, phi2):
             u1 = (random.uniform(0, phi1) for _ in range(len(part)))
             u2 = (random.uniform(0, phi2) for _ in range(len(part)))
             v_u1 = map(operator.mul, u1,
@@ -414,10 +416,10 @@ try:
             part.speed = list(map(operator.add, part.speed,
                                   map(operator.add, v_u1, v_u2)))
             for i, speed in enumerate(part.speed):
-                if speed < part.smin:
-                    part.speed[i] = part.smin
-                elif speed > part.smax:
-                    part.speed[i] = part.smax
+                if speed < self.smin[i]:
+                    part.speed[i] = self.smin[i]
+                elif speed > self.smax[i]:
+                    part.speed[i] = self.smax[i]
             part[:] = list(map(operator.add, part, part.speed))
 
         def maximize(self, f):
@@ -431,15 +433,6 @@ try:
             self._toolbox.register("evaluate", evaluate)
 
             pop = self.toolbox.population(self.num_particles)
-#            stats = deap.tools.Statistics(lambda ind: ind.fitness.values)
-#            stats.register("avg", numpy.mean)
-#            stats.register("std", numpy.std)
-#            stats.register("min", numpy.min)
-#            stats.register("max", numpy.max)
-
-#            logbook = tools.Logbook()
-#            logbook.header = ["gen", "evals"] + stats.fields
-
             best = None
 
             for g in range(self.num_generations):
@@ -453,10 +446,6 @@ try:
                         best.fitness.values = part.fitness.values
                 for part in pop:
                     self.toolbox.update(part, best)
-
-                # Gather all the fitnesses in one list and print the stats
-#                logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
-#                print(logbook.stream)
 
             return dict([(k, v)
                          for k, v in zip(self.bounds.keys(), best)]), None

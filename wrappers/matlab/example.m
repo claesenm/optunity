@@ -2,7 +2,9 @@ close all; clear all;
 drawfig = true;
 
 %% target function: f(x,y) = - x^2 - y^2
-f = @(pars) - pars.x^2 - pars.y^2;
+offx = rand();
+offy = rand();
+f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
 
 %% cross-validation example
 strata = {[1,2,3], [6,7,8,9]};
@@ -14,7 +16,7 @@ solver_config = struct('x', -5:0.5:5, 'y', -5:0.5:5);
     optunity.solve('grid-search', solver_config, f, 'return_call_log', true);
 
 %% optimize using random-search
-solver_config = struct('x',[-5, 5], 'y', [-5, 5], 'num_evals', 100);
+solver_config = struct('x',[-5, 5], 'y', [-5, 5], 'num_evals', 400);
 [rnd_solution, rnd_details] = ...
     optunity.solve('random-search', solver_config, f, 'return_call_log', true);
 
@@ -24,7 +26,7 @@ nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
 if nm_available
-    solver_config = struct('x0', struct('x',5,'y',-5), 'xtol', 1e-5);
+    solver_config = struct('x0', struct('x',4,'y',-4), 'xtol', 1e-4);
     [nm_solution, nm_details] = ...
         optunity.solve('nelder-mead', solver_config, f, 'return_call_log', true);
 end
@@ -32,8 +34,8 @@ end
 %% check if PSO is available
 pso_available = any(arrayfun(@(x) strcmp(x, 'particle-swarm'), solvers));
 if pso_available
-    solver_config = struct('num_particles', 20, 'num_generations', 10, ...
-        'x', [-5, 5], 'y', [-5, 5], 'smin', -1, 'smax', 1);
+    solver_config = struct('num_particles', 5, 'num_generations', 30, ...
+        'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
     [pso_solution, pso_details] = ...
         optunity.solve('particle-swarm', solver_config, f, 'return_call_log', true);
 end
@@ -44,10 +46,10 @@ if drawfig
     plot(grid_details.call_log.args.x, grid_details.call_log.args.y, 'r+','LineWidth', 2);
     plot(rnd_details.call_log.args.x, rnd_details.call_log.args.y, 'k+','LineWidth', 2);
     if nm_available
-        plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'b', 'LineWidth', 3);
+        plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'm', 'LineWidth', 3);
     end
     if pso_available
-        plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'go', 'LineWidth', 2);
+        plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'bo', 'LineWidth', 2);
     end    
     [X,Y] = meshgrid(-5:0.1:5);
     Z = arrayfun(@(idx) f(struct('x',X(idx),'y',Y(idx))), 1:numel(X));
@@ -68,6 +70,29 @@ if drawfig
         legends{end+1} = ['particle swarm (',num2str(pso_details.stats.num_evals),' evals)'];
     end
     legend(legends);
+    
+    num_evals = [grid_details.stats.num_evals, rnd_details.stats.num_evals];
+    optima = [grid_details.optimum, rnd_details.optimum];
+    ticks = {'grid search', 'random search'};
+    if nm_available
+       num_evals(end+1) = nm_details.stats.num_evals;
+       optima(end+1) = nm_details.optimum;
+       ticks{end+1} = 'Nelder-Mead';
+    end
+    if pso_available
+       num_evals(end+1) = pso_details.stats.num_evals;
+       optima(end+1) = pso_details.optimum;
+       ticks{end+1} = 'particle swarm';
+    end
+    
+    figure; hold on;
+    
+    optima(optima~=0) = log10(abs(optima(optima~=0)));
+    bar(optima);
+    set(gca,'XTick', 1:numel(optima), 'XTickLabel',ticks);
+    xlabel('solver');
+    ylabel('log10(error) or 0 if exact');
+    
 end
 
 %% grid-search with constraints and defaulted function value -> see call log 
