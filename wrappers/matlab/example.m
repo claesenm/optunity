@@ -15,7 +15,7 @@ grid_solver = optunity.make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
 [grid_solution, grid_details] = optunity.maximize(grid_solver, f, 'return_call_log', true);
 
 %% optimize using random-search
-rnd_solver = optunity.make_solver('random search', 'x',[-5, 5], 'y', [-5, 5], 'num_evals', 400);
+rnd_solver = optunity.make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], 'num_evals', 400);
 [rnd_solution, rnd_details] = optunity.maximize(rnd_solver, f, 'return_call_log', true);
 
 %% check if the nelder-mead solver is available in the list of solvers
