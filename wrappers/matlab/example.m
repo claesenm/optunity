@@ -36,6 +36,15 @@ if pso_available
     [pso_solution, pso_details] = optunity.maximize(pso_solver, f, 'return_call_log', true);
 end
 
+%% check if CMA-ES is available
+cma_available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
+if cma_available
+    cma_solver = optunity.make_solver('cma-es', 'num_generations', 20, ...
+        'sigma', 1, 'centroid', struct('x', 2, 'y', 4));
+    [cma_solution, cma_details] = optunity.maximize(cma_solver, f, 'return_call_log', true);
+end
+
+
 %% draw a figure to illustrate the call log of all solvers
 if drawfig
     figure; hold on;
@@ -47,6 +56,9 @@ if drawfig
     if pso_available
         plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'bo', 'LineWidth', 2);
     end    
+    if cma_available
+        plot(cma_details.call_log.args.x, cma_details.call_log.args.y, 'go', 'LineWidth', 2);
+    end    
     [X,Y] = meshgrid(-5:0.1:5);
     Z = arrayfun(@(idx) f(struct('x',X(idx),'y',Y(idx))), 1:numel(X));
     Z = reshape(Z, size(X,1), size(X,1));
@@ -55,6 +67,7 @@ if drawfig
     xlabel('x');
     ylabel('y');
     title('f(x,y) = -x^2-y^2');
+    axis([-5.5, 5.5, -5.5, 5.5])
     legends = {['grid search (',num2str(grid_details.stats.num_evals),' evals)'], ...
              ['random search (',num2str(rnd_details.stats.num_evals),' evals)'], ...
         };
@@ -65,7 +78,10 @@ if drawfig
     if pso_available
         legends{end+1} = ['particle swarm (',num2str(pso_details.stats.num_evals),' evals)'];
     end
-    legend(legends);
+    if cma_available
+        legends{end+1} = ['CMA-ES (',num2str(cma_details.stats.num_evals),' evals)'];
+    end
+    legend(legends, -1);
     
     num_evals = [grid_details.stats.num_evals, rnd_details.stats.num_evals];
     optima = [grid_details.optimum, rnd_details.optimum];
@@ -79,6 +95,11 @@ if drawfig
        num_evals(end+1) = pso_details.stats.num_evals;
        optima(end+1) = pso_details.optimum;
        ticks{end+1} = 'particle swarm';
+    end
+    if cma_available
+       num_evals(end+1) = cma_details.stats.num_evals;
+       optima(end+1) = cma_details.optimum;
+       ticks{end+1} = 'CMA-ES';
     end
     
     figure; hold on;

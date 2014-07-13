@@ -356,7 +356,83 @@ try:
     import deap.creator
     import deap.base
     import deap.tools
+    import deap.cma
+    import deap.algorithms
 
+# CMA_ES solver requires deap > 1.0.1
+# http://deap.readthedocs.org/en/latest/examples/cmaes.html
+    @register_solver('cma-es',
+                     'covariance matrix adaptation evolutionary strategy',
+                     ['CMA-ES: covariance matrix adaptation evolutionary strategy',
+                      ' ',
+                      'This method requires the following parameters:',
+                      '- num_generations :: number of generations to use',
+                      '- centroid :: starting point of the solver',
+                      '- sigma :: initial covariance',
+                      '- Lambda :: (optional) measure of reproducibility',
+                      ' ',
+                      'This method is described in detail in:',
+                      'Hansen and Ostermeier, 2001. Completely Derandomized Self-Adaptation in Evolution Strategies. Evolutionary Computation'])
+    class CMA_ES(Solver):
+
+        def __init__(self, num_generations, centroid, sigma, Lambda=None):
+            """blah"""
+
+            self._num_generations = num_generations
+            self._centroid = centroid
+            self._sigma = sigma
+            self._lambda = Lambda
+
+            deap.creator.create("FitnessMax", deap.base.Fitness,
+                                weights=(1.0,))
+            deap.creator.create("Individual", list,
+                                fitness=deap.creator.FitnessMax)
+
+        @property
+        def num_generations(self):
+            return self._num_generations
+
+        @property
+        def centroid(self):
+            return self._centroid
+
+        @property
+        def lambda_(self):
+            return self._lambda
+
+        @property
+        def sigma(self):
+            return self._sigma
+
+        def maximize(self, f):
+            toolbox = deap.base.Toolbox()
+
+            if self.lambda_:
+                strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+                                             sigma=self.sigma, lambda_=self.lambda_)
+            else:
+                strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+                                             sigma=self.sigma)
+            toolbox.register("generate", strategy.generate,
+                             deap.creator.Individual)
+            toolbox.register("update", strategy.update)
+
+            def evaluate(individual):
+                return (f(**dict([(k, v)
+                                  for k, v in zip(self.centroid.keys(),
+                                                  individual)])),)
+            toolbox.register("evaluate", evaluate)
+
+            hof = deap.tools.HallOfFame(1)
+            deap.algorithms.eaGenerateUpdate(toolbox=toolbox,
+                                             ngen=self._num_generations,
+                                             halloffame=hof, verbose=False)
+
+            return dict([(k, v)
+                         for k, v in zip(self.centroid.keys(), hof[0])]), None
+
+
+# PSO solver requires deap > 0.7
 # http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
 # https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
     @register_solver('particle swarm',

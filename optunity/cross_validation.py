@@ -202,7 +202,7 @@ class cross_validated_callable(object):
                     kwargs['y_train'] = select(self.y, rows_train)
                     kwargs['y_test'] = select(self.y, rows_test)
                 scores.append(self.f(*args, **kwargs))
-        return float(sum(scores)) / (self.num_iter * len(scores))
+        return float(sum(scores)) / len(scores)
 
 
 def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1,
