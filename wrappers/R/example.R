@@ -12,4 +12,4 @@ manual()
 ## solver demo
 f <- function(x, y) return (-x^2-y^2)
 cfg <- list(x = seq(-5, 5, by=0.5), y = seq(-5, 5, by=0.5))
-result <- solve('grid-search', cfg, f, return_call_log=TRUE)
+result <- solve('grid search', cfg, f, return_call_log=TRUE)

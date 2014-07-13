@@ -13,12 +13,12 @@ folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', st
 %% optimize using grid-search
 solver_config = struct('x', -5:0.5:5, 'y', -5:0.5:5);
 [grid_solution, grid_details] = ...
-    optunity.solve('grid-search', solver_config, f, 'return_call_log', true);
+    optunity.solve('grid search', solver_config, f, 'return_call_log', true);
 
 %% optimize using random-search
 solver_config = struct('x',[-5, 5], 'y', [-5, 5], 'num_evals', 400);
 [rnd_solution, rnd_details] = ...
-    optunity.solve('random-search', solver_config, f, 'return_call_log', true);
+    optunity.solve('random search', solver_config, f, 'return_call_log', true);
 
 %% check if the nelder-mead solver is available in the list of solvers
 solvers = optunity.manual(); % obtain a list of available solvers
@@ -32,12 +32,12 @@ if nm_available
 end
 
 %% check if PSO is available
-pso_available = any(arrayfun(@(x) strcmp(x, 'particle-swarm'), solvers));
+pso_available = any(arrayfun(@(x) strcmp(x, 'particle swarm'), solvers));
 if pso_available
     solver_config = struct('num_particles', 5, 'num_generations', 30, ...
         'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
     [pso_solution, pso_details] = ...
-        optunity.solve('particle-swarm', solver_config, f, 'return_call_log', true);
+        optunity.solve('particle swarm', solver_config, f, 'return_call_log', true);
 end
 
 %% draw a figure to illustrate the call log of all solvers
@@ -99,7 +99,7 @@ end
 solver_config = struct('x', -5:0.5:5, 'y', -5:0.5:5);
 constraints = struct('ub_o', struct('x', 3));
 [constr_solution, constr_details] = ...
-    optunity.solve('grid-search', solver_config, f, ...
+    optunity.solve('grid search', solver_config, f, ...
     'return_call_log', true, 'constraints', constraints, 'default', -100);
 
 %% grid-search with warm start: already evaluated grid -> warm_nevals = 0
@@ -107,5 +107,5 @@ solver_config = struct('x', [1, 2], 'y', [1, 2]);
 call_log = struct('args',struct('x',[1 1 2 2], 'y', [1 2 1 2]), ...
     'values',[1 2 3 4]);
 [warm_solution, warm_details] = ...    
-    optunity.solve('grid-search', solver_config, f, ...
+    optunity.solve('grid search', solver_config, f, ...
     'return_call_log', true, 'call_log', call_log);

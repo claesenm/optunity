@@ -58,7 +58,7 @@ class Solver(SolverBase):
         pass
 
 
-@register_solver('grid-search',
+@register_solver('grid search',
                  'finds optimal parameter values through grid search',
                  ['TODO'])
 class GridSearch(Solver):
@@ -105,8 +105,8 @@ class GridSearch(Solver):
         return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
 
-@register_solver('random-search',
-                 'finds optimal parameter values through random search',
+@register_solver('random search',
+                 'random parameter tuples sampled uniformly within box constraints',
                  ['This solver implements the technique described here:',
                   'Bergstra, James, and Yoshua Bengio. Random search for hyper-parameter optimization. The Journal of Machine Learning Research 13 (2012): 281-305.']
                  )
@@ -268,7 +268,7 @@ try:
     import numpy as np
 
     @register_solver('nelder-mead',
-                     'optimizes parameters using the downhill simplex method',
+                     'optimizes parameters using the simplex method',
                      ['TODO'])
     class NelderMead(Solver):
 
@@ -335,9 +335,23 @@ try:
 
 # http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
 # https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
-    @register_solver('particle-swarm',
+    @register_solver('particle swarm',
                      'particle swarm optimization',
-                     ['TODO'])
+                     ['Maximizes the function using particle swarm optimization.',
+                      ' ',
+                      'This is a two-phase approach:',
+                      '1. Initialization: randomly initializes num_particles particles.',
+                      '   Particles are randomized uniformly within the box constraints.',
+                      '2. Iteration: particles move during num_generations iterations.',
+                      '   Movement is based on their velocities and mutual attractions.',
+                      ' ',
+                      'This function requires the following arguments:',
+                      '- num_particles: number of particles to use in the swarm',
+                      '- num_generations: number of iterations used by the swarm',
+                      '- max_speed: maximum speed of the particles in each direction (in (0, 1])',
+                      '- box constraints via key words: constraints are lists [lb, ub]', ' ',
+                      'This solver performs num_particles*num_generations function evaluations.'
+                      ])
     class ParticleSwarm(Solver):
 
         # TODO: implement warm start
@@ -423,9 +437,6 @@ try:
             part[:] = list(map(operator.add, part, part.speed))
 
         def maximize(self, f):
-            """
-            TODO
-            """
             def evaluate(individual):
                 return (f(**dict([(k, v)
                                   for k, v in zip(self.bounds.keys(),

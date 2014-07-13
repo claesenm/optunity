@@ -43,7 +43,7 @@ from . import solver_registry
 from .util import DocumentedNamedTuple as DocTup
 
 
-def manual_request(solver_name=None):
+def manual(solver_name=None):
     """Returns the manual and name that was requested via solver.
     If no solver_name is specified, returns a list of all registered solvers.
     If a name was specified, returns the same name in a list.
