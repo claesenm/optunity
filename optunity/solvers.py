@@ -59,8 +59,16 @@ class Solver(SolverBase):
 
 
 @register_solver('grid search',
-                 'finds optimal parameter values through grid search',
-                 ['TODO'])
+                 'finds optimal parameter values on a predefined grid',
+                 ['Retrieves the best parameter tuple on a predefined grid.',
+                  ' ',
+                  'This function requires the grid to be specified via named arguments:',
+                  '- names :: argument names',
+                  '- values :: list of grid coordinates to test',
+                  ' ',
+                  'The solver performs evaluation on the Cartesian product of grid values.',
+                  'The number of evaluations is the product of the length of all value vectors.'
+                  ])
 class GridSearch(Solver):
 
     def __init__(self, **kwargs):
@@ -107,8 +115,16 @@ class GridSearch(Solver):
 
 @register_solver('random search',
                  'random parameter tuples sampled uniformly within box constraints',
-                 ['This solver implements the technique described here:',
-                  'Bergstra, James, and Yoshua Bengio. Random search for hyper-parameter optimization. The Journal of Machine Learning Research 13 (2012): 281-305.']
+                 ['Tests random parameter tuples sampled uniformly within the box constraints.',
+                  ' ',
+                  'This function requires the following arguments:',
+                  '- num_evals :: number of tuples to test',
+                  '- box constraints via keywords: constraints are lists [lb, ub]',
+                  ' ',
+                  'This solver performs num_evals function evaluations.',
+                  ' ',
+                  'This solver implements the technique described here:',
+                  'Bergstra, James, and Yoshua Bengio. Random search for hyper-parameter optimization. Journal of Machine Learning Research 13 (2012): 281-305.']
                  )
 class RandomSearch(Solver):
 
@@ -173,9 +189,9 @@ class RandomSearch(Solver):
 
 
 @register_solver('direct',
-                 'optimizes a box-constrained function using the DIRECT algorithm',
+                 'DIviding RECTangles refinement search strategy',
                  ['This solver implements the technique described here:',
-                  'Jones, Donald R., Cary D. Perttunen, and Bruce E. Stuckman. "Lipschitzian optimization without the Lipschitz constant." Journal of Optimization Theory and Applications 79.1 (1993): 157-181.']
+                  'Jones, Donald R., Cary D. Perttunen, and Bruce E. Stuckman. Lipschitzian optimization without the Lipschitz constant. Journal of Optimization Theory and Applications 79.1 (1993): 157-181.']
                  )
 class Direct(Solver):
 
@@ -268,8 +284,16 @@ try:
     import numpy as np
 
     @register_solver('nelder-mead',
-                     'optimizes parameters using the simplex method',
-                     ['TODO'])
+                     'simplex method for unconstrained optimization',
+                     ['Simplex method for unconstrained optimization',
+                      ' ',
+                      'The simplex algorithm is a simple way to optimize a fairly well-behaved function.',
+                      'The function is assumed to be convex. If not, this solver may yield poor solutions.',
+                      ' ',
+                      'This solver requires the following arguments:',
+                      '- x0 :: starting point for the solver (as a dict)',
+                      '- xtol :: accuracy up to which to optimize the function'
+                      ])
     class NelderMead(Solver):
 
         def __init__(self, x0, xtol):

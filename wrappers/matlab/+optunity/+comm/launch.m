@@ -23,7 +23,7 @@ if isempty(env)
     
     % attach optunity's path to env
     path = mfilename('fullpath');
-    path = path(1:strfind(path, '/wrappers/matlab/launch_optunity'));
+    path = path(1:strfind(path, '/wrappers/matlab/+optunity/+comm/launch'));
     env = [env, ':', path];
 end
 

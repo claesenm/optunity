@@ -44,15 +44,33 @@ from .util import DocumentedNamedTuple as DocTup
 
 
 def manual(solver_name=None):
-    """Returns the manual and name that was requested via solver.
-    If no solver_name is specified, returns a list of all registered solvers.
-    If a name was specified, returns the same name in a list.
+    """Brief solver manual.
+
+    Returns the following:
+    - manual: list of strings that contain the requested manual
+    - solver name(s): name of the solver that was specified
+
+    If no solver_name is specified, a general manual and list of all
+    registered solvers is returned.
 
     Raises KeyError if solver_name is not registered."""
     if solver_name:
         return solver_registry.get(solver_name).desc_full, [solver_name]
     else:
         return solver_registry.manual(), solver_registry.solver_names()
+
+
+def print_manual(solver_name=None):
+    """Prints the manual of requested solver.
+    If no solver_name is specified, a general manual is printed.
+
+    Raises KeyError if solver_name is not registered."""
+    if solver_name:
+        man = solver_registry.get(solver_name).desc_full
+    else:
+        man = solver_registry.manual()
+    print('\n'.join(man))
+
 
 maximize_results = DocTup("""
 Result details includes the following:
