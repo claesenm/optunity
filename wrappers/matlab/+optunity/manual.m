@@ -1,5 +1,9 @@
 function [solver_names] = manual( varargin )
 %MANUAL Prints the manual of specified solver or Optunity in general.
+%
+% If no solver name is specified, a general manual is printed along with
+% a list of available solvers. If a name is specified, the same name is
+% returned.
 
 [m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
 
