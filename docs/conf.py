@@ -14,6 +14,7 @@
 
 import sys
 import os
+import optunity
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -91,7 +92,7 @@ show_authors = True
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+modindex_common_prefix = ['optunity']
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False

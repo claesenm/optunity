@@ -5,6 +5,9 @@ Installing Optunity
 .. toctree::
     :hidden:
 
+    /wrappers/matlab/installation
+    /wrappers/R/installation
+
 Optunity can be installed as a typical Python package.
 
 Optunity has soft dependencies on NumPy_ and SciPy_ 

@@ -63,7 +63,7 @@ Developer Guide
 =================
 
 - :doc:`Developer guide <dev/index>`
-- :doc:`API reference <api/index>`
+- :doc:`API reference <api/optunity>`
 
 Contributors
 ============
