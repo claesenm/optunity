@@ -2,6 +2,9 @@
 Installing Optunity
 ====================
 
+.. toctree::
+    :hidden:
+
 Optunity can be installed as a typical Python package.
 
 Optunity has soft dependencies on NumPy_ and SciPy_ 

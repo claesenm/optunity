@@ -2,10 +2,6 @@
 Optunity
 ===========
 
-..
-    .. toctree::
-    :maxdepth: 4
-
 Optunity is a library containing various optimizers for hyperparameter tuning.
 Hyperparameter tuning is a recurrent problem in many machine learning tasks,
 both supervised and unsupervised.This package provides several distinct approaches 
@@ -18,24 +14,8 @@ typically expensive to evaluate. Tuning examples include optimizing regularizati
 or kernel parameters.
 
 The Optunity library is implemented in Python and allows straightforward
-integration in other machine learning environments, including R and MATLAB.
-
-.. sidebar:: Quick setup
-
-    Issue the following commands to get started on Linux::
-
-        git clone https://github.com/claesenm/optunity.git
-        export PYTHONPATH=#PYTHONPATH:$(pwd)/optunity/
-
-    Afterwards, importing ``optunity`` should work in Python::
-
-        python -c 'import optunity'
-
-    For a proper installation, run the following::
-
-        python optunity/setup.py install
-
-    Installation may require superuser priviliges.
+integration in other machine learning environments, including 
+:doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
 
 Optunity is free software, using a BSD license.
 
@@ -44,31 +24,46 @@ User Guide
 
 **First steps**
 
-* :doc:`Overview (Start Here!) <user/overview>`
+* :doc:`Overview (Start Here!) <user/index>`
 * :doc:`Installation <user/installation>`
+* :doc:`Using Optunity in different environments <wrappers/index>`
+
+    * :doc:`MATLAB <wrappers/matlab/index>`
+    * :doc:`R <wrappers/R/index>`
+
+-------------
+
+**Quick setup**
+
+Issue the following commands to get started on Linux::
+
+    git clone https://github.com/claesenm/optunity.git
+    export PYTHONPATH=#PYTHONPATH:$(pwd)/optunity/
+
+Afterwards, importing ``optunity`` should work in Python::
+
+    python -c 'import optunity'
+
+For a proper installation, run the following::
+
+    python optunity/setup.py install
+
+Installation may require superuser priviliges.
 
 -------------
 
 **Examples of Optunity usage**
 
-* :doc:`Optimizing a simple function <user/examples/parabola2d>`
-* :doc:`Tuning SVM hyperparameters <user/examples/svm>`
+* :doc:`Optimizing a simple function </user/examples/parabola2d>`
+* :doc:`Tuning SVM hyperparameters </user/examples/svm>`
 
-For more examples, please see our :doc:`examples page <user/examples/index>`.
-
--------------
-
-**Using Optunity in different environments**
-
-* :doc:`MATLAB <wrappers/matlab/index>`
-* :doc:`R <wrappers/R/index>`
-
+For more examples, please see our :doc:`examples page </user/examples/index>`.
 
 Developer Guide
 =================
 
 - :doc:`Developer guide <dev/index>`
-- :doc:`API reference <optunity>`
+- :doc:`API reference <api/index>`
 
 Contributors
 ============
@@ -101,6 +96,12 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-
 .. toctree::
-  :hidden:
+    :includehidden:
+
+    /user/index
+    /user/installation
+    /examples/index
+    /wrappers/index
+    /dev/index
+    /api/optunity
