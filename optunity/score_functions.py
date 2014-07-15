@@ -52,7 +52,7 @@ def accuracy(y, yhat):
 def log_loss(y, yhat):
     """Returns the log loss between labels and predictions.
 
-    loss = -(y*log(yhat)+(1-y)*log(1-yhat))
+    .. math:: loss = -\\big(y \\times \log (\hat{y}))+(1-y) \\times \log (1-\hat{y})\\big)
 
     y must be a binary vector, e.g. elements in {True, False}
     yhat must be a vector of probabilities, e.g. elements in [0, 1]
