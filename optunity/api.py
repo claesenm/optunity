@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-# Author: Marc Claesen
-#
 # Copyright (c) 2014 KU Leuven, ESAT-STADIUS
 # All rights reserved.
 #
@@ -32,6 +30,21 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""A collection of top-level API functions for Optunity.
+
+Main functions in this module:
+
+* :func:`make_solver`
+* :func:`manual`
+* :func:`maximize`
+* :func:`tune`
+
+We recommend using these functions rather than equivalents found in other places,
+e.g. :mod:`optunity.solvers`.
+
+.. moduleauthor:: Marc Claesen
+
+"""
 
 import functools
 import timeit
@@ -46,14 +59,14 @@ from .util import DocumentedNamedTuple as DocTup
 def manual(solver_name=None):
     """Brief solver manual.
 
-    Returns the following:
-    - manual: list of strings that contain the requested manual
-    - solver name(s): name of the solver that was specified
+    :param solver_name: (optional) name of the solver to request a manual from.
+        If none is specified, a general manual and list of all registered solvers is returned.
 
-    If no solver_name is specified, a general manual and list of all
-    registered solvers is returned.
+    :result:
+        * list of strings that contain the requested manual
+        * solver name(s): name of the solver that was specified or list of all registered solvers.
 
-    Raises KeyError if solver_name is not registered."""
+    Raises ``KeyError`` if ``solver_name`` is not registered."""
     if solver_name:
         return solver_registry.get(solver_name).desc_full, [solver_name]
     else:
@@ -62,9 +75,11 @@ def manual(solver_name=None):
 
 def print_manual(solver_name=None):
     """Prints the manual of requested solver.
-    If no solver_name is specified, a general manual is printed.
 
-    Raises KeyError if solver_name is not registered."""
+    :param solver_name: (optional) name of the solver to request a manual from.
+        If none is specified, a general manual is printed.
+
+    Raises ``KeyError`` if ``solver_name`` is not registered."""
     if solver_name:
         man = solver_registry.get(solver_name).desc_full
     else:
@@ -73,19 +88,31 @@ def print_manual(solver_name=None):
 
 
 maximize_results = DocTup("""
-Result details includes the following:
-- optimum: optimal function value f(solution)
-- stats: statistics about the solving process
-- call_log: the call log
-- report: solver report, can be None
+**Result details includes the following**:
+
+optimum
+    optimal function value f(solution)
+
+stats
+    statistics about the solving process
+
+call_log
+    the call log
+
+report
+    solver report, can be None
                           """,
                           'maximize_results', ['optimum',
                                                'stats',
                                                'call_log',  'report'])
 maximize_stats = DocTup("""
-Statistics gathered while solving a problem:
-- num_evals: number of function evaluations
-- time: wall clock time needed to solve
+----
+**Statistics gathered while solving a problem**:
+
+num_evals
+    number of function evaluations
+time
+    wall clock time needed to solve
                         """,
                         'maximize_stats', ['num_evals', 'time'])
 
@@ -126,16 +153,26 @@ def maximize(solver, func):
 maximize.__doc__ = '''
 Maximizes func with given solver.
 
-Raises KeyError if
-    - <solver_name> is not registered
-    - <solver_config> is invalid to instantiate <solver_name>
-
-Returns the solution and a namedtuple with further details.
+Returns the solution and a ``namedtuple`` with further details.
 ''' + maximize_results.__doc__ + maximize_stats.__doc__
 
 
+def tune(f, num_evals, solver_name=None, *args, **kwargs):
+    if solver_name:
+        solvercls = solver_registry.get(solver_name)
+    else:
+        solvercls = solver_registry.get('particle swarm')
+    pass  # TODO: where to implement this logic?
+
+
 def make_solver(solver_name, *args, **kwargs):
-    """Creates a Solver from given parameters."""
+    """Creates a Solver from given parameters.
+
+    Raises ``KeyError`` if
+
+    - ``solver_name`` is not registered
+    - ``*args`` and ``**kwargs`` are invalid to instantiate the solver.
+    """
     solvercls = solver_registry.get(solver_name)
     return solvercls(*args, **kwargs)
 

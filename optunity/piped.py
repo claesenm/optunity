@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-# Author: Marc Claesen
-#
 # Copyright (c) 2014 KU Leuven, ESAT-STADIUS
 # All rights reserved.
 #
@@ -32,97 +30,109 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""This module is for developer use only. It is used to start a
+communication session.
+
+.. warning::
+    Importing this module should only be done when launching Optunity
+    as a subprocess to access functionality from non-Python environments.
+    Do not import this module as a Python user.
+
+.. moduleauthor:: Marc Claesen
+
+"""
 
 from __future__ import print_function
 import sys
 
 # optunity imports
-from optunity import communication as comm
+from . import communication as comm
 import optunity
 
 
-startup_json = comm.receive()
-startup_msg = comm.json_decode(startup_json)
+if __name__ == '__main__':
+    startup_json = comm.receive()
+    startup_msg = comm.json_decode(startup_json)
 
-if startup_msg.get('manual', False):
-    solver_name = startup_msg.get('solver', None)
-    try:
-        manual, solver_names = optunity.manual(solver_name)
-    except KeyError:
-        msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
+    if startup_msg.get('manual', False):
+        solver_name = startup_msg.get('solver', None)
+        try:
+            manual, solver_names = optunity.manual(solver_name)
+        except KeyError:
+            msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
+            comm.send(comm.json_encode(msg))
+            print(startup_msg, file=sys.stderr)
+            exit(1)
+        except EOFError:
+            msg = {'error_msg': 'Broken pipe.'}
+            comm.send(comm.json_encode(msg))
+            exit(1)
+        msg = {'manual': manual, 'solver_names': solver_names}
         comm.send(comm.json_encode(msg))
-        print(startup_msg, file=sys.stderr)
-        exit(1)
-    except EOFError:
-        msg = {'error_msg': 'Broken pipe.'}
+        exit(0)
+
+    elif startup_msg.get('generate_folds', False):
+        import optunity.cross_validation as cv
+        cv_opts = startup_msg['generate_folds']
+
+        try:
+            num_instances = cv_opts['num_instances']
+        except KeyError:
+            msg = {'error_msg': 'number of instances num_instances must be set.'}
+            comm.send(comm.json_encode(msg))
+            print(startup_msg, file=sys.stderr)
+            exit(1)
+
+        num_folds = cv_opts.get('num_folds', 10)
+        strata = cv_opts.get('strata', None)
+        clusters = cv_opts.get('clusters', None)
+        num_iter = cv_opts.get('num_iter', 1)
+
+        idx2cluster = None
+        if clusters:
+            idx2cluster = cv.map_clusters(clusters)
+
+        folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
+                                         strata=strata, clusters=clusters,
+                                         idx2cluster=idx2cluster)
+                 for _ in range(num_iter)]
+
+        msg = {'folds': folds}
         comm.send(comm.json_encode(msg))
-        exit(1)
-    msg = {'manual': manual, 'solver_names': solver_names}
-    comm.send(comm.json_encode(msg))
-    exit(0)
+        exit(0)
 
-elif startup_msg.get('generate_folds', False):
-    import optunity.cross_validation as cv
-    cv_opts = startup_msg['generate_folds']
+    else:  # solving a given problem
+        func = optunity.wrap_constraints(comm.piped_function_eval,
+                                         startup_msg.get('constraints', None),
+                                         startup_msg.get('default', None))
 
-    try:
-        num_instances = cv_opts['num_instances']
-    except KeyError:
-        msg = {'error_msg': 'number of instances num_instances must be set.'}
-        comm.send(comm.json_encode(msg))
-        print(startup_msg, file=sys.stderr)
-        exit(1)
+        if startup_msg.get('call_log', False):
+            func = optunity.wrap_call_log(func, startup_msg['call_log'])
 
-    num_folds = cv_opts.get('num_folds', 10)
-    strata = cv_opts.get('strata', None)
-    clusters = cv_opts.get('clusters', None)
-    num_iter = cv_opts.get('num_iter', 1)
+        # instantiate solver
+        try:
+            solver = optunity.make_solver(startup_msg['solver'],
+                                          **startup_msg['config'])
+        except KeyError:
+            msg = {'error_msg': 'Unable to instantiate solver.'}
+            comm.send(comm.json_encode(msg))
+            print(startup_msg, file=sys.stderr)
+            exit(1)
+        except EOFError:
+            msg = {'error_msg': 'Broken pipe.'}
+            comm.send(comm.json_encode(msg))
+            exit(1)
 
-    idx2cluster = None
-    if clusters:
-        idx2cluster = cv.map_clusters(clusters)
+        # solve and send result
+        try:
+            solution, rslt = optunity.maximize(solver, func)
+        except EOFError:
+            msg = {'error_msg': 'Broken pipe.'}
+            comm.send(comm.json_encode(msg))
+            exit(1)
 
-    folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
-                                     strata=strata, clusters=clusters,
-                                     idx2cluster=idx2cluster)
-             for _ in range(num_iter)]
-
-    msg = {'folds': folds}
-    comm.send(comm.json_encode(msg))
-    exit(0)
-
-else:  # solving a given problem
-    func = optunity.wrap_constraints(comm.piped_function_eval,
-                                     startup_msg.get('constraints', None),
-                                     startup_msg.get('default', None))
-
-    if startup_msg.get('call_log', False):
-        func = optunity.wrap_call_log(func, startup_msg['call_log'])
-
-    # instantiate solver
-    try:
-        solver = optunity.make_solver(startup_msg['solver'],
-                                      **startup_msg['config'])
-    except KeyError:
-        msg = {'error_msg': 'Unable to instantiate solver.'}
-        comm.send(comm.json_encode(msg))
-        print(startup_msg, file=sys.stderr)
-        exit(1)
-    except EOFError:
-        msg = {'error_msg': 'Broken pipe.'}
-        comm.send(comm.json_encode(msg))
-        exit(1)
-
-    # solve and send result
-    try:
-        solution, rslt = optunity.maximize(solver, func)
-    except EOFError:
-        msg = {'error_msg': 'Broken pipe.'}
-        comm.send(comm.json_encode(msg))
-        exit(1)
-
-    result = rslt._asdict()
-    result['solution'] = solution
-    result_json = comm.json_encode(result)
-    comm.send(result_json)
-    exit(0)
+        result = rslt._asdict()
+        result['solution'] = solution
+        result_json = comm.json_encode(result)
+        comm.send(result_json)
+        exit(0)

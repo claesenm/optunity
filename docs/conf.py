@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Optunity documentation build configuration file, created by
-# sphinx-quickstart on Mon Jul 14 23:41:12 2014.
+# sphinx-quickstart on Tue Jul 15 10:39:35 2014.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -85,7 +85,7 @@ exclude_patterns = ['_build']
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
-#show_authors = False
+show_authors = True
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

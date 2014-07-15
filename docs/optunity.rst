@@ -83,6 +83,9 @@ optunity.solvers module
     :undoc-members:
     :show-inheritance:
 
+.. autoclass:: NelderMead
+   :members:
+
 optunity.util module
 --------------------
 

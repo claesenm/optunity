@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-# Author: Marc Claesen
-#
 # Copyright (c) 2014 KU Leuven, ESAT-STADIUS
 # All rights reserved.
 #
@@ -31,6 +29,28 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Module to take care of registering solvers for use in the main Optunity API.
+
+Main classes in this module:
+
+* :class:`Solver`
+* :class:`GridSearch`
+* :class:`RandomSearch`
+* :class:`DIRECT`
+* :class:`NelderMead`
+* :class:`ParticleSwarm`
+* :class:`CMA_ES`
+
+:class:`NelderMead` is only available if SciPy_ is available.
+:class:`ParticleSwarm` and :class:`CMA_ES` require DEAP_.
+
+.. _SciPy: http://http://www.scipy.org/
+.. _DEAP: https://code.google.com/p/deap/
+
+.. moduleauthor:: Marc Claesen
+
+"""
 
 import itertools
 import collections
@@ -70,6 +90,7 @@ class Solver(SolverBase):
                   'The number of evaluations is the product of the length of all value vectors.'
                   ])
 class GridSearch(Solver):
+    """Blah"""
 
     def __init__(self, **kwargs):
         """Initializes the solver with a tuple indicating parameter values.
@@ -199,12 +220,6 @@ class Direct(Solver):
         """Initializes the solver with bounds and a number of allowed evaluations.
         kwargs must be a dictionary of parameter-bound pairs representing the box constraints.
         Bounds are a 2-element list: [lower_bound, upper_bound].
-
-        >>> s = Direct(x=[0, 1], y=[-1, 2], num_evals=50)
-        >>> s.bounds
-        {'y': [-1, 2], 'x': [0, 1]}
-        >>> s.num_evals
-        50
 
         """
         assert all([len(v) == 2 and v[0] <= v[1]
@@ -375,7 +390,7 @@ try:
                       'Hansen and Ostermeier, 2001. Completely Derandomized Self-Adaptation in Evolution Strategies. Evolutionary Computation'])
     class CMA_ES(Solver):
 
-        def __init__(self, num_generations, centroid, sigma, Lambda=None):
+        def __init__(self, num_generations, centroid, sigma=1.0, Lambda=None):
             """blah"""
 
             self._num_generations = num_generations

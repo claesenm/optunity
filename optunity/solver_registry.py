@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-# Author: Marc Claesen
-#
 # Copyright (c) 2014 KU Leuven, ESAT-STADIUS
 # All rights reserved.
 #
@@ -32,11 +30,25 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""Module to take care of registering solvers for use in the main Optunity API.
+
+Main functions in this module:
+
+* :func:`register_solver`
+* :func:`manual`
+* :func:`get`
+
+.. moduleauthor:: Marc Claesen
+
+"""
+
 import abc
+import functools
 
 
 class MetaDocumentedSolver(abc.ABCMeta):
-    """Provides class properties related to solver documentation."""
+    """Provides class properties related to solver documentation.
+    This meta class is used when registering a solver, see :func:`register_solver`."""
     @property
     def name(cls):
         """Returns the name of this Solver."""
@@ -65,12 +77,20 @@ def __register(cls):
 
 
 def get(solver_name):
-    """Returns the class of given solver."""
+    """Returns the class of the solver registered under given name.
+
+    :param solver_name: name of the solver
+    :returns: the solver class"""
     global __registered_solvers
     return __registered_solvers[solver_name]
 
 
 def manual():
+    """
+    Returns the general manual of Optunity, with a brief introduction of all registered solvers.
+
+    :returns: the manual as a list of strings (lines)
+    """
     global __registered_solvers
     manual = ['Optunity: optimization algorithms for hyperparameter tuning', ' ',
                 'The following solvers are available:']
@@ -84,19 +104,30 @@ def manual():
 
 
 def solver_names():
+    """Returns a list of all registered solvers."""
     global __registered_solvers
     return list(__registered_solvers.keys())
 
 
 def register_solver(name, desc_brief, desc_full):
-    """Class decorator to register solver in the registry.
+    """Class decorator to register a :class:`optunity.solvers.Solver` subclass in the registry.
+    Registered solvers will be available through Optunity's main API functions,
+    e.g. :func:`optunity.api.make_solver` and :func:`optunity.api.manual`.
 
-    Attaches attributes to cls before registering:
-        - _name attribute indicating solver name
-        - _desc_full attribute with extensive description and manual
-        - _desc_brief attribute with one-line description
+    :param name: name to register the solver with
+    :param desc_brief: one-line description of the solver
+    :param desc_full:
+        extensive description and manual of the solver
+        returns a list of strings representing manual lines
+    :returns: a class decorator to register solvers in the solver registry
 
-    These attributes are available as class properties.
+    The resulting class decorator attaches attributes to the class before registering:
+
+    :_name: the name using which the solver is registered
+    :_desc_full: extensive description and manual as list of strings (lines)
+    :_desc_brief: attribute with one-line description
+
+    These attributes will be available as class properties.
     """
     def class_wrapper(cls):
         class wrapped_solver(DocumentedSolver, cls):
@@ -108,10 +139,16 @@ def register_solver(name, desc_brief, desc_full):
             __doc__ = cls.__doc__
             __module__ = cls.__module__
 
+            @functools.wraps(cls.__init__)
             def __init__(self, *args, **kwargs):
                 super(wrapped_solver, self).__init__(*args, **kwargs)
+#                functools.update_wrapper(self, cls)
 
         # register the new wrapped_solver class
+        wrapped_solver.__name__ = cls.__name__
+        wrapped_solver.__doc__ = cls.__doc__
+        wrapped_solver.__module__ = cls.__module__
+#        wrapped_solver.__init__.__doc__ = cls.__init__.__doc__
         __register(wrapped_solver)
         return wrapped_solver
     return class_wrapper

@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-# Author: Marc Claesen
-#
 # Copyright (c) 2014 KU Leuven, ESAT-STADIUS
 # All rights reserved.
 #
@@ -32,48 +30,61 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""A variety of useful function decorators for logging, constraints and more.
+
+Main features in this module:
+
+* :func:`constrained`
+* :func:`logged`
+* :func:`max_evals`
+* :func:`dict2call_log`
+* :func:`call_log2dict`
+
+.. moduleauthor:: Marc Claesen
+"""
+
 import itertools
 import collections
 import functools
 
 
 def constr_ub_o(field, bounds, *args, **kwargs):
-    """Models args.field < bounds."""
+    """Models ``args.field < bounds``."""
     return kwargs[field] < bounds
 
 
 def constr_ub_c(field, bounds, *args, **kwargs):
-    """Models args.field <= bounds."""
+    """Models ``args.field <= bounds``."""
     return kwargs[field] <= bounds
 
 
 def constr_lb_o(field, bounds, *args, **kwargs):
-    """Models args.field > bounds."""
+    """Models ``args.field > bounds``."""
     return kwargs[field] > bounds
 
 
 def constr_lb_c(field, bounds, *args, **kwargs):
-    """Models args.field >= bounds."""
+    """Models ``args.field >= bounds``."""
     return kwargs[field] >= bounds
 
 
 def constr_range_oo(field, bounds, *args, **kwargs):
-    """Models args.field in (bounds[0], bounds[1])."""
+    """Models ``args.field in (bounds[0], bounds[1])``."""
     return kwargs[field] > bounds[0] and kwargs[field] < bounds[1]
 
 
 def constr_range_cc(field, bounds, *args, **kwargs):
-    """Models args.field in [bounds[0], bounds[1]]."""
+    """Models ``args.field in [bounds[0], bounds[1]]``."""
     return kwargs[field] >= bounds[0] and kwargs[field] <= bounds[1]
 
 
 def constr_range_oc(field, bounds, *args, **kwargs):
-    """Models args.field in (bounds[0], bounds[1]]."""
+    """Models ``args.field in (bounds[0], bounds[1]]``."""
     return kwargs[field] > bounds[0] and kwargs[field] <= bounds[1]
 
 
 def constr_range_co(field, bounds, **kwargs):
-    """Models args.field in [bounds[0], bounds[1])."""
+    """Models ``args.field in [bounds[0], bounds[1])``."""
     return kwargs[field] >= bounds[0] and kwargs[field] < bounds[1]
 
 
@@ -126,7 +137,7 @@ def constrained(constraints):
 
 
 def violations_defaulted(default):
-    """Decorator to default function value when a ConstraintViolation occurs.
+    """Decorator to default function value when a :class:`ConstraintViolation` occurs.
 
     >>> @violations_defaulted("foobar")
     ... @constrained([lambda x: x > 0])
@@ -149,15 +160,15 @@ def violations_defaulted(default):
 
 
 def logged(f):
-    """Decorator that logs unique calls to f.
+    """Decorator that logs unique calls to ``f``.
 
-    The call log can always be retrieved using f.call_log.
+    The call log can always be retrieved using ``f.call_log``.
     Decorating a function that is already being logged has
     no effect.
 
-    The call log is an OrderedDict with a namedtuple as key.
-    The namedtuple has fields based on *args and **kwargs,
-    for *args the tuple has fields pos_<i>.
+    The call log is an ``OrderedDict`` with a ``namedtuple`` as key.
+    The namedtuple has fields based on ``*args`` and ``**kwargs``,
+    for ``*args`` the tuple has fields ``pos_<i>``.
 
     >>> @logged
     ... def f(x): return x+1
@@ -166,6 +177,7 @@ def logged(f):
     OrderedDict([(args(pos_0=1), 2), (args(pos_0=2), 3)])
 
     logged as inner decorator:
+
     >>> @logged
     ... @constrained([lambda x: x > 1])
     ... def f2(x): return x+1
@@ -177,6 +189,7 @@ def logged(f):
     OrderedDict([(args(pos_0=2), 3)])
 
     logged as outer decorator:
+
     >>> @constrained([lambda x: x > 1])
     ... @logged
     ... def f3(x): return x+1
@@ -188,6 +201,7 @@ def logged(f):
     OrderedDict([(args(pos_0=2), 3)])
 
     logging twice does not remove original call_log
+
     >>> @logged
     ... def f(x): return 1
     >>> f(1)
@@ -226,7 +240,7 @@ def dict2call_log(calldict):
     """Converts given dict to a valid call log used by logged functions.
 
     Given dictionary must have the following structure:
-    {'args': {'argname': []}, 'values': []}
+    ``{'args': {'argname': []}, 'values': []}``
 
     >>> dict2call_log({'args': {'x': [1, 2]}, 'values': [2, 3]})
     OrderedDict([(Pars(x=1), 2), (Pars(x=2), 3)])
@@ -241,9 +255,9 @@ def dict2call_log(calldict):
 def call_log2dict(call_log):
     """Returns given call_log into a dictionary.
 
-    The call_log is an OrderedDict((namedtuple, value)).
+    The call_log is an ``OrderedDict((namedtuple, value))``.
     The result is a dict with the following structure:
-    {'args': {'argname': []}, 'values': []}
+    ``{'args': {'argname': []}, 'values': []}``
 
     >>> Pars = collections.namedtuple('Pars',['x','y'])
     >>> call_log = collections.OrderedDict({Pars(1,2): 3})
