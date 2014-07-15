@@ -1,0 +1,4 @@
+Optunity==0.2.0
+argparse==1.2.1
+deap==1.0.1
+wsgiref==0.1.2
