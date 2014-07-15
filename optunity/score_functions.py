@@ -38,13 +38,23 @@ import math
 def mse(y, yhat):
     """Returns the mean squared error between y and yhat.
 
+    :param y: true function values
+    :param yhat: predicted function values
+    :returns:
+        .. math:: \\frac{1}{n} \sum_{i=1}^n \\big[(\hat{y}-y)^2\\big]
+
     Lower is better."""
     return float(sum([(l - p) ** 2
                       for l, p in zip(y, yhat)])) / len(y)
 
 
 def accuracy(y, yhat):
-    """Returns the accuracy. Higher is better."""
+    """Returns the accuracy. Higher is better.
+
+    :param y: true function values
+    :param yhat: predicted function values
+
+    """
     return float(len(filter(lambda x: x[0] == x[1],
                             zip(y, yhat)))) / len(y)
 
@@ -52,7 +62,10 @@ def accuracy(y, yhat):
 def log_loss(y, yhat):
     """Returns the log loss between labels and predictions.
 
-    .. math:: loss = -\\big(y \\times \log (\hat{y}))+(1-y) \\times \log (1-\hat{y})\\big)
+    :param y: true function values
+    :param yhat: predicted function values
+    :returns:
+        .. math:: -\\frac{1}{n}\sum_{i=1}^n\\big[y \\times \log \hat{y}+(1-y) \\times \log (1-\hat{y})\\big]
 
     y must be a binary vector, e.g. elements in {True, False}
     yhat must be a vector of probabilities, e.g. elements in [0, 1]
@@ -69,7 +82,10 @@ def log_loss(y, yhat):
 def brier_score(y, yhat):
     """Returns the Brier score between y and yhat.
 
-    score = 1/len(y) * sum((yhat-y)^2)
+    :param y: true function values
+    :param yhat: predicted function values
+    :returns:
+        .. math:: \\frac{1}{n} \sum_{i=1}^n \\big[(\hat{y}-y)^2\\big]
 
     y must be a boolean vector, e.g. elements in {True, False}
     yhat must be a vector of probabilities, e.g. elements in [0, 1]
@@ -83,7 +99,10 @@ def pu_score(y, yhat):
     """
     Returns a score used for PU learning.
 
-    score = recall^2 / probability(yhat = 1)
+    :param y: true function values
+    :param yhat: predicted function values
+    :returns:
+        .. math:: \\frac{P(\hat{y}=1 | y=1)^2}{P(\hat{y}=1)}
 
     y and yhat must be boolean vectors.
 
