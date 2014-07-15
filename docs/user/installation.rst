@@ -10,15 +10,17 @@ Installing Optunity
 
 Optunity can be installed as a typical Python package.
 
-Optunity has soft dependencies on NumPy_ and SciPy_ 
-(for the :doc:`CMA-ES </user/solvers/CMA_ES>` and 
-:doc:`Nelder-Mead </user/solvers/nelder-mead>` solvers, respectively).
+.. note::
 
-.. _NumPy:
-    http://www.numpy.org
+    Optunity has soft dependencies on NumPy_ and SciPy_ 
+    (for the :doc:`CMA-ES </user/solvers/CMA_ES>` and 
+    :doc:`Nelder-Mead </user/solvers/nelder-mead>` solvers, respectively).
 
-.. _SciPy:
-    http://www.scipy.org
+    .. _NumPy:
+        http://www.numpy.org
+
+    .. _SciPy:
+        http://www.scipy.org
 
 Setting up Optunity for other environments
 ===========================================
