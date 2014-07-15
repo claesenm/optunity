@@ -8,9 +8,9 @@ both supervised and unsupervised.This package provides several distinct approach
 to solve such problems including some helpful facilities such as cross-validation 
 and a plethora of score functions.
 
-.. sidebar:: **First steps**
+.. sidebar:: **Getting started**
 
-    * :doc:`Overview (Start Here!) <user/index>`
+    * :doc:`Overview <user/index>`
     * :doc:`Installation <user/installation>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
@@ -107,4 +107,3 @@ Indices and tables
     /wrappers/index
     /dev/index
     /api/optunity
-    /genindex
