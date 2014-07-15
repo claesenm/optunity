@@ -42,32 +42,6 @@ Main functions in this module:
 
 """
 
-import abc
-import functools
-
-
-class MetaDocumentedSolver(abc.ABCMeta):
-    """Provides class properties related to solver documentation.
-    This meta class is used when registering a solver, see :func:`register_solver`."""
-    @property
-    def name(cls):
-        """Returns the name of this Solver."""
-        return cls._name
-
-    @property
-    def desc_brief(cls):
-        """Returns a one-line description of this Solver."""
-        return cls._desc_brief
-
-    @property
-    def desc_full(cls):
-        """Returns a full description of this Solver, including manual."""
-        return cls._desc_full
-
-
-# python version-independent metaclass usage
-DocumentedSolver = MetaDocumentedSolver('DocumentedSolver', (object, ), {})
-
 __registered_solvers = {}
 
 
@@ -130,25 +104,9 @@ def register_solver(name, desc_brief, desc_full):
     These attributes will be available as class properties.
     """
     def class_wrapper(cls):
-        class wrapped_solver(DocumentedSolver, cls):
-            _name = name
-            _desc_brief = desc_brief
-            _desc_full = desc_full
-
-            __name__ = cls.__name__
-            __doc__ = cls.__doc__
-            __module__ = cls.__module__
-
-            @functools.wraps(cls.__init__)
-            def __init__(self, *args, **kwargs):
-                super(wrapped_solver, self).__init__(*args, **kwargs)
-#                functools.update_wrapper(self, cls)
-
-        # register the new wrapped_solver class
-        wrapped_solver.__name__ = cls.__name__
-        wrapped_solver.__doc__ = cls.__doc__
-        wrapped_solver.__module__ = cls.__module__
-#        wrapped_solver.__init__.__doc__ = cls.__init__.__doc__
-        __register(wrapped_solver)
-        return wrapped_solver
+        cls.name = name
+        cls.desc_brief = desc_brief
+        cls.desc_full = desc_full
+        __register(cls)
+        return cls
     return class_wrapper
