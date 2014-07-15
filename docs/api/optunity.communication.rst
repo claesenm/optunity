@@ -1,0 +1,7 @@
+optunity.communication module
+=============================
+
+.. automodule:: optunity.communication
+    :members:
+    :undoc-members:
+    :show-inheritance:
