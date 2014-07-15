@@ -15,6 +15,10 @@ Optunity can be installed as a typical Python package.
     Optunity has soft dependencies on NumPy_ and SciPy_ 
     (for the :doc:`CMA-ES </user/solvers/CMA_ES>` and 
     :doc:`Nelder-Mead </user/solvers/nelder-mead>` solvers, respectively).
+    Optunity additionally ships with DEAP, a library for evolutionary algorithms [DEAP2012]_.
+
+    .. [DEAP2012] Fortin, Félix-Antoine, et al. "DEAP: Evolutionary algorithms made easy."
+        Journal of Machine Learning Research 13.1 (2012): 2171-2175.
 
     .. _NumPy:
         http://www.numpy.org
