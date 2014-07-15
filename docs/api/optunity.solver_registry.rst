@@ -1,4 +1,4 @@
-optunity.solver_registry module
+optunity.solver_registry
 ===============================
 
 .. automodule:: optunity.solver_registry

@@ -5,7 +5,9 @@ Optunity API
 Module contents
 ---------------
 
-.. sidebar:: **Key submodules**
+.. sidebar:: optunity submodules
+
+    **Key submodules**
 
     .. toctree::
 

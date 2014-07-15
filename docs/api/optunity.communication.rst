@@ -1,4 +1,4 @@
-optunity.communication module
+optunity.communication
 =============================
 
 .. automodule:: optunity.communication

@@ -1,4 +1,4 @@
-optunity.piped module
+optunity.piped
 =====================
 
 .. automodule:: optunity.piped

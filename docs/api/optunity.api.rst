@@ -1,4 +1,4 @@
-optunity.api module
+optunity.api
 ===================
 
 .. automodule:: optunity.api

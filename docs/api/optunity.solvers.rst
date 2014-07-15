@@ -1,4 +1,4 @@
-optunity.solvers module
+optunity.solvers
 =======================
 
 .. automodule:: optunity.solvers
