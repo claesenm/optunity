@@ -17,34 +17,38 @@ The Optunity library is implemented in Python and allows straightforward
 integration in other machine learning environments, including 
 :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
 
-Optunity is free software, using a BSD license.
+Optunity is free software, using a BSD-style license.
 
 User Guide
 ==============
 
-**First steps**
+.. sidebar:: **First steps**
 
-* :doc:`Overview (Start Here!) <user/index>`
-* :doc:`Installation <user/installation>`
-* :doc:`Using Optunity in different environments <wrappers/index>`
+    * :doc:`Overview (Start Here!) <user/index>`
+    * :doc:`Installation <user/installation>`
+    * :doc:`Using Optunity in different environments <wrappers/index>`
 
-    * :doc:`MATLAB <wrappers/matlab/index>`
-    * :doc:`R <wrappers/R/index>`
-
--------------
+        * :doc:`MATLAB <wrappers/matlab/index>`
+        * :doc:`R <wrappers/R/index>`
 
 **Quick setup**
 
-Issue the following commands to get started on Linux::
+Issue the following commands to get started on Linux:
+
+.. code-block:: bash
 
     git clone https://github.com/claesenm/optunity.git
     export PYTHONPATH=#PYTHONPATH:$(pwd)/optunity/
 
-Afterwards, importing ``optunity`` should work in Python::
+Afterwards, importing ``optunity`` should work in Python:
+
+.. code-block:: bash
 
     python -c 'import optunity'
 
-For a proper installation, run the following::
+For a proper installation, run the following:
+
+.. code-block:: bash
 
     python optunity/setup.py install
 
@@ -97,11 +101,13 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
+    :maxdepth: 2
     :includehidden:
 
-    /user/index
     /user/installation
+    /user/index
     /examples/index
     /wrappers/index
     /dev/index
     /api/optunity
+    /genindex

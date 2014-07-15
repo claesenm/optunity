@@ -1,5 +1,5 @@
 ===================
-User Guide
+Optunity User Guide
 ===================
 
 .. toctree::
@@ -7,8 +7,8 @@ User Guide
 
     /user/installation
     /user/solvers
-    /user/functions
     /user/cross_validation
+    /user/functions
 
 This page contains a high-level overview of Optunity. 
 

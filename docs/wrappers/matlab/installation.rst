@@ -1,5 +1,5 @@
 ==============================
-Installing Optunity in MATLAB
+Installation for MATLAB
 ==============================
 
 TODO

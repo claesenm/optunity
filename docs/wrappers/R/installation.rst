@@ -1,5 +1,5 @@
 ========================
-Installing Optunity in R
+Installing in R
 ========================
 
 TODO
