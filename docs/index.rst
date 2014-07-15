@@ -12,10 +12,10 @@ and a plethora of score functions.
 
     * :doc:`Overview (Start Here!) <user/index>`
     * :doc:`Installation <user/installation>`
-    * Trouble? `Report an issue <https://github.com/claesenm/optunity/issues>`_
+    * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
 From an optimization point of view, the tuning problem can be considered as 
-follows: the objective function is non-convex, non-differentiable and 
+follows: the objective function is non-convex, non-smooth and 
 typically expensive to evaluate. Tuning examples include optimizing regularization 
 or kernel parameters.
 
