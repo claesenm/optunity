@@ -106,7 +106,6 @@ report
                                                'stats',
                                                'call_log',  'report'])
 maximize_stats = DocTup("""
-----
 **Statistics gathered while solving a problem**:
 
 num_evals
@@ -125,8 +124,9 @@ def maximize(solver, func):
     and optunity.maximize_stats.
 
     Raises KeyError if
-        - <solver_name> is not registered
-        - <solver_config> is invalid to instantiate <solver_name>
+    - ``solver_name`` is not registered
+    - ``solver_config`` is invalid to instantiate ``solver_name``
+
     """
     @fun.logged
     @functools.wraps(func)
@@ -172,13 +172,16 @@ def make_solver(solver_name, *args, **kwargs):
 
     - ``solver_name`` is not registered
     - ``*args`` and ``**kwargs`` are invalid to instantiate the solver.
+
     """
     solvercls = solver_registry.get(solver_name)
     return solvercls(*args, **kwargs)
 
 
 def wrap_call_log(f, call_dict):
-    """Wraps an existing call log (as dictionary) around f."""
+    """Wraps an existing call log (as dictionary) around f.
+
+    """
     f = fun.logged(f)
     call_log = fun.dict2call_log(call_dict)
     if f.call_log:
@@ -192,11 +195,14 @@ def wrap_constraints(f, constraint_dict, default=None):
     """Decorates f with all constraints listed in the dict.
 
     constraint_dict may have the following keys:
-        - 'ub_?': upper bound
-        - 'lb_?': lower bound
-        - 'range_??': range'
+
+    - ``ub_?``: upper bound
+    - ``lb_?``: lower bound
+    - ``range_??``: range'
+
     where '?' can be either 'o' (open) or 'c' (closed).
     The values of constraint_dict are dicts with argname-value pairs.
+
     """
     if not constraint_dict:
         return f

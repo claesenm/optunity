@@ -42,6 +42,8 @@ Main functions in this module:
 
 """
 
+__all__ = ['get', 'manual', 'register_solver', 'solver_names']
+
 __registered_solvers = {}
 
 
@@ -86,7 +88,7 @@ def solver_names():
 def register_solver(name, desc_brief, desc_full):
     """Class decorator to register a :class:`optunity.solvers.Solver` subclass in the registry.
     Registered solvers will be available through Optunity's main API functions,
-    e.g. :func:`optunity.api.make_solver` and :func:`optunity.api.manual`.
+    e.g. :func:`optunity.make_solver` and :func:`optunity.manual`.
 
     :param name: name to register the solver with
     :param desc_brief: one-line description of the solver

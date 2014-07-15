@@ -11,13 +11,14 @@ Subpackages
 Submodules
 ----------
 
+
 optunity.api module
 -------------------
 
 .. automodule:: optunity.api
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 optunity.communication module
 -----------------------------
@@ -82,9 +83,6 @@ optunity.solvers module
     :members:
     :undoc-members:
     :show-inheritance:
-
-.. autoclass:: NelderMead
-   :members:
 
 optunity.util module
 --------------------
