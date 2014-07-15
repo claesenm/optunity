@@ -8,6 +8,12 @@ both supervised and unsupervised.This package provides several distinct approach
 to solve such problems including some helpful facilities such as cross-validation 
 and a plethora of score functions.
 
+.. sidebar:: **First steps**
+
+    * :doc:`Overview (Start Here!) <user/index>`
+    * :doc:`Installation <user/installation>`
+    * Trouble? `Report an issue <https://github.com/claesenm/optunity/issues>`_
+
 From an optimization point of view, the tuning problem can be considered as 
 follows: the objective function is non-convex, non-differentiable and 
 typically expensive to evaluate. Tuning examples include optimizing regularization 
@@ -21,15 +27,6 @@ Optunity is free software, using a BSD-style license.
 
 User Guide
 ==============
-
-.. sidebar:: **First steps**
-
-    * :doc:`Overview (Start Here!) <user/index>`
-    * :doc:`Installation <user/installation>`
-    * :doc:`Using Optunity in different environments <wrappers/index>`
-
-        * :doc:`MATLAB <wrappers/matlab/index>`
-        * :doc:`R <wrappers/R/index>`
 
 **Quick setup**
 
