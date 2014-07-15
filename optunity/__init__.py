@@ -1,6 +1,6 @@
 """
 Optunity
-=====
+==========
 
 Provides
   1. Routines to efficiently optimize hyperparameters
@@ -23,6 +23,7 @@ test
 
 Utilities
 ---------
+
 __version__
     Optunity version string
 __revision__
@@ -41,5 +42,5 @@ __version__ = "0.2"
 __revision__ = "0.2.1"
 
 __all__ = ['manual', 'print_manual', 'maximize', 'tune',
-           'wrap_call_log', 'wrap_constraints', 'make_solver'
+           'wrap_call_log', 'wrap_constraints', 'make_solver',
            'cross_validated', 'generate_folds']
