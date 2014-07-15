@@ -44,11 +44,15 @@ The main functions in this module are:
 # TODO: remove dependency on numpy
 import math
 import random
-import numpy as np
 import itertools
 import functools
 import collections
 
+# FIXME
+try:
+    import numpy as np
+except ImportError:
+    pass
 
 def select(collection, indices):
     """Selects the subset specified by indices from collection."""
