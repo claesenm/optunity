@@ -396,6 +396,21 @@ if _scipy_available:
 
 
 class CMA_ES(Solver):
+    """
+    Covariance Matrix Adaptation Evolutionary Strategy
+
+    This solver implements the technique described in [HANSEN2001]_.
+    This solver uses an implementation available in the DEAP library [DEAP2012]_.
+
+    .. [HANSEN2001] Nikolaus Hansen and Andreas Ostermeier. *Completely
+        derandomized self-adaptation in evolution  strategies*.
+        Evolutionary computation, 9(2):159-195, 2001.
+
+    .. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
+        Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
+        Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
+
+    """
 
     def __init__(self, num_generations, sigma=1.0, Lambda=None, **kwargs):
         """blah"""
@@ -476,6 +491,13 @@ if _deap_available and _numpy_available:
 
 
 class ParticleSwarm(Solver):
+    """
+    This solver uses an implementation available in the DEAP library [DEAP2012]_.
+
+    .. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
+        Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
+        Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
+    """
 
     def __init__(self, num_particles, num_generations,
                     max_speed, **kwargs):
