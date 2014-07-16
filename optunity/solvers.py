@@ -120,8 +120,9 @@ class Solver(SolverBase):
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
-        :returns: the arguments which optimize ``f``
-        :returns: an optional solver report, can be None
+        :returns:
+            - the arguments which optimize ``f``
+            - an optional solver report, can be None
 
         """
         pass
@@ -131,8 +132,9 @@ class Solver(SolverBase):
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
-        :returns: the arguments which optimize ``f``
-        :returns: an optional solver report, can be None
+        :returns:
+            - the arguments which optimize ``f``
+            - an optional solver report, can be None
 
         """
         return optimize(f, True)
@@ -142,8 +144,9 @@ class Solver(SolverBase):
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
-        :returns: the arguments which optimize ``f``
-        :returns: an optional solver report, can be None
+        :returns:
+            - the arguments which optimize ``f``
+            - an optional solver report, can be None
 
         """
         return optimize(f, False)
