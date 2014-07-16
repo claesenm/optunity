@@ -63,6 +63,35 @@ import operator
 from . import functions as fun
 from .solver_registry import register_solver
 
+_scipy_available = True
+try:
+    import scipy.optimize
+except ImportError:
+    _scipy_available = False
+
+_numpy_available = True
+try:
+    import numpy as np
+except ImportError:
+    _numpy_available = False
+
+_deap_available = True
+try:
+    import deap
+    import deap.creator
+    import deap.base
+    import deap.tools
+    import deap.cma
+    import deap.algorithms
+except ImportError:
+    _deap_available = False
+except TypeError:
+    # this can happen because DEAP is in Python 2
+    # install needs to take proper care of converting
+    # 2 to 3 when necessary
+    _deap_available = False
+
+
 # python version-independent metaclass usage
 SolverBase = abc.ABCMeta('SolverBase', (object, ), {})
 
@@ -294,288 +323,275 @@ class Direct(Solver):
 
         return best_pars, None  # no useful statistics to report
 
-try:
-    import scipy.optimize
-    import numpy as np
+class NelderMead(Solver):
 
-    @register_solver('nelder-mead',
-                     'simplex method for unconstrained optimization',
-                     ['Simplex method for unconstrained optimization',
-                      ' ',
-                      'The simplex algorithm is a simple way to optimize a fairly well-behaved function.',
-                      'The function is assumed to be convex. If not, this solver may yield poor solutions.',
-                      ' ',
-                      'This solver requires the following arguments:',
-                      '- x0 :: starting point for the solver (as a dict)',
-                      '- xtol :: accuracy up to which to optimize the function'
-                      ])
-    class NelderMead(Solver):
+    def __init__(self, x0, xtol):
+        """Initializes the solver with a tuple indicating parameter values.
 
-        def __init__(self, x0, xtol):
-            """Initializes the solver with a tuple indicating parameter values.
+        >>> s = NelderMead(x0={'x': 1}, xtol=2)
+        >>> s.x0
+        {'x': 1}
+        >>> s.xtol
+        2
 
-            >>> s = NelderMead(x0={'x': 1}, xtol=2)
-            >>> s.x0
-            {'x': 1}
-            >>> s.xtol
-            2
+        """
+        self._x0 = x0
+        self._xtol = xtol
 
-            """
-            self._x0 = x0
-            self._xtol = xtol
+    @property
+    def xtol(self):
+        """Returns the tolerance."""
+        return self._xtol
 
-        @property
-        def xtol(self):
-            """Returns the tolerance."""
-            return self._xtol
+    @property
+    def x0(self):
+        """Returns the starting point x0."""
+        return self._x0
 
-        @property
-        def x0(self):
-            """Returns the starting point x0."""
-            return self._x0
+    def maximize(self, f):
+        """
+        Performs Nelder-Mead optimization to minimize f. Requires scipy.
 
-        def maximize(self, f):
-            """
-            Performs Nelder-Mead optimization to minimize f. Requires scipy.
+        In scipy < 0.11.0, scipy.optimize.fmin is used.
+        In scipy >= 0.11.0, scipy.optimize.minimize is used.
 
-            In scipy < 0.11.0, scipy.optimize.fmin is used.
-            In scipy >= 0.11.0, scipy.optimize.minimize is used.
+        >>> s = NelderMead({'x': 1, 'y': 1}, 1e-8)
+        >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2)
+        >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]
+        [True, True]
 
-            >>> s = NelderMead({'x': 1, 'y': 1}, 1e-8)
-            >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2)
-            >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]
-            [True, True]
+        """
+        # Nelder-Mead implicitly minimizes, so negate f()
+        f = fun.negated(f)
 
-            """
-            # Nelder-Mead implicitly minimizes, so negate f()
-            f = fun.negated(f)
+        sortedkeys = sorted(self.x0.keys())
+        x0 = [self.x0[k] for k in sortedkeys]
+        f = fun.static_key_order(sortedkeys)(f)
 
-            sortedkeys = sorted(self.x0.keys())
-            x0 = [self.x0[k] for k in sortedkeys]
-            f = fun.static_key_order(sortedkeys)(f)
+        version = scipy.__version__
+        if int(version.split('.')[1]) >= 11:
+            print('HALP: wrong scipy version')
+            pass  # TODO
+        else:
+            xopt = scipy.optimize.fmin(f, np.array(x0),
+                                        xtol=self.xtol, disp=False)
+            return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None
 
-            version = scipy.__version__
-            if int(version.split('.')[1]) >= 11:
-                print('HALP: wrong scipy version')
-                pass  # TODO
-            else:
-                xopt = scipy.optimize.fmin(f, np.array(x0),
-                                           xtol=self.xtol, disp=False)
-                return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None
+if _scipy_available:
+    NelderMead = register_solver('nelder-mead',
+                                 'simplex method for unconstrained optimization',
+                                 ['Simplex method for unconstrained optimization',
+                                  ' ',
+                                  'The simplex algorithm is a simple way to optimize a fairly well-behaved function.',
+                                  'The function is assumed to be convex. If not, this solver may yield poor solutions.',
+                                  ' ',
+                                  'This solver requires the following arguments:',
+                                  '- x0 :: starting point for the solver (as a dict)',
+                                  '- xtol :: accuracy up to which to optimize the function'
+                                 ])(NelderMead)
 
-except ImportError:
-    pass
 
-try:
-    import deap
-    import deap.creator
-    import deap.base
-    import deap.tools
-    import deap.cma
-    import deap.algorithms
+class CMA_ES(Solver):
+
+    def __init__(self, num_generations, centroid, sigma=1.0, Lambda=None):
+        """blah"""
+
+        self._num_generations = num_generations
+        self._centroid = centroid
+        self._sigma = sigma
+        self._lambda = Lambda
+
+        deap.creator.create("FitnessMax", deap.base.Fitness,
+                            weights=(1.0,))
+        deap.creator.create("Individual", list,
+                            fitness=deap.creator.FitnessMax)
+
+    @property
+    def num_generations(self):
+        return self._num_generations
+
+    @property
+    def centroid(self):
+        return self._centroid
+
+    @property
+    def lambda_(self):
+        return self._lambda
+
+    @property
+    def sigma(self):
+        return self._sigma
+
+    def maximize(self, f):
+        toolbox = deap.base.Toolbox()
+
+        if self.lambda_:
+            strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+                                            sigma=self.sigma, lambda_=self.lambda_)
+        else:
+            strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+                                            sigma=self.sigma)
+        toolbox.register("generate", strategy.generate,
+                            deap.creator.Individual)
+        toolbox.register("update", strategy.update)
+
+        def evaluate(individual):
+            return (f(**dict([(k, v)
+                                for k, v in zip(self.centroid.keys(),
+                                                individual)])),)
+        toolbox.register("evaluate", evaluate)
+
+        hof = deap.tools.HallOfFame(1)
+        deap.algorithms.eaGenerateUpdate(toolbox=toolbox,
+                                            ngen=self._num_generations,
+                                            halloffame=hof, verbose=False)
+
+        return dict([(k, v)
+                        for k, v in zip(self.centroid.keys(), hof[0])]), None
 
 # CMA_ES solver requires deap > 1.0.1
 # http://deap.readthedocs.org/en/latest/examples/cmaes.html
-    @register_solver('cma-es',
-                     'covariance matrix adaptation evolutionary strategy',
-                     ['CMA-ES: covariance matrix adaptation evolutionary strategy',
-                      ' ',
-                      'This method requires the following parameters:',
-                      '- num_generations :: number of generations to use',
-                      '- centroid :: starting point of the solver',
-                      '- sigma :: initial covariance',
-                      '- Lambda :: (optional) measure of reproducibility',
-                      ' ',
-                      'This method is described in detail in:',
-                      'Hansen and Ostermeier, 2001. Completely Derandomized Self-Adaptation in Evolution Strategies. Evolutionary Computation'])
-    class CMA_ES(Solver):
+if _deap_available and _numpy_available:
+    CMA_ES =register_solver('cma-es', 'covariance matrix adaptation evolutionary strategy',
+                        ['CMA-ES: covariance matrix adaptation evolutionary strategy',
+                        ' ',
+                        'This method requires the following parameters:',
+                        '- num_generations :: number of generations to use',
+                        '- centroid :: starting point of the solver',
+                        '- sigma :: initial covariance',
+                        '- Lambda :: (optional) measure of reproducibility',
+                        ' ',
+                        'This method is described in detail in:',
+                        'Hansen and Ostermeier, 2001. Completely Derandomized Self-Adaptation in Evolution Strategies. Evolutionary Computation'
+                         ])(CMA_ES)
 
-        def __init__(self, num_generations, centroid, sigma=1.0, Lambda=None):
-            """blah"""
 
-            self._num_generations = num_generations
-            self._centroid = centroid
-            self._sigma = sigma
-            self._lambda = Lambda
+class ParticleSwarm(Solver):
 
-            deap.creator.create("FitnessMax", deap.base.Fitness,
-                                weights=(1.0,))
-            deap.creator.create("Individual", list,
-                                fitness=deap.creator.FitnessMax)
+    def __init__(self, num_particles, num_generations,
+                    max_speed, **kwargs):
+        """blah"""
+        assert all([len(v) == 2 and v[0] <= v[1]
+                    for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
+        self._bounds = kwargs
+        self._ttype = collections.namedtuple('ttype', kwargs.keys())
+        self._num_particles = num_particles
+        self._num_generations = num_generations
+        self._max_speed = max_speed
+        self._smax = [self.max_speed * (b[1] - b[0])
+                        for _, b in self.bounds.items()]
+        self._smin = map(operator.neg, self.smax)
 
-        @property
-        def num_generations(self):
-            return self._num_generations
+        deap.creator.create("FitnessMax", deap.base.Fitness,
+                            weights=(1.0,))
+        deap.creator.create("Particle", list,
+                            fitness=deap.creator.FitnessMax, speed=list,
+                            best=None)
+        self._toolbox = deap.base.Toolbox()
+        self._toolbox.register("particle", self.generate)
+        self._toolbox.register("population", deap.tools.initRepeat, list,
+                                self.toolbox.particle)
+        self._toolbox.register("update", self.updateParticle,
+                                phi1=2.0, phi2=2.0)
 
-        @property
-        def centroid(self):
-            return self._centroid
+    @property
+    def num_particles(self):
+        return self._num_particles
 
-        @property
-        def lambda_(self):
-            return self._lambda
+    @property
+    def num_generations(self):
+        return self._num_generations
 
-        @property
-        def sigma(self):
-            return self._sigma
+    @property
+    def toolbox(self):
+        return self._toolbox
 
-        def maximize(self, f):
-            toolbox = deap.base.Toolbox()
+    @property
+    def max_speed(self):
+        return self._max_speed
 
-            if self.lambda_:
-                strategy = deap.cma.Strategy(centroid=self.centroid.values(),
-                                             sigma=self.sigma, lambda_=self.lambda_)
-            else:
-                strategy = deap.cma.Strategy(centroid=self.centroid.values(),
-                                             sigma=self.sigma)
-            toolbox.register("generate", strategy.generate,
-                             deap.creator.Individual)
-            toolbox.register("update", strategy.update)
+    @property
+    def smax(self):
+        return self._smax
 
-            def evaluate(individual):
-                return (f(**dict([(k, v)
-                                  for k, v in zip(self.centroid.keys(),
-                                                  individual)])),)
-            toolbox.register("evaluate", evaluate)
+    @property
+    def smin(self):
+        return self._smin
 
-            hof = deap.tools.HallOfFame(1)
-            deap.algorithms.eaGenerateUpdate(toolbox=toolbox,
-                                             ngen=self._num_generations,
-                                             halloffame=hof, verbose=False)
+    @property
+    def bounds(self):
+        return self._bounds
 
-            return dict([(k, v)
-                         for k, v in zip(self.centroid.keys(), hof[0])]), None
+    @property
+    def ttype(self):
+        return self._ttype
 
+    def generate(self):
+        part = deap.creator.Particle(random.uniform(bounds[0], bounds[1])
+                                        for _, bounds in self.bounds.items())
+        part.speed = [random.uniform(smin, smax)
+                        for smin, smax in zip(self.smin, self.smax)]
+        return part
+
+    def updateParticle(self, part, best, phi1, phi2):
+        u1 = (random.uniform(0, phi1) for _ in range(len(part)))
+        u2 = (random.uniform(0, phi2) for _ in range(len(part)))
+        v_u1 = map(operator.mul, u1,
+                    map(operator.sub, part.best, part))
+        v_u2 = map(operator.mul, u2,
+                    map(operator.sub, best, part))
+        part.speed = list(map(operator.add, part.speed,
+                                map(operator.add, v_u1, v_u2)))
+        for i, speed in enumerate(part.speed):
+            if speed < self.smin[i]:
+                part.speed[i] = self.smin[i]
+            elif speed > self.smax[i]:
+                part.speed[i] = self.smax[i]
+        part[:] = list(map(operator.add, part, part.speed))
+
+    def maximize(self, f):
+        def evaluate(individual):
+            return (f(**dict([(k, v)
+                                for k, v in zip(self.bounds.keys(),
+                                                individual)])),)
+        self._toolbox.register("evaluate", evaluate)
+
+        pop = self.toolbox.population(self.num_particles)
+        best = None
+
+        for g in range(self.num_generations):
+            for part in pop:
+                part.fitness.values = self.toolbox.evaluate(part)
+                if not part.best or part.best.fitness < part.fitness:
+                    part.best = deap.creator.Particle(part)
+                    part.best.fitness.values = part.fitness.values
+                if not best or best.fitness < part.fitness:
+                    best = deap.creator.Particle(part)
+                    best.fitness.values = part.fitness.values
+            for part in pop:
+                self.toolbox.update(part, best)
+
+        return dict([(k, v)
+                        for k, v in zip(self.bounds.keys(), best)]), None
 
 # PSO solver requires deap > 0.7
 # http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
 # https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
-    @register_solver('particle swarm',
-                     'particle swarm optimization',
-                     ['Maximizes the function using particle swarm optimization.',
-                      ' ',
-                      'This is a two-phase approach:',
-                      '1. Initialization: randomly initializes num_particles particles.',
-                      '   Particles are randomized uniformly within the box constraints.',
-                      '2. Iteration: particles move during num_generations iterations.',
-                      '   Movement is based on their velocities and mutual attractions.',
-                      ' ',
-                      'This function requires the following arguments:',
-                      '- num_particles: number of particles to use in the swarm',
-                      '- num_generations: number of iterations used by the swarm',
-                      '- max_speed: maximum speed of the particles in each direction (in (0, 1])',
-                      '- box constraints via key words: constraints are lists [lb, ub]', ' ',
-                      'This solver performs num_particles*num_generations function evaluations.'
-                      ])
-    class ParticleSwarm(Solver):
-
-        # TODO: implement warm start
-        def __init__(self, num_particles, num_generations,
-                     max_speed, **kwargs):
-            """blah"""
-            assert all([len(v) == 2 and v[0] <= v[1]
-                        for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
-            self._bounds = kwargs
-            self._ttype = collections.namedtuple('ttype', kwargs.keys())
-            self._num_particles = num_particles
-            self._num_generations = num_generations
-            self._max_speed = max_speed
-            self._smax = [self.max_speed * (b[1] - b[0])
-                          for _, b in self.bounds.items()]
-            self._smin = map(operator.neg, self.smax)
-
-            deap.creator.create("FitnessMax", deap.base.Fitness,
-                                weights=(1.0,))
-            deap.creator.create("Particle", list,
-                                fitness=deap.creator.FitnessMax, speed=list,
-                                best=None)
-            self._toolbox = deap.base.Toolbox()
-            self._toolbox.register("particle", self.generate)
-            self._toolbox.register("population", deap.tools.initRepeat, list,
-                                   self.toolbox.particle)
-            self._toolbox.register("update", self.updateParticle,
-                                   phi1=2.0, phi2=2.0)
-
-        @property
-        def num_particles(self):
-            return self._num_particles
-
-        @property
-        def num_generations(self):
-            return self._num_generations
-
-        @property
-        def toolbox(self):
-            return self._toolbox
-
-        @property
-        def max_speed(self):
-            return self._max_speed
-
-        @property
-        def smax(self):
-            return self._smax
-
-        @property
-        def smin(self):
-            return self._smin
-
-        @property
-        def bounds(self):
-            return self._bounds
-
-        @property
-        def ttype(self):
-            return self._ttype
-
-        def generate(self):
-            part = deap.creator.Particle(random.uniform(bounds[0], bounds[1])
-                                         for _, bounds in self.bounds.items())
-            part.speed = [random.uniform(smin, smax)
-                          for smin, smax in zip(self.smin, self.smax)]
-            return part
-
-        def updateParticle(self, part, best, phi1, phi2):
-            u1 = (random.uniform(0, phi1) for _ in range(len(part)))
-            u2 = (random.uniform(0, phi2) for _ in range(len(part)))
-            v_u1 = map(operator.mul, u1,
-                       map(operator.sub, part.best, part))
-            v_u2 = map(operator.mul, u2,
-                       map(operator.sub, best, part))
-            part.speed = list(map(operator.add, part.speed,
-                                  map(operator.add, v_u1, v_u2)))
-            for i, speed in enumerate(part.speed):
-                if speed < self.smin[i]:
-                    part.speed[i] = self.smin[i]
-                elif speed > self.smax[i]:
-                    part.speed[i] = self.smax[i]
-            part[:] = list(map(operator.add, part, part.speed))
-
-        def maximize(self, f):
-            def evaluate(individual):
-                return (f(**dict([(k, v)
-                                  for k, v in zip(self.bounds.keys(),
-                                                  individual)])),)
-            self._toolbox.register("evaluate", evaluate)
-
-            pop = self.toolbox.population(self.num_particles)
-            best = None
-
-            for g in range(self.num_generations):
-                for part in pop:
-                    part.fitness.values = self.toolbox.evaluate(part)
-                    if not part.best or part.best.fitness < part.fitness:
-                        part.best = deap.creator.Particle(part)
-                        part.best.fitness.values = part.fitness.values
-                    if not best or best.fitness < part.fitness:
-                        best = deap.creator.Particle(part)
-                        best.fitness.values = part.fitness.values
-                for part in pop:
-                    self.toolbox.update(part, best)
-
-            return dict([(k, v)
-                         for k, v in zip(self.bounds.keys(), best)]), None
-
-except ImportError:
-    pass
-
+if _deap_available:
+    ParticleSwarm = register_solver('particle swarm',
+                         'particle swarm optimization',
+                        ['Maximizes the function using particle swarm optimization.',
+                        ' ',
+                        'This is a two-phase approach:',
+                        '1. Initialization: randomly initializes num_particles particles.',
+                        '   Particles are randomized uniformly within the box constraints.',
+                        '2. Iteration: particles move during num_generations iterations.',
+                        '   Movement is based on their velocities and mutual attractions.',
+                       ' ',
+                        'This function requires the following arguments:',
+                        '- num_particles: number of particles to use in the swarm',
+                        '- num_generations: number of iterations used by the swarm',
+                        '- max_speed: maximum speed of the particles in each direction (in (0, 1])',
+                        '- box constraints via key words: constraints are lists [lb, ub]', ' ',
+                        'This solver performs num_particles*num_generations function evaluations.'
+                        ])(ParticleSwarm)

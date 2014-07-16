@@ -97,7 +97,7 @@ def brier_score(y, yhat):
 
 def pu_score(y, yhat):
     """
-    Returns a score used for PU learning.
+    Returns a score used for PU learning as introduced in [LEE2003]_.
 
     :param y: true function values
     :param yhat: predicted function values
@@ -108,10 +108,9 @@ def pu_score(y, yhat):
 
     Higher is better.
 
-    Reference:
-    Wee Sun Lee and Bing Liu. Learning with positive and unlabeled examples
-    using weighted logistic regression. In Proceedings of the Twentieth
-    International Conference on Machine Learning (ICML), 2003.
+    .. [LEE2003] Wee Sun Lee and Bing Liu. Learning with positive and unlabeled examples
+        using weighted logistic regression. In Proceedings of the Twentieth
+        International Conference on Machine Learning (ICML), 2003.
     """
     num_pos = sum(y)
     p_pred_pos = float(sum(yhat)) / len(y)
