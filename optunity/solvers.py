@@ -325,11 +325,11 @@ class Direct(Solver):
 
 class NelderMead(Solver):
 
-    def __init__(self, x0, xtol):
+    def __init__(self, xtol=1e-4, **kwargs):
         """Initializes the solver with a tuple indicating parameter values.
 
-        >>> s = NelderMead(x0={'x': 1}, xtol=2)
-        >>> s.x0 #doctest:+SKIP
+        >>> s = NelderMead(x=1, xtol=2) #doctest:+SKIP
+        >>> s.start #doctest:+SKIP
         {'x': 1}
         >>> s.xtol #doctest:+SKIP
         2
@@ -338,7 +338,7 @@ class NelderMead(Solver):
         if not _scipy_available:
             raise ImportError('This solver requires SciPy but it is missing.')
 
-        self._x0 = x0
+        self._start = kwargs
         self._xtol = xtol
 
     @property
@@ -347,9 +347,9 @@ class NelderMead(Solver):
         return self._xtol
 
     @property
-    def x0(self):
-        """Returns the starting point x0."""
-        return self._x0
+    def start(self):
+        """Returns the starting point."""
+        return self._start
 
     def maximize(self, f):
         """
@@ -358,7 +358,7 @@ class NelderMead(Solver):
         In scipy < 0.11.0, scipy.optimize.fmin is used.
         In scipy >= 0.11.0, scipy.optimize.minimize is used.
 
-        >>> s = NelderMead({'x': 1, 'y': 1}, 1e-8)
+        >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
         >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
         >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
         [True, True]
@@ -368,8 +368,8 @@ class NelderMead(Solver):
         # Nelder-Mead implicitly minimizes, so negate f()
         f = fun.negated(f)
 
-        sortedkeys = sorted(self.x0.keys())
-        x0 = [self.x0[k] for k in sortedkeys]
+        sortedkeys = sorted(self.start.keys())
+        x0 = [self.start[k] for k in sortedkeys]
         f = fun.static_key_order(sortedkeys)(f)
 
         version = scipy.__version__
@@ -390,14 +390,14 @@ if _scipy_available:
                                   'The function is assumed to be convex. If not, this solver may yield poor solutions.',
                                   ' ',
                                   'This solver requires the following arguments:',
-                                  '- x0 :: starting point for the solver (as a dict)',
-                                  '- xtol :: accuracy up to which to optimize the function'
+                                  '- start :: starting point for the solver (through kwargs)',
+                                  '- xtol :: accuracy up to which to optimize the function (default 1e-4)'
                                  ])(NelderMead)
 
 
 class CMA_ES(Solver):
 
-    def __init__(self, num_generations, centroid, sigma=1.0, Lambda=None):
+    def __init__(self, num_generations, sigma=1.0, Lambda=None, **kwargs):
         """blah"""
         if not _deap_available:
             raise ImportError('This solver requires DEAP but it is missing.')
@@ -405,7 +405,7 @@ class CMA_ES(Solver):
             raise ImportError('This solver requires NumPy but it is missing.')
 
         self._num_generations = num_generations
-        self._centroid = centroid
+        self._start = kwargs
         self._sigma = sigma
         self._lambda = Lambda
 
@@ -419,8 +419,9 @@ class CMA_ES(Solver):
         return self._num_generations
 
     @property
-    def centroid(self):
-        return self._centroid
+    def start(self):
+        """Returns the starting point for CMA-ES."""
+        return self._start
 
     @property
     def lambda_(self):
@@ -434,10 +435,10 @@ class CMA_ES(Solver):
         toolbox = deap.base.Toolbox()
 
         if self.lambda_:
-            strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+            strategy = deap.cma.Strategy(centroid=self.start.values(),
                                             sigma=self.sigma, lambda_=self.lambda_)
         else:
-            strategy = deap.cma.Strategy(centroid=self.centroid.values(),
+            strategy = deap.cma.Strategy(centroid=self.start.values(),
                                             sigma=self.sigma)
         toolbox.register("generate", strategy.generate,
                             deap.creator.Individual)
@@ -445,7 +446,7 @@ class CMA_ES(Solver):
 
         def evaluate(individual):
             return (f(**dict([(k, v)
-                                for k, v in zip(self.centroid.keys(),
+                                for k, v in zip(self.start.keys(),
                                                 individual)])),)
         toolbox.register("evaluate", evaluate)
 
@@ -455,7 +456,7 @@ class CMA_ES(Solver):
                                             halloffame=hof, verbose=False)
 
         return dict([(k, v)
-                        for k, v in zip(self.centroid.keys(), hof[0])]), None
+                        for k, v in zip(self.start.keys(), hof[0])]), None
 
 # CMA_ES solver requires deap > 1.0.1
 # http://deap.readthedocs.org/en/latest/examples/cmaes.html
@@ -465,9 +466,9 @@ if _deap_available and _numpy_available:
                         ' ',
                         'This method requires the following parameters:',
                         '- num_generations :: number of generations to use',
-                        '- centroid :: starting point of the solver',
-                        '- sigma :: initial covariance',
+                        '- sigma :: (optional) initial covariance, default 1',
                         '- Lambda :: (optional) measure of reproducibility',
+                        '- starting point: through kwargs'
                         ' ',
                         'This method is described in detail in:',
                         'Hansen and Ostermeier, 2001. Completely Derandomized Self-Adaptation in Evolution Strategies. Evolutionary Computation'

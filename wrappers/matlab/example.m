@@ -24,7 +24,7 @@ nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
 if nm_available
-    nm_solver = optunity.make_solver('nelder-mead', 'x0', struct('x',4,'y',-4), 'xtol', 1e-4);
+    nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'xtol', 1e-4);
     [nm_solution, nm_details] = optunity.maximize(nm_solver, f, 'return_call_log', true);
 end
 
@@ -40,7 +40,7 @@ end
 cma_available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
 if cma_available
     cma_solver = optunity.make_solver('cma-es', 'num_generations', 25, ...
-        'sigma', 5, 'centroid', struct('x', 2, 'y', 4));
+        'sigma', 5, 'x', 2, 'y', 4);
     [cma_solution, cma_details] = optunity.maximize(cma_solver, f, 'return_call_log', true);
 end
 
