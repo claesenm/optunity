@@ -335,6 +335,9 @@ class NelderMead(Solver):
         2
 
         """
+        if not _scipy_available:
+            raise ImportError('This solver requires SciPy but it is missing.')
+
         self._x0 = x0
         self._xtol = xtol
 
@@ -361,6 +364,7 @@ class NelderMead(Solver):
         [True, True]
 
         """
+
         # Nelder-Mead implicitly minimizes, so negate f()
         f = fun.negated(f)
 
@@ -395,6 +399,10 @@ class CMA_ES(Solver):
 
     def __init__(self, num_generations, centroid, sigma=1.0, Lambda=None):
         """blah"""
+        if not _deap_available:
+            raise ImportError('This solver requires DEAP but it is missing.')
+        if not _numpy_available:
+            raise ImportError('This solver requires NumPy but it is missing.')
 
         self._num_generations = num_generations
         self._centroid = centroid
@@ -471,6 +479,9 @@ class ParticleSwarm(Solver):
     def __init__(self, num_particles, num_generations,
                     max_speed, **kwargs):
         """blah"""
+        if not _deap_available:
+            raise ImportError('This solver requires DEAP but it is missing.')
+
         assert all([len(v) == 2 and v[0] <= v[1]
                     for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
         self._bounds = kwargs
