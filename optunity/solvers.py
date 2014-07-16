@@ -514,8 +514,10 @@ class CMA_ES(Solver):
             fit = -1.0
         deap.creator.create("FitnessMax", deap.base.Fitness,
                             weights=(fit,))
+        Fit = deap.creator.FitnessMax
         deap.creator.create("Individual", list,
-                            fitness=deap.creator.FitnessMax)
+                            fitness=Fit)
+        Individual = deap.creator.Individual
 
         if self.lambda_:
             strategy = deap.cma.Strategy(centroid=self.start.values(),
@@ -523,8 +525,7 @@ class CMA_ES(Solver):
         else:
             strategy = deap.cma.Strategy(centroid=self.start.values(),
                                             sigma=self.sigma)
-        toolbox.register("generate", strategy.generate,
-                            deap.creator.Individual)
+        toolbox.register("generate", strategy.generate, Individual)
         toolbox.register("update", strategy.update)
 
         def evaluate(individual):
@@ -564,8 +565,7 @@ class ParticleSwarm(Solver):
 
     """
 
-    def __init__(self, num_particles, num_generations,
-                    max_speed=None, **kwargs):
+    def __init__(self, num_particles, num_generations, max_speed=None, **kwargs):
         """blah"""
         if not _deap_available:
             raise ImportError('This solver requires DEAP but it is missing.')
@@ -576,6 +576,7 @@ class ParticleSwarm(Solver):
         self._ttype = collections.namedtuple('ttype', kwargs.keys())
         self._num_particles = num_particles
         self._num_generations = num_generations
+
         if max_speed is None:
             max_speed = 1.0/num_generations
         self._max_speed = max_speed
@@ -637,7 +638,7 @@ class ParticleSwarm(Solver):
         return self._ttype
 
     def generate(self):
-        part = deap.creator.Particle(random.uniform(bounds[0], bounds[1])
+        part = self._Particle(random.uniform(bounds[0], bounds[1])
                                         for _, bounds in self.bounds.items())
         part.speed = [random.uniform(smin, smax)
                         for smin, smax in zip(self.smin, self.smax)]
@@ -672,9 +673,12 @@ class ParticleSwarm(Solver):
             fit = -1.0
         deap.creator.create("FitnessMax", deap.base.Fitness,
                             weights=(fit,))
+        FitnessMax = deap.creator.FitnessMax
+
         deap.creator.create("Particle", list,
-                            fitness=deap.creator.FitnessMax, speed=list,
+                            fitness=FitnessMax, speed=list,
                             best=None)
+        self._Particle = deap.creator.Particle
 
         pop = self.toolbox.population(self.num_particles)
         best = None
@@ -683,10 +687,10 @@ class ParticleSwarm(Solver):
             for part in pop:
                 part.fitness.values = self.toolbox.evaluate(part)
                 if not part.best or part.best.fitness < part.fitness:
-                    part.best = deap.creator.Particle(part)
+                    part.best = self._Particle(part)
                     part.best.fitness.values = part.fitness.values
                 if not best or best.fitness < part.fitness:
-                    best = deap.creator.Particle(part)
+                    best = self._Particle(part)
                     best.fitness.values = part.fitness.values
             for part in pop:
                 self.toolbox.update(part, best)
