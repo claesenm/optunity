@@ -329,9 +329,9 @@ class NelderMead(Solver):
         """Initializes the solver with a tuple indicating parameter values.
 
         >>> s = NelderMead(x0={'x': 1}, xtol=2)
-        >>> s.x0
+        >>> s.x0 #doctest:+SKIP
         {'x': 1}
-        >>> s.xtol
+        >>> s.xtol #doctest:+SKIP
         2
 
         """
@@ -359,7 +359,7 @@ class NelderMead(Solver):
         In scipy >= 0.11.0, scipy.optimize.minimize is used.
 
         >>> s = NelderMead({'x': 1, 'y': 1}, 1e-8)
-        >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2)
+        >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
         >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
         [True, True]
 
