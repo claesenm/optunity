@@ -42,11 +42,24 @@ Main classes in this module:
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
 
-:class:`NelderMead` is only available if SciPy_ is available.
-:class:`ParticleSwarm` and :class:`CMA_ES` require DEAP_.
+.. warning::
+    :class:`NelderMead` is only available if SciPy_ is available.
+    :class:`ParticleSwarm` and :class:`CMA_ES` require DEAP_.
 
-.. _SciPy: http://http://www.scipy.org/
-.. _DEAP: https://code.google.com/p/deap/
+    .. _SciPy: http://http://www.scipy.org/
+    .. _DEAP: https://code.google.com/p/deap/
+
+
+Bibliographic references for some solvers:
+
+.. [HANSEN2001] Nikolaus Hansen and Andreas Ostermeier. *Completely
+    derandomized self-adaptation in evolution  strategies*.
+    Evolutionary computation, 9(2):159-195, 2001.
+
+.. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
+    Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
+    Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
+
 
 .. moduleauthor:: Marc Claesen
 
@@ -402,14 +415,6 @@ class CMA_ES(Solver):
     This solver implements the technique described in [HANSEN2001]_.
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
 
-    .. [HANSEN2001] Nikolaus Hansen and Andreas Ostermeier. *Completely
-        derandomized self-adaptation in evolution  strategies*.
-        Evolutionary computation, 9(2):159-195, 2001.
-
-    .. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
-        Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
-        Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
-
     """
 
     def __init__(self, num_generations, sigma=1.0, Lambda=None, **kwargs):
@@ -494,9 +499,6 @@ class ParticleSwarm(Solver):
     """
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
 
-    .. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
-        Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
-        Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
     """
 
     def __init__(self, num_particles, num_generations,
