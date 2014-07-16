@@ -360,7 +360,7 @@ class NelderMead(Solver):
 
         >>> s = NelderMead({'x': 1, 'y': 1}, 1e-8)
         >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2)
-        >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]
+        >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
         [True, True]
 
         """
