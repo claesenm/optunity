@@ -310,7 +310,7 @@ def max_evals(max_evals):
     """Decorator to enforce a maximum number of function evaluations.
 
     Throws a MaximumEvaluationsException during evaluations after
-    the maximum is reached. Adds a field f.num_evals which tracks
+    the maximum is reached. Adds a field ``f.num_evals`` which tracks
     the number of evaluations that have been performed.
 
     >>> @max_evals(1)

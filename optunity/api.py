@@ -35,9 +35,11 @@
 Main functions in this module:
 
 * :func:`make_solver`
+* :func:`suggest_solver`
 * :func:`manual`
 * :func:`maximize`
-* :func:`tune`
+* :func:`minimize`
+* :func:`optimize`
 
 We recommend using these functions rather than equivalents found in other places,
 e.g. :mod:`optunity.solvers`.
@@ -48,6 +50,8 @@ e.g. :mod:`optunity.solvers`.
 
 import functools
 import timeit
+import sys
+import operator
 
 # optunity imports
 from . import functions as fun
@@ -87,7 +91,7 @@ def print_manual(solver_name=None):
     print('\n'.join(man))
 
 
-maximize_results = DocTup("""
+optimize_results = DocTup("""
 **Result details includes the following**:
 
 optimum
@@ -102,10 +106,12 @@ call_log
 report
     solver report, can be None
                           """,
-                          'maximize_results', ['optimum',
+                          'optimize_results', ['optimum',
                                                'stats',
-                                               'call_log',  'report'])
-maximize_stats = DocTup("""
+                                               'call_log',
+                                               'report']
+                          )
+optimize_stats = DocTup("""
 **Statistics gathered while solving a problem**:
 
 num_evals
@@ -113,11 +119,83 @@ num_evals
 time
     wall clock time needed to solve
                         """,
-                        'maximize_stats', ['num_evals', 'time'])
+                        'optimize_stats', ['num_evals', 'time'])
 
 
-def maximize(solver, func):
-    """Maximizes func with given solver.
+def suggest_solver(num_evals=50, solver_name=None, **kwargs):
+    if solver_name:
+        solvercls = solver_registry.get(solver_name)
+    else:
+        solver_name = 'particle swarm'
+        solvercls = solvers.ParticleSwarm
+    if hasattr(solvercls, 'suggest_from_box'):
+        suggestion = solvercls.suggest_from_box(num_evals, **kwargs)
+    elif hasattr(solvercls, 'suggest_from_seed'):
+        # the seed will be the center of the box that is provided to us
+        seed = dict([(k, float(v[0] + v[1]) / 2) for k, v in kwargs.items()])
+        suggestion = solvercls.suggest_from_seed(num_evals, **seed)
+    else:
+        raise ValueError('Unable to instantiate ' + solvercls.name + '.')
+    suggestion['solver_name'] = solver_name
+    return suggestion
+
+
+def maximize(f, num_evals=50, solver_name=None, **kwargs):
+    """Basic function maximization routine. Maximizes ``f`` within
+    the given box constraints.
+
+    :param f: the function to be maximized
+    :param num_evals: number of permitted function evaluations
+    :param solver_name: name of the solver to use (optional)
+    :param kwargs: box constraints, a dict of the following form
+        ``{'parameter_name': [lower_bound, upper_bound], ...}``
+    :returns: retrieved maximum, extra information and solver info
+
+    This function will implicitly choose an appropriate solver and
+    its initialization based on ``num_evals`` and the box constraints.
+
+    """
+    # sanity check on box constraints
+    assert all([len(v) == 2 and v[0] < v[1]
+                for v in kwargs.values()]), 'Box constraints improperly specified: should be [lb, ub] pairs'
+
+    func = _wrap_hard_box_constraints(f, kwargs, sys.float_info.min)
+
+    suggestion = suggest_solver(num_evals, solver_name, **kwargs)
+    solver = make_solver(**suggestion)
+    solution, details = optimize(solver, func, maximize=True, max_evals=num_evals)
+    return solution, details, suggestion
+
+
+def minimize(f, num_evals=50, solver_name=None, **kwargs):
+    """Basic function minimization routine. Minimizes ``f`` within
+    the given box constraints.
+
+    :param f: the function to be minimized
+    :param num_evals: number of permitted function evaluations
+    :param solver_name: name of the solver to use (optional)
+    :param kwargs: box constraints, a dict of the following form
+        ``{'parameter_name': [lower_bound, upper_bound], ...}``
+    :returns: retrieved minimum, extra information and solver info
+
+    This function will implicitly choose an appropriate solver and
+    its initialization based on ``num_evals`` and the box constraints.
+
+    """
+    # sanity check on box constraints
+    assert all([len(v) == 2 and v[0] < v[1]
+                for v in kwargs.values()]), 'Box constraints improperly specified: should be [lb, ub] pairs'
+
+    func =  _wrap_hard_box_constraints(f, kwargs, sys.float_info.max)
+
+    suggestion = suggest_solver(num_evals, solver_name, **kwargs)
+    solver = make_solver(**suggestion)
+    solution, details = optimize(solver, func, maximize=False, max_evals=num_evals)
+    return solution, details, suggestion
+
+
+def optimize(solver, func, maximize=True, max_evals=0):
+    """Optimizes func with given solver.
 
     Returns the solution and a namedtuple with further details.
     Please refer to docs of optunity.maximize_results
@@ -128,33 +206,48 @@ def maximize(solver, func):
     - ``solver_config`` is invalid to instantiate ``solver_name``
 
     """
-    @fun.logged
-    @functools.wraps(func)
-    def f(*args, **kwargs):
-        return func(*args, **kwargs)
+    ## FIXME: negating function values is fragile, since the function
+    # may already be logged by the user, in which case the log will
+    # be polluted with negated function values
 
+    if max_evals > 0:
+        f = fun.max_evals(max_evals)(func)
+    else:
+        f = func
+
+    f = fun.logged(f)
     num_evals = -len(f.call_log)
 
     time = timeit.default_timer()
-    solution, report = solver.maximize(f)
+    try:
+        solution, report = solver.optimize(f, maximize)
+    except fun.MaximumEvaluationsException:
+        # early stopping because maximum number of evaluations is reached
+        # retrieve solution from the call log
+        report = None
+        if maximize:
+            index, _ = max(enumerate(f.call_log.values()), key=operator.itemgetter(1))
+        else:
+            index, _ = min(enumerate(f.call_log.values()), key=operator.itemgetter(1))
+        solution = operator.itemgetter(index)(f.call_log.keys())._asdict()
     time = timeit.default_timer() - time
 
     optimum = f(**solution)
     num_evals += len(f.call_log)
 
     # use namedtuple to enforce uniformity in case of changes
-    stats = maximize_stats(num_evals, time)
+    stats = optimize_stats(num_evals, time)
 
     call_dict = fun.call_log2dict(f.call_log)
-    return solution, maximize_results(optimum, stats._asdict(),
+    return solution, optimize_results(optimum, stats._asdict(),
                                       call_dict, report)
 
 
-maximize.__doc__ = '''
-Maximizes func with given solver.
+optimize.__doc__ = '''
+Optimizes func with given solver.
 
 Returns the solution and a ``namedtuple`` with further details.
-''' + maximize_results.__doc__ + maximize_stats.__doc__
+''' + optimize_results.__doc__ + optimize_stats.__doc__
 
 
 def tune(f, num_evals, solver_name=None, *args, **kwargs):
@@ -239,3 +332,17 @@ def wrap_constraints(f, constraint_dict, default=None):
         def func(*args, **kwargs):
             return f(*args, **kwargs)
     return func
+
+
+def _wrap_hard_box_constraints(f, box, default):
+    """Places hard box constraints on the domain of ``f``
+    and defaults function values if constraints are violated.
+
+    :param f: the function to be wrapped with constraints
+    :param box: the box, as a dict: ``{'param_name': [lb, ub], ...}
+    :param default: function value to default to when constraints
+        are violated
+
+    """
+    constraints = {'range_oo': box}
+    return wrap_constraints(f, constraints, default)

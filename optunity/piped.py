@@ -109,6 +109,8 @@ if __name__ == '__main__':
         if startup_msg.get('call_log', False):
             func = optunity.wrap_call_log(func, startup_msg['call_log'])
 
+        maximize = startup_msg.get('maximize', True)
+
         # instantiate solver
         try:
             solver = optunity.make_solver(startup_msg['solver'],
@@ -125,7 +127,7 @@ if __name__ == '__main__':
 
         # solve and send result
         try:
-            solution, rslt = optunity.maximize(solver, func)
+            solution, rslt = optunity.optimize(solver, func, maximize)
         except EOFError:
             msg = {'error_msg': 'Broken pipe.'}
             comm.send(comm.json_encode(msg))

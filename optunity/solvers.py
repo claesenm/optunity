@@ -71,6 +71,7 @@ import abc
 import functools
 import random
 import operator
+import math
 
 # optunity imports
 from . import functions as fun
@@ -112,12 +113,41 @@ SolverBase = abc.ABCMeta('SolverBase', (object, ), {})
 class Solver(SolverBase):
     """A callable which maximizes its argument (also a callable).
     """
+
     @abc.abstractmethod
-    def maximize(self, f):
-        """Maximizes f. Returns the optimal arguments and a
-        solver report (can be None).
+    def optimize(self, f, maximize=True):
+        """Optimizes ``f``.
+
+        :param f: the objective function
+        :param maximize: bool to indicate maximization
+        :returns: the arguments which optimize ``f``
+        :returns: an optional solver report, can be None
+
         """
         pass
+
+    def maximize(self, f):
+        """Maximizes f.
+
+        :param f: the objective function
+        :param maximize: bool to indicate maximization
+        :returns: the arguments which optimize ``f``
+        :returns: an optional solver report, can be None
+
+        """
+        return optimize(f, True)
+
+    def minimize(self, f):
+        """Minimizes ``f``.
+
+        :param f: the objective function
+        :param maximize: bool to indicate maximization
+        :returns: the arguments which optimize ``f``
+        :returns: an optional solver report, can be None
+
+        """
+        return optimize(f, False)
+
 
 
 @register_solver('grid search',
@@ -144,31 +174,41 @@ class GridSearch(Solver):
         """
         self._parameter_tuples = kwargs
 
+    @staticmethod
+    def from_box(num_evals, **kwargs):
+        pass
+
     @property
     def parameter_tuples(self):
         """Returns the possible values of every parameter."""
         return self._parameter_tuples
 
-    def maximize(self, f):
+    def optimize(self, f, maximize=True):
         """
         Exhaustive search over the Cartesian product of parameter tuples.
         Returns x (the tuple which maximizes f) and its score f(x).
 
         >>> s = GridSearch(x=[1,2,3], y=[-1,0,1])
-        >>> best_pars, _ = s.maximize(lambda x, y: x*y)
+        >>> best_pars, _ = s.optimize(lambda x, y: x*y)
         >>> best_pars
         {'y': 1, 'x': 3}
 
         """
+
         best_score = float("-inf")
         best_pars = None
 
         sortedkeys = sorted(self.parameter_tuples.keys())
         f = fun.static_key_order(sortedkeys)(f)
 
+        if maximize:
+            comp = lambda score, best: score > best
+        else:
+            comp = lambda score, best: score < best
+
         for pars in itertools.product(*zip(*sorted(self.parameter_tuples.items()))[1]):
             score = f(pars)
-            if score > best_score:
+            if comp(score, best_score):
                 best_score = score
                 best_pars = pars
 
@@ -208,6 +248,12 @@ class RandomSearch(Solver):
         self._bounds = kwargs
         self._num_evals = num_evals
 
+    @staticmethod
+    def suggest_from_box(num_evals, **kwargs):
+        d = dict(kwargs)
+        d['num_evals'] = num_evals
+        return d
+
     @property
     def upper(self, par):
         """Returns the upper bound of par."""
@@ -228,7 +274,7 @@ class RandomSearch(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def maximize(self, f):
+    def optimize(self, f, maximize=True):
         """
         TODO
         """
@@ -242,9 +288,14 @@ class RandomSearch(Solver):
         best_score = float("-inf")
         best_pars = None
 
+        if maximize:
+            comp = lambda score, best: score > best
+        else:
+            comp = lambda score, best: score < best
+
         for pars in parameter_tuples:
             score = f(**pars)
-            if score > best_score:
+            if comp(score, best_score):
                 best_score = score
                 best_pars = pars
 
@@ -354,6 +405,10 @@ class NelderMead(Solver):
         self._start = kwargs
         self._xtol = xtol
 
+    @staticmethod
+    def suggest_from_seed(num_evals, **kwargs):
+        return kwargs
+
     @property
     def xtol(self):
         """Returns the tolerance."""
@@ -364,7 +419,7 @@ class NelderMead(Solver):
         """Returns the starting point."""
         return self._start
 
-    def maximize(self, f):
+    def optimize(self, f, maximize=True):
         """
         Performs Nelder-Mead optimization to minimize f. Requires scipy.
 
@@ -372,14 +427,13 @@ class NelderMead(Solver):
         In scipy >= 0.11.0, scipy.optimize.minimize is used.
 
         >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
-        >>> best_pars, _ = s.maximize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
+        >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
         >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
         [True, True]
 
         """
-
-        # Nelder-Mead implicitly minimizes, so negate f()
-        f = fun.negated(f)
+        if maximize:
+            f = fun.negated(f)
 
         sortedkeys = sorted(self.start.keys())
         x0 = [self.start[k] for k in sortedkeys]
@@ -429,10 +483,14 @@ class CMA_ES(Solver):
         self._sigma = sigma
         self._lambda = Lambda
 
-        deap.creator.create("FitnessMax", deap.base.Fitness,
-                            weights=(1.0,))
-        deap.creator.create("Individual", list,
-                            fitness=deap.creator.FitnessMax)
+    @staticmethod
+    def suggest_from_seed(num_evals, **kwargs):
+        fertility = 4 + 3 * math.log(len(kwargs))
+        d = dict(kwargs)
+        d['num_generations'] = int(math.ceil(float(num_evals) / fertility))
+        # num_gen is overestimated
+        # this will require slightly more function evaluations than permitted by num_evals
+        return d
 
     @property
     def num_generations(self):
@@ -451,8 +509,16 @@ class CMA_ES(Solver):
     def sigma(self):
         return self._sigma
 
-    def maximize(self, f):
+    def optimize(self, f, maximize=True):
         toolbox = deap.base.Toolbox()
+        if maximize:
+            fit = 1.0
+        else:
+            fit = -1.0
+        deap.creator.create("FitnessMax", deap.base.Fitness,
+                            weights=(fit,))
+        deap.creator.create("Individual", list,
+                            fitness=deap.creator.FitnessMax)
 
         if self.lambda_:
             strategy = deap.cma.Strategy(centroid=self.start.values(),
@@ -502,7 +568,7 @@ class ParticleSwarm(Solver):
     """
 
     def __init__(self, num_particles, num_generations,
-                    max_speed, **kwargs):
+                    max_speed=None, **kwargs):
         """blah"""
         if not _deap_available:
             raise ImportError('This solver requires DEAP but it is missing.')
@@ -513,22 +579,33 @@ class ParticleSwarm(Solver):
         self._ttype = collections.namedtuple('ttype', kwargs.keys())
         self._num_particles = num_particles
         self._num_generations = num_generations
+        if max_speed is None:
+            max_speed = 1.0/num_generations
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
         self._smin = map(operator.neg, self.smax)
 
-        deap.creator.create("FitnessMax", deap.base.Fitness,
-                            weights=(1.0,))
-        deap.creator.create("Particle", list,
-                            fitness=deap.creator.FitnessMax, speed=list,
-                            best=None)
         self._toolbox = deap.base.Toolbox()
         self._toolbox.register("particle", self.generate)
         self._toolbox.register("population", deap.tools.initRepeat, list,
                                 self.toolbox.particle)
         self._toolbox.register("update", self.updateParticle,
                                 phi1=2.0, phi2=2.0)
+
+    @staticmethod
+    def suggest_from_box(num_evals, **kwargs):
+        d = dict(kwargs)
+        if num_evals > 200:
+            d['num_particles'] = 50
+            d['num_generations'] = int(math.ceil(float(num_evals) / 50))
+        elif num_evals > 10:
+            d['num_particles'] = 10
+            d['num_generations'] = int(math.ceil(float(num_evals) / 10))
+        else:
+            d['num_particles'] = num_evals
+            d['num_generations'] = 1
+        return d
 
     @property
     def num_particles(self):
@@ -585,12 +662,22 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part[:] = list(map(operator.add, part, part.speed))
 
-    def maximize(self, f):
+    def optimize(self, f, maximize=True):
         def evaluate(individual):
             return (f(**dict([(k, v)
                                 for k, v in zip(self.bounds.keys(),
                                                 individual)])),)
         self._toolbox.register("evaluate", evaluate)
+
+        if maximize:
+            fit = 1.0
+        else:
+            fit = -1.0
+        deap.creator.create("FitnessMax", deap.base.Fitness,
+                            weights=(fit,))
+        deap.creator.create("Particle", list,
+                            fitness=deap.creator.FitnessMax, speed=list,
+                            best=None)
 
         pop = self.toolbox.population(self.num_particles)
         best = None
