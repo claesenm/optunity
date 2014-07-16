@@ -165,7 +165,16 @@ class Solver(SolverBase):
                   'The number of evaluations is the product of the length of all value vectors.'
                   ])
 class GridSearch(Solver):
-    """Blah"""
+    """
+    Exhaustive search over the Cartesian product of parameter tuples.
+    Returns x (the tuple which maximizes f) and its score f(x).
+
+    >>> s = GridSearch(x=[1,2,3], y=[-1,0,1])
+    >>> best_pars, _ = s.optimize(lambda x, y: x*y)
+    >>> best_pars
+    {'y': 1, 'x': 3}
+
+    """
 
     def __init__(self, **kwargs):
         """Initializes the solver with a tuple indicating parameter values.
@@ -187,16 +196,6 @@ class GridSearch(Solver):
         return self._parameter_tuples
 
     def optimize(self, f, maximize=True):
-        """
-        Exhaustive search over the Cartesian product of parameter tuples.
-        Returns x (the tuple which maximizes f) and its score f(x).
-
-        >>> s = GridSearch(x=[1,2,3], y=[-1,0,1])
-        >>> best_pars, _ = s.optimize(lambda x, y: x*y)
-        >>> best_pars
-        {'y': 1, 'x': 3}
-
-        """
 
         best_score = float("-inf")
         best_pars = None
@@ -278,9 +277,6 @@ class RandomSearch(Solver):
         return self._num_evals
 
     def optimize(self, f, maximize=True):
-        """
-        TODO
-        """
 
         def generate_rand_args():
             return dict([(par, random.uniform(bounds[0], bounds[1]))
@@ -369,10 +365,8 @@ class Direct(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def maximize(self, f):
-        """
-        TODO
-        """
+    def optimize(self, f, maximize=True):
+
         def generate_rand_args():
             return dict([(par, random.uniform(bounds[0], bounds[1]))
                          for par, bounds in self.bounds.items()])
@@ -391,6 +385,18 @@ class Direct(Solver):
         return best_pars, None  # no useful statistics to report
 
 class NelderMead(Solver):
+    """
+    Performs Nelder-Mead optimization to minimize f. Requires scipy.
+
+    In scipy < 0.11.0, scipy.optimize.fmin is used.
+    In scipy >= 0.11.0, scipy.optimize.minimize is used.
+
+    >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
+    >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
+    >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
+    [True, True]
+
+    """
 
     def __init__(self, xtol=1e-4, **kwargs):
         """Initializes the solver with a tuple indicating parameter values.
@@ -423,18 +429,6 @@ class NelderMead(Solver):
         return self._start
 
     def optimize(self, f, maximize=True):
-        """
-        Performs Nelder-Mead optimization to minimize f. Requires scipy.
-
-        In scipy < 0.11.0, scipy.optimize.fmin is used.
-        In scipy >= 0.11.0, scipy.optimize.minimize is used.
-
-        >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
-        >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
-        >>> [math.fabs(best_pars['x']) < 1e-8, math.fabs(best_pars['y']) < 1e-8]  #doctest:+SKIP
-        [True, True]
-
-        """
         if maximize:
             f = fun.negated(f)
 
