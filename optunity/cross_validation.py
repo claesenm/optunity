@@ -145,15 +145,37 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
     return folds
 
 
+def mean(x):
+    return float(sum(x)) / len(x)
+
+
 class cross_validated_callable(object):
     """Function decorator that takes care of cross-validation.
     Evaluations of the decorated function will always return a cross-validated
     estimate of generalization performance.
 
+    :param x: data to be used for cross-validation
+    :param num_folds: number of cross-validation folds (default 10)
+    :param y: (optional) labels to be used for cross-validation.
+        If specified, len(labels) must equal len(x)
+    :param strata: (optional) strata to account for when generating folds.
+        Strata signify instances that must be spread across folds.
+        Not every instance must be in a stratum.
+        Specify strata as a list of lists of instance indices.
+    :param folds: (optional) prespecified cross-validation folds to be used (list of lists).
+    :param num_iter: (optional) number of iterations to use (default 1)
+    :param regenerate_folds: (optional) whether or not to regenerate folds on every evaluation (default false)
+    :param clusters: (optional) clusters to account for when generating folds.
+        Clusters signify instances that must be assigned to the same fold.
+        Not every instance must be in a cluster.
+        Specify clusters as a list of lists of instance indices.
+    :param aggregator: function to aggregate scores of different folds (default: mean)
+
     Use :func:`cross_validated` to create instances of this class.
     """
     def __init__(self, f, x, num_folds=10, y=None, strata=None, folds=None,
-                 num_iter=1, regenerate_folds=False, clusters=None):
+                 num_iter=1, regenerate_folds=False, clusters=None,
+                 aggregator=mean):
         self._x = x
         self._y = y
         self._strata = strata
@@ -162,6 +184,7 @@ class cross_validated_callable(object):
         # TODO: sanity check between strata & clusters? define what is allowed
         self._regenerate_folds = regenerate_folds
         self._f = f
+        self._aggregator = aggregator
         if folds:
             assert (len(folds) == num_iter), 'Number of fold sets does not equal num_iter.'
             assert (len(folds[0] == num_folds)), 'Number of folds does not match num_folds.'
@@ -171,6 +194,11 @@ class cross_validated_callable(object):
                                           self.clusters, self.idx2cluster)
                            for _ in range(num_iter)]
         functools.update_wrapper(self, f)
+
+    @property
+    def aggregator(self):
+        """The aggregation function."""
+        return self._aggregator
 
     @property
     def f(self):
@@ -242,11 +270,11 @@ class cross_validated_callable(object):
                     kwargs['y_train'] = select(self.y, rows_train)
                     kwargs['y_test'] = select(self.y, rows_test)
                 scores.append(self.f(*args, **kwargs))
-        return float(sum(scores)) / len(scores)
+        return self.aggregator(scores)
 
 
 def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1,
-                    regenerate_folds=False, clusters=None):
+                    regenerate_folds=False, clusters=None, aggregator=mean):
     """Function decorator to perform cross-validation as configured.
 
     :param x: data to be used for cross-validation
@@ -264,11 +292,13 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
         Clusters signify instances that must be assigned to the same fold.
         Not every instance must be in a cluster.
         Specify clusters as a list of lists of instance indices.
+    :param aggregator: function to aggregate scores of different folds (default: mean)
     :returns: a :class:`cross_validated_callable` with the proper configuration.
     """
     def wrapper(f):
         cv_callable = cross_validated_callable(f, x, num_folds, y, strata, folds,
-                                               num_iter, regenerate_folds, clusters)
+                                               num_iter, regenerate_folds, clusters,
+                                               aggregator)
         return cv_callable
     return wrapper
 

@@ -109,9 +109,8 @@ except TypeError:
 # python version-independent metaclass usage
 SolverBase = abc.ABCMeta('SolverBase', (object, ), {})
 
-# TODO: document properly
 class Solver(SolverBase):
-    """A callable which maximizes its argument (also a callable).
+    """Base class of all Optunity solvers.
     """
 
     @abc.abstractmethod
