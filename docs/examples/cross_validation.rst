@@ -59,7 +59,7 @@ used for model selection, the outer cv estimates generalization performance.
 This can be done in a straightforward manner using Optunity::
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
-    def nested_cv(x_train, x_test):
+    def nested_cv(x_train, y_train, x_test, y_test):
 
         @opt.cross_validated(x=x_train, y=y_train, num_folds=3)
         def inner_cv(x_train, y_train, x_test, y_test):

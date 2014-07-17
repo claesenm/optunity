@@ -34,8 +34,9 @@
 
 The main functions in this module are:
 
-* :func:`generate_folds`
 * :func:`cross_validated`
+* :func:`generate_folds`
+* :func:`strata_by_labels`
 
 .. moduleauthor:: Marc Claesen
 
@@ -47,6 +48,7 @@ import random
 import itertools
 import functools
 import collections
+import operator as op
 
 # FIXME
 try:
@@ -76,6 +78,18 @@ def map_clusters(clusters):
                 idx2cluster[index].append(cluster)
     return idx2cluster
 
+
+def strata_by_labels(labels):
+    """Constucts a list of strata (lists) based on unique values of ``labels``.
+
+    :param labels: iterable, identical values will end up in identical strata
+    :returns: the strata, as a list of lists
+    """
+    indexmap = dict([(k, v) for v, k in enumerate(set(labels))])
+    strata = map(lambda x: [], range(len(indexmap)))
+    for index, label in enumerate(labels):
+        strata[indexmap[label]].append(index)
+    return strata
 
 # TODO: implement support for clusters
 def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
@@ -148,6 +162,8 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
 def mean(x):
     return float(sum(x)) / len(x)
 
+def identity(x):
+    return x
 
 class cross_validated_callable(object):
     """Function decorator that takes care of cross-validation.
