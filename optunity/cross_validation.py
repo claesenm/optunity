@@ -37,6 +37,7 @@ The main functions in this module are:
 * :func:`cross_validated`
 * :func:`generate_folds`
 * :func:`strata_by_labels`
+* :func:`random_permutation`
 
 .. moduleauthor:: Marc Claesen
 
@@ -60,12 +61,11 @@ def select(collection, indices):
 
 
 # https://docs.python.org/2/library/itertools.html#itertools.permutations
-def random_permutation(data, num_perms=1):
+def random_permutation(data):
     """Returns a list containing a random permutation of ``r`` elements out of
     ``data``.
 
     :param data: an iterable containing the elements to permute over
-    :param num_perms: number of permutations to return
     :returns: returns a list containing permuted entries of ``data``.
 
     """
@@ -94,11 +94,9 @@ def strata_by_labels(labels):
     :param labels: iterable, identical values will end up in identical strata
     :returns: the strata, as a list of lists
     """
-    indexmap = dict([(k, v) for v, k in enumerate(set(labels))])
-    strata = map(lambda x: [], range(len(indexmap)))
-    for index, label in enumerate(labels):
-        strata[indexmap[label]].append(index)
-    return strata
+    return [list(zip(*g)[0])
+            for _, g in it.groupby(enumerate(labels), op.itemgetter(1))]
+
 
 # TODO: implement support for clusters
 def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
