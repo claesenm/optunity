@@ -42,27 +42,36 @@ The main functions in this module are:
 
 """
 
-# TODO: remove dependency on numpy
 import math
 import random
-import itertools
+import itertools as it
 import functools
 import collections
 import operator as op
 
-# FIXME
-try:
-    import numpy as np
-except ImportError:
-    pass
+
+__all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
+           'generate_folds', 'strata_by_labels']
+
 
 def select(collection, indices):
     """Selects the subset specified by indices from collection."""
-    if type(collection) is list:
-        return [collection[i] for i in indices]
-    else:
-        # assume np array, TODO: make proper type checking
-        return collection[indices]
+    return [collection[i] for i in indices]
+
+
+# https://docs.python.org/2/library/itertools.html#itertools.permutations
+def random_permutation(data, num_perms=1):
+    """Returns a list containing a random permutation of ``r`` elements out of
+    ``data``.
+
+    :param data: an iterable containing the elements to permute over
+    :param num_perms: number of permutations to return
+    :returns: returns a list containing permuted entries of ``data``.
+
+    """
+    d = data[:]
+    random.shuffle(d)
+    return d
 
 
 def map_clusters(clusters):
@@ -124,23 +133,22 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
             raise ValueError
 
         folds = [None] * num_folds
-        idx = np.random.permutation(rows).tolist()
+        idx = random_permutation(rows)
         for fold in range(num_folds):
             fold_size = int(len(idx) / (num_folds - fold))
             folds[fold] = idx[:fold_size]
             del idx[:fold_size]
 
         # permute so the largest folds are not always at the back
-        perm = np.random.permutation(len(folds))
-        return [folds[idx] for idx in perm]
+        return random_permutation(folds)
 
     if clusters and not idx2cluster:
         idx2cluster = map_clusters(clusters)
 
     if strata:  # stratified cross-validation
         ## keep lists per stratum + 1 extra for no-care instances
-        permuted_strata = map(np.random.permutation, strata)
-        nocares = list(set(range(num_rows)) - set(itertools.chain(*strata)))
+        permuted_strata = map(random_permutation, strata)
+        nocares = list(set(range(num_rows)) - set(it.chain(*strata)))
 
         # we  do not require points of each stratum in each fold,
         # since strata can be smaller than number of folds
@@ -151,7 +159,7 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
 
         # merge folds across strata
         folds_per_stratum.append(folds_nocare)
-        folds = [list(itertools.chain(*x)) for x in zip(*folds_per_stratum)]
+        folds = [list(it.chain(*x)) for x in zip(*folds_per_stratum)]
 
     else:  # no stratification required
         folds = get_folds(range(num_rows), num_folds, True)
@@ -277,7 +285,7 @@ class cross_validated_callable(object):
         for folds in self.folds:
             for fold in range(self.num_folds):
                 rows_test = folds[fold]
-                rows_train = list(itertools.chain(*[folds[i]
+                rows_train = list(it.chain(*[folds[i]
                                                     for i in range(self.num_folds)
                                                     if not i == fold]))
                 kwargs['x_train'] = select(self.x, rows_train)
