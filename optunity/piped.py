@@ -138,15 +138,8 @@ if __name__ == '__main__':
             comm.send(comm.json_encode(msg))
             exit(1)
 
-        # update call_log if it exists
-        keys = func.call_log.keys()[::-1]
-        for k, v in zip(reversed(keys), mgr.record):
-            func.call_log[k] = v
-
         result = rslt._asdict()
-        result['call_log'] = functions.call_log2dict(func.call_log)
         result['solution'] = solution
-        result['optimum'] = func(**solution)
         result_json = comm.json_encode(result)
         comm.send(result_json)
         exit(0)

@@ -36,6 +36,7 @@ __author__
 from .api import manual, print_manual, maximize, minimize, optimize
 from .api import wrap_call_log, wrap_constraints, make_solver, suggest_solver
 from .cross_validation import cross_validated, generate_folds
+from .parallel import pmap
 
 __author__ = "Marc Claesen, Jaak Simm and Dusan Popovic"
 __version__ = "0.2"
@@ -43,4 +44,5 @@ __revision__ = "0.2.1"
 
 __all__ = ['manual', 'print_manual', 'maximize', 'minimize', 'optimize',
            'wrap_call_log', 'wrap_constraints', 'make_solver',
-           'suggest_solver', 'cross_validated', 'generate_folds']
+           'suggest_solver', 'cross_validated', 'generate_folds',
+           'pmap']

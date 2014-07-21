@@ -37,7 +37,10 @@ import json
 import sys
 import itertools
 from . import functions
+from .import parallel
 
+import multiprocessing
+import threading
 
 __DEBUG = False
 
@@ -79,32 +82,86 @@ class EvalManager(object):
     def __init__(self):
         self._vectorized = False
         self._queue = []
-        self._record = []
+        self._add_lock = multiprocessing.Lock()
+        self._cv = multiprocessing.Condition()
+        self._counter = 0
+        self._counter_lock = multiprocessing.Lock()
+        self._counter_cv = multiprocessing.Condition(self._counter_lock)
+        self._get_lock = multiprocessing.Lock()
+
+    @property
+    def cv(self):
+        return self._cv
+
+    @property
+    def counter(self):
+        try:
+            self.counter_lock.acquire()
+            cnt = self._counter
+        finally:
+            self.counter_lock.release()
+        return cnt
+
+    @property
+    def counter_lock(self):
+        return self._counter_lock
+
+    def increment(self):
+        try:
+            self.counter_lock.acquire()
+            self._counter += 1
+            self._counter_cv.notify()
+        finally:
+            self.counter_lock.release()
+        return None
+
+    def wait_for_counter(self, ctr):
+        while(not self.counter == ctr):
+            try:
+                self._counter_cv.acquire()
+                self._counter_cv.wait()
+            finally:
+                self._counter_cv.release()
 
     def pmap(self, f, *args):
         self._queue = []
+        self._counter = 0
         self._vectorized = True
-        # fill the queue
 
+        # make sure correct evaluations lead to counter increments
+        def wrap(*args):
+            result = f(*args)
+            self.increment()
+            return result
+
+        # create list of futures
+        futures = []
+        for ar in zip(*args):
+            try:
+                futures.append(parallel.Future(wrap, *ar))
+            except functions.MaximumEvaluationsException:
+                if not len(self.queue):
+                    # FIXME: some threads may be running atm
+                    raise functions.MaximumEvaluationsException()
+                break
+
+        # wait for all necessary futures to have registered
+        self.wait_for_counter(len(futures))
+
+        # process queue
+        self.flush_queue()
+
+        # notify all waiting futures
         try:
-            non_piped = [f(*a) for a in zip(*args)]
-        except functions.MaximumEvaluationsException:
-            if not len(self.queue):
-                raise functions.MaximumEvaluationsException()
+            self.cv.acquire()
+            self.cv.notify_all()
+        finally:
+            self.cv.release()
 
-        # complete list of results: some evaluations may not have reached
-        # the manager: namely violated constraints or calls that were
-        # already in a call log
-        results = self.flush_queue()
-        if results is None:
-            results = non_piped
-        else:
-            results = [y if x == None or x == (None,) else x
-                       for x, y in zip(non_piped, itertools.cycle(results))]
-        self._record.extend(results)
-
-        self._vectorized = False
-        self._queue = []
+        # gather results
+        results = [f() for f in futures]
+        for f in futures:
+            f.join()
         return results
 
     def pipe_eval(self, **kwargs):
@@ -116,11 +173,16 @@ class EvalManager(object):
         if decoded.get('error', False):  # TODO: allow error handling higher up?
             sys.stderr('ERROR: ' + decoded['error'])
             sys.exit(1)
-        self._record.append(decoded['value'])
         return decoded['value']
 
     def add_to_queue(self, **kwargs):
-        self._queue.append(kwargs)
+        try:
+            self.add_lock.acquire()
+            self._queue.append(kwargs)
+            idx = len(self.queue) - 1
+        finally:
+            self.add_lock.release()
+        return idx
 
     @property
     def vectorized(self):
@@ -131,31 +193,48 @@ class EvalManager(object):
         return self._queue
 
     @property
-    def record(self):
-        return self._record
+    def add_lock(self):
+        return self._add_lock
+
+    def get(self, number):
+        try:
+            self._get_lock.acquire()
+            value = self._results[number]
+        finally:
+            self._get_lock.release()
+        return value
 
     def flush_queue(self):
+        self._results = []
         if self.queue:
             json_data = json_encode(self.queue)
             send(json_data)
-
             json_reply = receive()
             decoded = json_decode(json_reply)
             if decoded.get('error', False):
                 sys.stderr('ERROR: ' + decoded['error'])
                 sys.exit(1)
-            return decoded['values']
+            self._results = decoded['values']
         return None
 
 
 def make_piped_function(mgr):
-    def piped_function_eval(**kwargs):  # TODO: *args ?
+    def piped_function_eval(**kwargs):
         """Returns a function evaluated through a pipe with arguments args.
 
         args must be a namedtuple."""
         if mgr.vectorized:
-            mgr.add_to_queue(**kwargs)
-            return None
+            number = mgr.add_to_queue(**kwargs)
+            mgr.increment()
+
+            # wait for manager to process the evaluation
+            try:
+                mgr.cv.acquire()
+                mgr.cv.wait()
+            finally:
+                mgr.cv.release()
+
+            return mgr.get(number)
         else:
             return mgr.pipe_eval(**kwargs)
     return piped_function_eval

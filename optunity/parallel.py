@@ -33,13 +33,11 @@
 import itertools
 import functools
 import multiprocessing
+from threading import *
+import copy
 
 
-__all__ = ['sequence', 'pmap']
-
-
-def sequence(f, *args):
-    return map(f, *args)  # TODO use itertools.imap()?
+__all__ = ['pmap']
 
 
 def pmap(f, *args):
@@ -47,40 +45,48 @@ def pmap(f, *args):
     result = pool.map(f, *args)
     return result
 
+# http://code.activestate.com/recipes/84317-easy-threading-with-futures/
+class Future:
+    def __init__(self,func,*param):
+        # Constructor
+        self.__done=0
+        self.__result=None
+        self.__status='working'
 
-#http://stackoverflow.com/a/16071616
-def _parfun(q_in, q_out):
-    while True:
-        i, e = q_in.get()
-        if i is None:
-            break
-        q_out.put((i, e()))
+        self.__C=Condition()   # Notify on this Condition when result is ready
 
+        # Run the actual function in a separate thread
+        self.__T=Thread(target=self.Wrapper, args=(func, param))
+        self.__T.setName("FutureThread")
+        self.__T.daemon=True
+        self.__T.start()
 
-def _parmap(evals, nprocs=multiprocessing.cpu_count()):
-    q_in = multiprocessing.Queue(1)
-    q_out = multiprocessing.Queue()
+    def __repr__(self):
+        return '<Future at '+hex(id(self))+':'+self.__status+'>'
 
-    proc = [multiprocessing.Process(target=_parfun, args=(q_in, q_out))
-            for _ in range(nprocs)]
-    for p in proc:
-        p.daemon = True
-        p.start()
+    def __call__(self):
+        self.__C.acquire()
+        while self.__done==0:
+            self.__C.wait()
+        self.__C.release()
+        # We deepcopy __result to prevent accidental tampering with it.
+        a=copy.deepcopy(self.__result)
+        return a
 
-    sent = [q_in.put((i, e)) for i, e in enumerate(evals)]
-    [q_in.put((None, None)) for _ in range(nprocs)]
-    res = [q_out.get() for _ in range(len(sent))]
+    def join(self):
+        self.__T.join()
 
-    [p.join() for p in proc]
-    return [x for i, x in sorted(res)]
-
-
-# do not use yet, doesn't work as desired
-# python can't pickle functions ... :-()
-def _parallelize(num_processes=multiprocessing.cpu_count()):
-    def pareval(evals):
-        return _parmap(evals, nprocs=num_processes)
-    return pareval
+    def Wrapper(self, func, param):
+        # Run the actual function, and let us housekeep around it
+        self.__C.acquire()
+#        try:
+        self.__result=func(*param)
+#        except:
+#            self.__result="Exception raised within Future"
+        self.__done=1
+        self.__status=`self.__result`
+        self.__C.notify()
+        self.__C.release()
 
 
 if __name__ == '__main__':

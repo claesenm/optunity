@@ -195,7 +195,7 @@ def minimize(f, num_evals=50, solver_name=None, **kwargs):
     return solution, details, suggestion
 
 
-def optimize(solver, func, maximize=True, max_evals=0, pmap=par.sequence):
+def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
     """Optimizes func with given solver.
 
     Returns the solution and a namedtuple with further details.

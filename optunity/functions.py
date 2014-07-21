@@ -231,8 +231,9 @@ def logged(f):
         t = f.argtuple(**d)
         with lock:
             value = wrapped_f.call_log.get(t, False)
-            if value is False:
-                value = f(*args, **kwargs)
+        if value is False:
+            value = f(*args, **kwargs)
+            with lock:
                 wrapped_f.call_log[t] = value
         return value
     wrapped_f.call_log = collections.OrderedDict()

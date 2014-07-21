@@ -75,7 +75,6 @@ import math
 
 # optunity imports
 from . import functions as fun
-from . import parallel as par
 from .solver_registry import register_solver
 
 _scipy_available = True
@@ -115,7 +114,7 @@ class Solver(SolverBase):
     """
 
     @abc.abstractmethod
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
         """Optimizes ``f``.
 
         :param f: the objective function
@@ -128,7 +127,7 @@ class Solver(SolverBase):
         """
         pass
 
-    def maximize(self, f, pmap=par.sequence):
+    def maximize(self, f, pmap=map):
         """Maximizes f.
 
         :param f: the objective function
@@ -141,7 +140,7 @@ class Solver(SolverBase):
         """
         return optimize(f, True, pmap=pmap)
 
-    def minimize(self, f, pmap=par.sequence):
+    def minimize(self, f, pmap=map):
         """Minimizes ``f``.
 
         :param f: the objective function
@@ -198,7 +197,7 @@ class GridSearch(Solver):
         """Returns the possible values of every parameter."""
         return self._parameter_tuples
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
 
         best_pars = None
         sortedkeys = sorted(self.parameter_tuples.keys())
@@ -279,7 +278,7 @@ class RandomSearch(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args(len=1):
             return [[random.uniform(bounds[0], bounds[1]) for _ in range(len)]
@@ -370,7 +369,7 @@ class Direct(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args():
             return dict([(par, random.uniform(bounds[0], bounds[1]))
@@ -433,7 +432,7 @@ class NelderMead(Solver):
         """Returns the starting point."""
         return self._start
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
         if maximize:
             f = fun.negated(f)
 
@@ -514,7 +513,7 @@ class CMA_ES(Solver):
     def sigma(self):
         return self._sigma
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
         toolbox = deap.base.Toolbox()
         if maximize:
             fit = 1.0
@@ -541,10 +540,7 @@ class CMA_ES(Solver):
                                 for k, v in zip(self.start.keys(),
                                                 individual)])),)
         toolbox.register("evaluate", evaluate)
-
-        def mapfun(f, *args):
-            return map(lambda x: (x,), pmap(f, *args))
-        toolbox.register("map", mapfun)
+        toolbox.register("map", pmap)
 
         hof = deap.tools.HallOfFame(1)
         deap.algorithms.eaGenerateUpdate(toolbox=toolbox,
@@ -672,17 +668,14 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part[:] = list(map(operator.add, part, part.speed))
 
-    def optimize(self, f, maximize=True, pmap=par.sequence):
+    def optimize(self, f, maximize=True, pmap=map):
 
         def evaluate(individual):
             return (f(**dict([(k, v)
                               for k, v in zip(self.bounds.keys(),
                                               individual)])),)
         self._toolbox.register("evaluate", evaluate)
-
-        def mapfun(f, *args):
-            return map(lambda x: (x,), pmap(f, *args))
-        self._toolbox.register("map", mapfun)
+        self._toolbox.register("map", pmap)
 
         if maximize:
             fit = 1.0
