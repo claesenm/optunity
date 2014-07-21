@@ -35,6 +35,8 @@
 from __future__ import print_function
 import json
 import sys
+import itertools
+from . import functions
 
 
 __DEBUG = False
@@ -72,19 +74,91 @@ def receive(channel=sys.stdin):
     return line
 
 
-def piped_function_eval(**kwargs):  # TODO: *args ?
-    """Returns a function evaluated through a pipe with arguments args.
+class EvalManager(object):
 
-    args must be a namedtuple."""
-    json_data = json_encode(kwargs)
-    send(json_data)
+    def __init__(self):
+        self._vectorized = False
+        self._queue = []
+        self._record = []
 
-    json_reply = receive()
-    decoded = json_decode(json_reply)
-    if decoded.get('error', False):  # TODO: allow error handling higher up?
-        sys.stderr('ERROR: ' + decoded['error'])
-        sys.exit(1)
-    return decoded['value']
+    def pmap(self, f, *args):
+        self._queue = []
+        self._vectorized = True
+        # fill the queue
+
+        try:
+            non_piped = [f(*a) for a in zip(*args)]
+        except functions.MaximumEvaluationsException:
+            if not len(self.queue):
+                raise functions.MaximumEvaluationsException()
+
+        # complete list of results: some evaluations may not have reached
+        # the manager: namely violated constraints or calls that were
+        # already in a call log
+        results = self.flush_queue()
+        if results is None:
+            results = non_piped
+        else:
+            results = [y if x == None or x == (None,) else x
+                       for x, y in zip(non_piped, itertools.cycle(results))]
+        self._record.extend(results)
+
+        self._vectorized = False
+        self._queue = []
+        return results
+
+    def pipe_eval(self, **kwargs):
+        json_data = json_encode(kwargs)
+        send(json_data)
+
+        json_reply = receive()
+        decoded = json_decode(json_reply)
+        if decoded.get('error', False):  # TODO: allow error handling higher up?
+            sys.stderr('ERROR: ' + decoded['error'])
+            sys.exit(1)
+        self._record.append(decoded['value'])
+        return decoded['value']
+
+    def add_to_queue(self, **kwargs):
+        self._queue.append(kwargs)
+
+    @property
+    def vectorized(self):
+        return self._vectorized
+
+    @property
+    def queue(self):
+        return self._queue
+
+    @property
+    def record(self):
+        return self._record
+
+    def flush_queue(self):
+        if self.queue:
+            json_data = json_encode(self.queue)
+            send(json_data)
+
+            json_reply = receive()
+            decoded = json_decode(json_reply)
+            if decoded.get('error', False):
+                sys.stderr('ERROR: ' + decoded['error'])
+                sys.exit(1)
+            return decoded['values']
+        return None
+
+
+def make_piped_function(mgr):
+    def piped_function_eval(**kwargs):  # TODO: *args ?
+        """Returns a function evaluated through a pipe with arguments args.
+
+        args must be a namedtuple."""
+        if mgr.vectorized:
+            mgr.add_to_queue(**kwargs)
+            return None
+        else:
+            return mgr.pipe_eval(**kwargs)
+    return piped_function_eval
 
 
 if __name__ == '__main__':

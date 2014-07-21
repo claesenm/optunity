@@ -75,6 +75,7 @@ import math
 
 # optunity imports
 from . import functions as fun
+from . import parallel as par
 from .solver_registry import register_solver
 
 _scipy_available = True
@@ -114,11 +115,12 @@ class Solver(SolverBase):
     """
 
     @abc.abstractmethod
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
         """Optimizes ``f``.
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
+        :param parallelize: turn on parallelization of evaluations
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
@@ -126,29 +128,31 @@ class Solver(SolverBase):
         """
         pass
 
-    def maximize(self, f):
+    def maximize(self, f, pmap=par.sequence):
         """Maximizes f.
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
+        :param parallelize: turn on parallelization of evaluations
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
 
         """
-        return optimize(f, True)
+        return optimize(f, True, pmap=pmap)
 
-    def minimize(self, f):
+    def minimize(self, f, pmap=par.sequence):
         """Minimizes ``f``.
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
+        :param parallelize: turn on parallelization of evaluations
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
 
         """
-        return optimize(f, False)
+        return optimize(f, False, pmap=pmap)
 
 
 
@@ -194,11 +198,9 @@ class GridSearch(Solver):
         """Returns the possible values of every parameter."""
         return self._parameter_tuples
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
 
-        best_score = float("-inf")
         best_pars = None
-
         sortedkeys = sorted(self.parameter_tuples.keys())
         f = fun.static_key_order(sortedkeys)(f)
 
@@ -207,13 +209,15 @@ class GridSearch(Solver):
         else:
             comp = lambda score, best: score < best
 
-        for pars in itertools.product(*zip(*sorted(self.parameter_tuples.items()))[1]):
-            score = f(pars)
-            if comp(score, best_score):
-                best_score = score
-                best_pars = pars
+        tuples = list(zip(*itertools.product(*zip(*sorted(self.parameter_tuples.items()))[1])))
+        scores = pmap(f, *tuples)
 
-        # no useful statistics to report
+        if maximize:
+            comp = max
+        else:
+            comp = min
+        best_idx, _ = comp(enumerate(scores), key=operator.itemgetter(1))
+        best_pars = operator.itemgetter(best_idx)(zip(*tuples))
         return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
 
@@ -275,29 +279,31 @@ class RandomSearch(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
 
-        def generate_rand_args():
-            return dict([(par, random.uniform(bounds[0], bounds[1]))
-                         for par, bounds in self.bounds.items()])
+        def generate_rand_args(len=1):
+            return [[random.uniform(bounds[0], bounds[1]) for _ in range(len)]
+                    for _, bounds in sorted(self.bounds.items())]
 
-        parameter_tuples = [generate_rand_args()
-                            for _ in range(self.num_evals)]
-        best_score = float("-inf")
         best_pars = None
+        sortedkeys = sorted(self.bounds.keys())
+        f = fun.static_key_order(sortedkeys)(f)
 
         if maximize:
             comp = lambda score, best: score > best
         else:
             comp = lambda score, best: score < best
 
-        for pars in parameter_tuples:
-            score = f(**pars)
-            if comp(score, best_score):
-                best_score = score
-                best_pars = pars
+        tuples = generate_rand_args(self.num_evals)
+        scores = pmap(f, *tuples)
 
-        return best_pars, None  # no useful statistics to report
+        if maximize:
+            comp = max
+        else:
+            comp = min
+        best_idx, _ = comp(enumerate(scores), key=operator.itemgetter(1))
+        best_pars = operator.itemgetter(best_idx)(zip(*tuples))
+        return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
 
 @register_solver('direct',
@@ -364,7 +370,7 @@ class Direct(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
 
         def generate_rand_args():
             return dict([(par, random.uniform(bounds[0], bounds[1]))
@@ -427,20 +433,23 @@ class NelderMead(Solver):
         """Returns the starting point."""
         return self._start
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
         if maximize:
             f = fun.negated(f)
 
         sortedkeys = sorted(self.start.keys())
         x0 = [self.start[k] for k in sortedkeys]
+
         f = fun.static_key_order(sortedkeys)(f)
+        def func(x):
+            return f(*list(x))
 
         version = scipy.__version__
         if int(version.split('.')[1]) >= 11:
             print('HALP: wrong scipy version')
             pass  # TODO
         else:
-            xopt = scipy.optimize.fmin(f, np.array(x0),
+            xopt = scipy.optimize.fmin(func, np.array(x0),
                                         xtol=self.xtol, disp=False)
             return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None
 
@@ -505,7 +514,7 @@ class CMA_ES(Solver):
     def sigma(self):
         return self._sigma
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
         toolbox = deap.base.Toolbox()
         if maximize:
             fit = 1.0
@@ -532,6 +541,10 @@ class CMA_ES(Solver):
                                 for k, v in zip(self.start.keys(),
                                                 individual)])),)
         toolbox.register("evaluate", evaluate)
+
+        def mapfun(f, *args):
+            return map(lambda x: (x,), pmap(f, *args))
+        toolbox.register("map", mapfun)
 
         hof = deap.tools.HallOfFame(1)
         deap.algorithms.eaGenerateUpdate(toolbox=toolbox,
@@ -577,7 +590,7 @@ class ParticleSwarm(Solver):
         self._num_generations = num_generations
 
         if max_speed is None:
-            max_speed = 1.0/num_generations
+            max_speed = 2.0/num_generations
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
@@ -659,12 +672,17 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part[:] = list(map(operator.add, part, part.speed))
 
-    def optimize(self, f, maximize=True):
+    def optimize(self, f, maximize=True, pmap=par.sequence):
+
         def evaluate(individual):
             return (f(**dict([(k, v)
-                                for k, v in zip(self.bounds.keys(),
-                                                individual)])),)
+                              for k, v in zip(self.bounds.keys(),
+                                              individual)])),)
         self._toolbox.register("evaluate", evaluate)
+
+        def mapfun(f, *args):
+            return map(lambda x: (x,), pmap(f, *args))
+        self._toolbox.register("map", mapfun)
 
         if maximize:
             fit = 1.0
@@ -683,8 +701,9 @@ class ParticleSwarm(Solver):
         best = None
 
         for g in range(self.num_generations):
-            for part in pop:
-                part.fitness.values = self.toolbox.evaluate(part)
+            fitnesses = self.toolbox.map(self.toolbox.evaluate, pop)
+            for part, fitness in zip(pop, fitnesses):
+                part.fitness.values = fitness
                 if not part.best or part.best.fitness < part.fitness:
                     part.best = self._Particle(part)
                     part.best.fitness.values = part.fitness.values

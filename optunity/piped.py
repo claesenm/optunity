@@ -47,6 +47,7 @@ import sys
 
 # optunity imports
 from . import communication as comm
+from . import functions
 import optunity
 
 
@@ -102,12 +103,15 @@ if __name__ == '__main__':
         exit(0)
 
     else:  # solving a given problem
-        func = optunity.wrap_constraints(comm.piped_function_eval,
+        mgr = comm.EvalManager()
+        func = optunity.wrap_constraints(comm.make_piped_function(mgr),
                                          startup_msg.get('constraints', None),
                                          startup_msg.get('default', None))
 
         if startup_msg.get('call_log', False):
             func = optunity.wrap_call_log(func, startup_msg['call_log'])
+        else:
+            func = functions.logged(func)
 
         maximize = startup_msg.get('maximize', True)
 
@@ -127,14 +131,22 @@ if __name__ == '__main__':
 
         # solve and send result
         try:
-            solution, rslt = optunity.optimize(solver, func, maximize)
+            solution, rslt = optunity.optimize(solver, func, maximize,
+                                               pmap=mgr.pmap)
         except EOFError:
             msg = {'error_msg': 'Broken pipe.'}
             comm.send(comm.json_encode(msg))
             exit(1)
 
+        # update call_log if it exists
+        keys = func.call_log.keys()[::-1]
+        for k, v in zip(reversed(keys), mgr.record):
+            func.call_log[k] = v
+
         result = rslt._asdict()
+        result['call_log'] = functions.call_log2dict(func.call_log)
         result['solution'] = solution
+        result['optimum'] = func(**solution)
         result_json = comm.json_encode(result)
         comm.send(result_json)
         exit(0)

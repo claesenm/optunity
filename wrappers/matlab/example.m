@@ -32,7 +32,7 @@ end
 pso_available = any(arrayfun(@(x) strcmp(x, 'particle swarm'), solvers));
 if pso_available
     pso_solver = optunity.make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
-        'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.05);
+        'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
     [pso_solution, pso_details] = optunity.maximize(pso_solver, f, 'return_call_log', true);
 end
 

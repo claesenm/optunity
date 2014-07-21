@@ -46,6 +46,7 @@ Main features in this module:
 import itertools
 import collections
 import functools
+import threading
 
 
 def constr_ub_o(field, bounds, *args, **kwargs):
@@ -218,6 +219,8 @@ def logged(f):
     if hasattr(f, 'call_log'):
         return f
 
+    lock = threading.Lock()
+
     @functools.wraps(f)
     def wrapped_f(*args, **kwargs):
         d = kwargs.copy()
@@ -226,10 +229,11 @@ def logged(f):
         if not wrapped_f.argtuple:
             f.argtuple = collections.namedtuple('args', d.keys())
         t = f.argtuple(**d)
-        value = wrapped_f.call_log.get(t)
-        if value is None:
-            value = f(*args, **kwargs)
-            wrapped_f.call_log[t] = value
+        with lock:
+            value = wrapped_f.call_log.get(t, False)
+            if value is False:
+                value = f(*args, **kwargs)
+                wrapped_f.call_log[t] = value
         return value
     wrapped_f.call_log = collections.OrderedDict()
     wrapped_f.argtuple = None
@@ -280,18 +284,6 @@ def negated(f):
     @functools.wraps(f)
     def wrapped_f(*args, **kwargs):
         return -f(*args, **kwargs)
-    return wrapped_f
-
-
-def sequenced(f):
-    """Decorator which sequences function evaluations when given a list
-    of argument lists."""
-    @functools.wraps(f)
-    def wrapped_f(*args, **kwargs):  # FIXME: how to handle this?
-        if islist(args):
-            return [f(arg) for arg in args]
-        else:
-            return f(args)
     return wrapped_f
 
 
@@ -355,7 +347,11 @@ def static_key_order(keys):
     """
     def wrapper(f):
         @functools.wraps(f)
-        def wrapped_f(args):
+        def wrapped_f(*args):
             return f(**dict([(k, v) for k, v in zip(keys, args)]))
         return wrapped_f
     return wrapper
+
+
+if __name__ == '__main__':
+    pass

@@ -42,7 +42,7 @@ if isstruct(options.constraints)
     end
 end
 if isstruct(options.call_log)
-   msg.call_log = options.call_log; 
+    msg.call_log = options.call_log;
 end
 pipe_send(msg);
 
@@ -54,7 +54,17 @@ while true
     if isfield(reply, 'solution') || isfield(reply, 'error_msg')
         break;
     end
-    msg = struct('value', f(reply));
+    
+    if iscell(reply)
+        results = zeros(numel(reply), 1);
+        parfor ii=1:numel(reply)
+            results(ii) = f(reply{ii});
+        end
+        msg = struct('values', results);
+    else
+        msg = struct('value', f(reply));
+    end
+    
     pipe_send(msg);
 end
 

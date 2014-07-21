@@ -86,7 +86,7 @@ optimization with :func:`optunity.maximize`. Assume we have access to the follow
 ``svm=svm_train(x, y, c, g)`` and ``predictions=svm_predict(svm, x)``. Where ``c`` and ``g``
 are hyperparameters to be optimized for accuracy::
 
-    @opt.cross_validated(x=data, num_folds=3)
+    @opt.cross_validated(x=data, y=labels, num_folds=3)
     def nested_cv(x_train, y_train, x_test, y_test):
 
         @opt.cross_validated(x=x_train, y=y_train, num_folds=3)
@@ -95,7 +95,7 @@ are hyperparameters to be optimized for accuracy::
             predictions = svm_predict(svm, x_test)
             return opt.score_functions.accuracy(y_test, predictions)
 
-        optimal_parameters = opt.maximize(inner_cv, num_evals=100, c=[0, 10], g=[0, 10])
+        optimal_parameters, _, _ = opt.maximize(inner_cv, num_evals=100, c=[0, 10], g=[0, 10])
         optimal_svm = svm_train(x_train, y_train, **optimal_parameters)
         predictions = svm_predict(optimal_svm, x_test)
         return opt.score_functions.accuracy(y_test, predictions)

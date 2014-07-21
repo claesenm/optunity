@@ -57,6 +57,7 @@ import operator
 from . import functions as fun
 from . import solvers
 from . import solver_registry
+from . import parallel as par
 from .util import DocumentedNamedTuple as DocTup
 
 
@@ -194,7 +195,7 @@ def minimize(f, num_evals=50, solver_name=None, **kwargs):
     return solution, details, suggestion
 
 
-def optimize(solver, func, maximize=True, max_evals=0):
+def optimize(solver, func, maximize=True, max_evals=0, pmap=par.sequence):
     """Optimizes func with given solver.
 
     Returns the solution and a namedtuple with further details.
@@ -220,7 +221,7 @@ def optimize(solver, func, maximize=True, max_evals=0):
 
     time = timeit.default_timer()
     try:
-        solution, report = solver.optimize(f, maximize)
+        solution, report = solver.optimize(f, maximize, pmap=pmap)
     except fun.MaximumEvaluationsException:
         # early stopping because maximum number of evaluations is reached
         # retrieve solution from the call log
