@@ -211,7 +211,7 @@ class GridSearch(Solver):
         """Returns the possible values of every parameter."""
         return self._parameter_tuples
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         best_pars = None
@@ -293,7 +293,7 @@ class RandomSearch(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args(len=1):
@@ -385,7 +385,7 @@ class Direct(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args():
@@ -449,7 +449,7 @@ class NelderMead(Solver):
         """Returns the starting point."""
         return self._start
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
         if maximize:
             f = fun.negated(f)
@@ -531,7 +531,7 @@ class CMA_ES(Solver):
     def sigma(self):
         return self._sigma
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
         toolbox = deap.base.Toolbox()
         if maximize:
@@ -688,7 +688,7 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part[:] = list(map(operator.add, part, part.speed))
 
-    @copydoc(Solver.optimize)
+    @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         @functools.wraps(f)
