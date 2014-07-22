@@ -191,13 +191,13 @@ class cross_validated_callable(object):
         Clusters signify instances that must be assigned to the same fold.
         Not every instance must be in a cluster.
         Specify clusters as a list of lists of instance indices.
-    :param aggregator: function to aggregate scores of different folds (default: mean)
+    :param reduce: function to aggregate scores of different folds (default: mean)
 
     Use :func:`cross_validated` to create instances of this class.
     """
     def __init__(self, f, x, num_folds=10, y=None, strata=None, folds=None,
                  num_iter=1, regenerate_folds=False, clusters=None,
-                 aggregator=mean):
+                 reduce=mean):
         self._x = x
         self._y = y
         self._strata = strata
@@ -206,7 +206,7 @@ class cross_validated_callable(object):
         # TODO: sanity check between strata & clusters? define what is allowed
         self._regenerate_folds = regenerate_folds
         self._f = f
-        self._aggregator = aggregator
+        self._reduce = reduce
         if folds:
             assert (len(folds) == num_iter), 'Number of fold sets does not equal num_iter.'
             assert (len(folds[0] == num_folds)), 'Number of folds does not match num_folds.'
@@ -218,9 +218,9 @@ class cross_validated_callable(object):
         functools.update_wrapper(self, f)
 
     @property
-    def aggregator(self):
+    def reduce(self):
         """The aggregation function."""
-        return self._aggregator
+        return self._reduce
 
     @property
     def f(self):
@@ -292,7 +292,7 @@ class cross_validated_callable(object):
                     kwargs['y_train'] = select(self.y, rows_train)
                     kwargs['y_test'] = select(self.y, rows_test)
                 scores.append(self.f(*args, **kwargs))
-        return self.aggregator(scores)
+        return self.reduce(scores)
 
 
 def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1,

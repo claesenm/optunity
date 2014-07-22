@@ -31,7 +31,7 @@ Optunity is developed at the STADIUS lab of the dept. of electrical engineering
 at KU Leuven (ESAT). Optunity is free software, using a BSD license.
 
 For more information, please refer to the following pages:
-https://github.com/claesenm/optunity/wiki
+http://optunity.readthedocs.org/en/latest/
 
 Contributors
 ============
