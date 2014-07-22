@@ -132,8 +132,8 @@ if __name__ == '__main__':
         # solve and send result
         try:
             solution, rslt = optunity.optimize(solver, func, maximize,
-                                               pmap=map)
-#                                               pmap=mgr.pmap)
+#                                               pmap=map)
+                                               pmap=mgr.pmap)
         except EOFError:
             msg = {'error_msg': 'Broken pipe.'}
             comm.send(comm.json_encode(msg))

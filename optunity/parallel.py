@@ -54,6 +54,7 @@ class Future:
         self.__status='working'
 
         self.__C=Condition()   # Notify on this Condition when result is ready
+        self.__S=Semaphore(0)
 
         # Run the actual function in a separate thread
         self.__T=Thread(target=self.Wrapper, args=(func, param))
@@ -65,12 +66,18 @@ class Future:
         return '<Future at '+hex(id(self))+':'+self.__status+'>'
 
     def __call__(self):
-        self.__C.acquire()
-        while self.__done==0:
-            self.__C.wait()
-        self.__C.release()
-        # We deepcopy __result to prevent accidental tampering with it.
-        a=copy.deepcopy(self.__result)
+#        try:
+#            self.__C.acquire()
+#            while self.__done==0:
+#            self.__C.wait()
+#        finally:
+#            self.__C.release()
+        try:
+            self.__S.acquire()
+            # We deepcopy __result to prevent accidental tampering with it.
+            a=copy.deepcopy(self.__result)
+        finally:
+            self.__S.release()
         return a
 
     def join(self):
@@ -78,15 +85,18 @@ class Future:
 
     def Wrapper(self, func, param):
         # Run the actual function, and let us housekeep around it
-        self.__C.acquire()
 #        try:
         self.__result=func(*param)
 #        except:
 #            self.__result="Exception raised within Future"
         self.__done=1
         self.__status=`self.__result`
-        self.__C.notify()
-        self.__C.release()
+        self.__S.release()
+#        try:
+#            self.__C.acquire()
+#            self.__C.notify()
+#        finally:
+#            self.__C.release()
 
 
 if __name__ == '__main__':

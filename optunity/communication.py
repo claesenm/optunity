@@ -37,7 +37,7 @@ import json
 import sys
 import itertools
 from . import functions
-from .import parallel
+from . import parallel
 
 import multiprocessing
 import threading
@@ -67,6 +67,7 @@ def send(data, channel=sys.stdout):
     """Writes data to channel and flushes."""
     print(data, file=channel)
     channel.flush()
+    return None
 
 
 def receive(channel=sys.stdin):
@@ -80,83 +81,67 @@ def receive(channel=sys.stdin):
 class EvalManager(object):
 
     def __init__(self):
+        # are we doing a parallel function evaluation?
         self._vectorized = False
-        self._queue = []
+
+        # the queue used for parallel evaluations
+        self._queue = None
+
+        # lock to use to add evaluations to the queue
         self._add_lock = multiprocessing.Lock()
-        self._cv = multiprocessing.Condition()
-        self._counter = 0
-        self._counter_lock = multiprocessing.Lock()
-        self._counter_cv = multiprocessing.Condition(self._counter_lock)
+
+        # lock to get results
         self._get_lock = multiprocessing.Lock()
+
+        # used to check whether Future started running
+        self._semaphore = None
+
+        # used to signal Future's to get their result
+        self._processed_semaphore = None
 
     @property
     def cv(self):
         return self._cv
 
     @property
-    def counter(self):
-        try:
-            self.counter_lock.acquire()
-            cnt = self._counter
-        finally:
-            self.counter_lock.release()
-        return cnt
+    def semaphore(self):
+        return self._semaphore
 
     @property
-    def counter_lock(self):
-        return self._counter_lock
-
-    def increment(self):
-        try:
-            self.counter_lock.acquire()
-            self._counter += 1
-            self._counter_cv.notify()
-        finally:
-            self.counter_lock.release()
-        return None
-
-    def wait_for_counter(self, ctr):
-        while(not self.counter == ctr):
-            try:
-                self._counter_cv.acquire()
-                self._counter_cv.wait()
-            finally:
-                self._counter_cv.release()
+    def processed_semaphore(self):
+        return self._processed_semaphore
 
     def pmap(self, f, *args):
         self._queue = []
-        self._counter = 0
         self._vectorized = True
+        self._semaphore = multiprocessing.Semaphore(0)
+        self._processed_semaphore = multiprocessing.Semaphore(0)
 
         # make sure correct evaluations lead to counter increments
         def wrap(*args):
             result = f(*args)
-            self.increment()
+            # signal mgr to add next future
+            self.semaphore.release()
             return result
 
         # create list of futures
         futures = []
         for ar in zip(*args):
+            futures.append(parallel.Future(wrap, *ar))
             try:
-                futures.append(parallel.Future(wrap, *ar))
+                self.semaphore.acquire()
             except functions.MaximumEvaluationsException:
                 if not len(self.queue):
                     # FIXME: some threads may be running atm
-                    raise functions.MaximumEvaluationsException()
+                    raise
                 break
-
-        # wait for all necessary futures to have registered
-        self.wait_for_counter(len(futures))
 
         # process queue
         self.flush_queue()
 
         # notify all waiting futures
-        try:
-            self.cv.acquire()
-            self.cv.notify_all()
-        finally:
-            self.cv.release()
+        for _ in range(len(self.queue)):
+            self.processed_semaphore.release()
 
         # gather results
         results = [f() for f in futures]
@@ -178,7 +163,7 @@ class EvalManager(object):
     def add_to_queue(self, **kwargs):
         try:
             self.add_lock.acquire()
-            self._queue.append(kwargs)
+            self.queue.append(kwargs)
             idx = len(self.queue) - 1
         finally:
             self.add_lock.release()
@@ -209,6 +194,7 @@ class EvalManager(object):
         if self.queue:
             json_data = json_encode(self.queue)
             send(json_data)
+
             json_reply = receive()
             decoded = json_decode(json_reply)
             if decoded.get('error', False):
@@ -224,16 +210,13 @@ def make_piped_function(mgr):
 
         args must be a namedtuple."""
         if mgr.vectorized:
+            # add to mgr queue
             number = mgr.add_to_queue(**kwargs)
-            mgr.increment()
+            # signal mgr to continue
+            mgr.semaphore.release()
 
-            # wait for manager to process the evaluation
-            try:
-                mgr.cv.acquire()
-                mgr.cv.wait()
-            finally:
-                mgr.cv.release()
-
+            # wait for results
+            mgr.processed_semaphore.acquire()
             return mgr.get(number)
         else:
             return mgr.pipe_eval(**kwargs)
