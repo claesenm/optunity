@@ -535,6 +535,7 @@ class CMA_ES(Solver):
         toolbox.register("generate", strategy.generate, Individual)
         toolbox.register("update", strategy.update)
 
+        @functools.wraps(f)
         def evaluate(individual):
             return (f(**dict([(k, v)
                                 for k, v in zip(self.start.keys(),
@@ -670,10 +671,12 @@ class ParticleSwarm(Solver):
 
     def optimize(self, f, maximize=True, pmap=map):
 
+        @functools.wraps(f)
         def evaluate(individual):
             return (f(**dict([(k, v)
                               for k, v in zip(self.bounds.keys(),
                                               individual)])),)
+
         self._toolbox.register("evaluate", evaluate)
         self._toolbox.register("map", pmap)
 

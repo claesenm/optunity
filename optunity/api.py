@@ -251,14 +251,6 @@ Returns the solution and a ``namedtuple`` with further details.
 ''' + optimize_results.__doc__ + optimize_stats.__doc__
 
 
-def tune(f, num_evals, solver_name=None, *args, **kwargs):
-    if solver_name:
-        solvercls = solver_registry.get(solver_name)
-    else:
-        solvercls = solver_registry.get('particle swarm')
-    pass  # TODO: where to implement this logic?
-
-
 def make_solver(solver_name, *args, **kwargs):
     """Creates a Solver from given parameters.
 
