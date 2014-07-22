@@ -33,11 +33,11 @@
 import itertools
 import functools
 import multiprocessing
-from threading import *
+import threading
 import copy
 
 
-__all__ = ['pmap']
+__all__ = ['pmap', 'Future']
 
 
 def pmap(f, *args):
@@ -53,11 +53,10 @@ class Future:
         self.__result=None
         self.__status='working'
 
-        self.__C=Condition()   # Notify on this Condition when result is ready
-        self.__S=Semaphore(0)
+        self.__S=threading.Semaphore(0)
 
         # Run the actual function in a separate thread
-        self.__T=Thread(target=self.Wrapper, args=(func, param))
+        self.__T=threading.Thread(target=self.Wrapper, args=(func, param))
         self.__T.setName("FutureThread")
         self.__T.daemon=True
         self.__T.start()
@@ -66,12 +65,6 @@ class Future:
         return '<Future at '+hex(id(self))+':'+self.__status+'>'
 
     def __call__(self):
-#        try:
-#            self.__C.acquire()
-#            while self.__done==0:
-#            self.__C.wait()
-#        finally:
-#            self.__C.release()
         try:
             self.__S.acquire()
             # We deepcopy __result to prevent accidental tampering with it.
@@ -89,14 +82,8 @@ class Future:
         self.__result=func(*param)
 #        except:
 #            self.__result="Exception raised within Future"
-        self.__done=1
         self.__status=`self.__result`
         self.__S.release()
-#        try:
-#            self.__C.acquire()
-#            self.__C.notify()
-#        finally:
-#            self.__C.release()
 
 
 if __name__ == '__main__':
