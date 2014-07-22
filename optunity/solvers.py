@@ -119,7 +119,8 @@ class Solver(SolverBase):
 
         :param f: the objective function
         :param maximize: bool to indicate maximization
-        :param parallelize: turn on parallelization of evaluations
+        :param pmap: the map() function to use
+        :type pmap: callable
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
@@ -131,8 +132,8 @@ class Solver(SolverBase):
         """Maximizes f.
 
         :param f: the objective function
-        :param maximize: bool to indicate maximization
-        :param parallelize: turn on parallelization of evaluations
+        :param pmap: the map() function to use
+        :type pmap: callable
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
@@ -144,8 +145,8 @@ class Solver(SolverBase):
         """Minimizes ``f``.
 
         :param f: the objective function
-        :param maximize: bool to indicate maximization
-        :param parallelize: turn on parallelization of evaluations
+        :param pmap: the map() function to use
+        :type pmap: callable
         :returns:
             - the arguments which optimize ``f``
             - an optional solver report, can be None
@@ -154,6 +155,19 @@ class Solver(SolverBase):
         return optimize(f, False, pmap=pmap)
 
 
+# http://stackoverflow.com/a/13743316
+def _copydoc(fromfunc, sep="\n"):
+    """
+    Decorator: Copy the docstring of `fromfunc`
+    """
+    def _decorator(func):
+        sourcedoc = fromfunc.__doc__
+        if func.__doc__ == None:
+            func.__doc__ = sourcedoc
+        else:
+            func.__doc__ = sep.join([sourcedoc, func.__doc__])
+        return func
+    return _decorator
 
 @register_solver('grid search',
                  'finds optimal parameter values on a predefined grid',
@@ -197,6 +211,7 @@ class GridSearch(Solver):
         """Returns the possible values of every parameter."""
         return self._parameter_tuples
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         best_pars = None
@@ -278,6 +293,7 @@ class RandomSearch(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args(len=1):
@@ -369,6 +385,7 @@ class Direct(Solver):
         """Returns the number of evaluations this solver may do."""
         return self._num_evals
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args():
@@ -432,6 +449,7 @@ class NelderMead(Solver):
         """Returns the starting point."""
         return self._start
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
         if maximize:
             f = fun.negated(f)
@@ -513,6 +531,7 @@ class CMA_ES(Solver):
     def sigma(self):
         return self._sigma
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
         toolbox = deap.base.Toolbox()
         if maximize:
@@ -669,6 +688,7 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part[:] = list(map(operator.add, part, part.speed))
 
+    @copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         @functools.wraps(f)
