@@ -54,7 +54,7 @@ please refer to the expert functions listed below or to submodules.
     If a solver name is specified, its manual will be shown.
 
     .. note::
-        In Python, please use :func:`optunity.print_manual` instead.
+        You may alternatively consult the solver documentation: :doc:`/api/optunity.solvers`.
 
 - :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
     TODO

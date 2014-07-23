@@ -61,7 +61,7 @@ from . import parallel as par
 from .util import DocumentedNamedTuple as DocTup
 
 
-def manual(solver_name=None):
+def _manual_lines(solver_name=None):
     """Brief solver manual.
 
     :param solver_name: (optional) name of the solver to request a manual from.
@@ -78,7 +78,7 @@ def manual(solver_name=None):
         return solver_registry.manual(), solver_registry.solver_names()
 
 
-def print_manual(solver_name=None):
+def manual(solver_name=None):
     """Prints the manual of requested solver.
 
     :param solver_name: (optional) name of the solver to request a manual from.
@@ -88,7 +88,7 @@ def print_manual(solver_name=None):
     if solver_name:
         man = solver_registry.get(solver_name).desc_full
     else:
-        man = solver_registry.manual()
+        man = solver_registry._manual_lines()
     print('\n'.join(man))
 
 
