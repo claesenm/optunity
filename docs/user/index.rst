@@ -49,6 +49,13 @@ please refer to the expert functions listed below or to submodules.
     Adheres to a prespecified upper bound on the number of function evaluations.
     The solution will be within given box constraints. Optunity determines
     the best solver and its configuration for you.
+- :func:`optunity.manual`: prints a basic manual (general or solver specific)
+    Prints a basic manual of Optunity and a list of all registered solvers.
+    If a solver name is specified, its manual will be shown.
+
+    .. note::
+        In Python, please use :func:`optunity.print_manual` instead.
+
 - :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
     TODO
 
