@@ -14,6 +14,13 @@ and a plethora of score functions.
     * :doc:`Installation <user/installation>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
+    Obtaining Optunity:
+    * at PyPI_ (releases)
+    * at GitHub_ (development)
+
+.. _PyPI: https://pypi.python.org/pypi/Optunity`
+.. _GitHub: https://github.com/claesenm/optunity
+
 From an optimization point of view, the tuning problem can be considered as 
 follows: the objective function is non-convex, non-smooth and 
 typically expensive to evaluate. Tuning examples include optimizing regularization 
