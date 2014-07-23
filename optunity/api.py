@@ -337,5 +337,4 @@ def _wrap_hard_box_constraints(f, box, default):
         are violated
 
     """
-    constraints = {'range_oo': box}
-    return wrap_constraints(f, constraints, default)
+    return wrap_constraints(f, default, range_oo=box)
