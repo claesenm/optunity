@@ -22,9 +22,15 @@ Optunity consists of a set of core functions that are offered in each environmen
 which we will now discuss briefly. Clicking on a function will take you to its Python
 API documentation. If you are using a different environment, you can still get the
 general idea on the Python pages. To dive into code details straight away, please
-consult the :doc:`api/optunity`.
+consult the :doc:`/api/optunity`.
 
-A variety of solvers is available. For more details, please visit :doc:`/user/solvers`.
+In the rest of this section we will discuss the main API functions. We will start with
+very simple functions that offer basic functionality which should meet the needs of most
+use cases. Subsequently we will introduce the expert interface functions which have more
+bells and whistles that can be configured.
+
+A variety of solvers is available, but they are not discussed on this page. 
+For more details about our solvers, please visit :doc:`/user/solvers`.
 
 Simple interface
 ----------------
