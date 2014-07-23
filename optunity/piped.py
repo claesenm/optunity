@@ -105,8 +105,9 @@ if __name__ == '__main__':
     else:  # solving a given problem
         mgr = comm.EvalManager()
         func = optunity.wrap_constraints(comm.make_piped_function(mgr),
-                                         startup_msg.get('constraints', None),
-                                         startup_msg.get('default', None))
+                                         startup_msg.get('default', None),
+                                         **startup_msg.get('constraints', {})
+                                         )
 
         if startup_msg.get('call_log', False):
             func = optunity.wrap_call_log(func, startup_msg['call_log'])

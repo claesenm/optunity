@@ -1,5 +1,5 @@
 ===================
-Optunity User Guide
+User Guide
 ===================
 
 This page contains a high-level overview of Optunity. 
@@ -54,7 +54,8 @@ please refer to the expert functions listed below or to submodules.
     If a solver name is specified, its manual will be shown.
 
     .. note::
-        You may alternatively consult the solver documentation: :doc:`/api/optunity.solvers`.
+        You may alternatively consult the solver API documentation at 
+        :doc:`/api/optunity.solvers` for more details.
 
 - :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
     TODO
@@ -92,7 +93,7 @@ objective function
     The function that must be optimized. The arguments to this function are hyperparameters
     and the result is some score measure of a model constructed using these hyperparameters.
     Optunity can minimize and maximize, depending on the requirements.
-    
+
     Example: accuracy of an SVM classifier as a function of kernel and regularization parameters.
 
 box constraints

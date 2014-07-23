@@ -277,8 +277,8 @@ def wrap_call_log(f, call_dict):
     return f
 
 
-def wrap_constraints(f, constraint_dict, default=None):
-    """Decorates f with all constraints listed in the dict.
+def wrap_constraints(f, default=None, **kwargs):
+    """Decorates f with all constraints listed in kwargs.
 
     constraint_dict may have the following keys:
 
@@ -290,7 +290,7 @@ def wrap_constraints(f, constraint_dict, default=None):
     The values of constraint_dict are dicts with argname-value pairs.
 
     """
-    if not constraint_dict:
+    if not kwargs:
         return f
 
     # jump table to get the right constraint function
@@ -305,7 +305,7 @@ def wrap_constraints(f, constraint_dict, default=None):
 
     # construct constraint list
     constraints = []
-    for constr_name, pars in constraint_dict.items():
+    for constr_name, pars in kwargs.items():
         constr_fun = jt[constr_name]
         for field, bounds in pars.items():
             constraints.append(functools.partial(constr_fun,
