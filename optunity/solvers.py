@@ -118,7 +118,9 @@ class Solver(SolverBase):
         """Optimizes ``f``.
 
         :param f: the objective function
-        :param maximize: bool to indicate maximization
+        :type f: callable
+        :param maximize: do we want to maximizes?
+        :type maximize: boolean
         :param pmap: the map() function to use
         :type pmap: callable
         :returns:
@@ -132,6 +134,7 @@ class Solver(SolverBase):
         """Maximizes f.
 
         :param f: the objective function
+        :type f: callable
         :param pmap: the map() function to use
         :type pmap: callable
         :returns:
@@ -145,6 +148,7 @@ class Solver(SolverBase):
         """Minimizes ``f``.
 
         :param f: the objective function
+        :type f: callable
         :param pmap: the map() function to use
         :type pmap: callable
         :returns:
@@ -203,7 +207,7 @@ class GridSearch(Solver):
         self._parameter_tuples = kwargs
 
     @staticmethod
-    def from_box(num_evals, **kwargs):
+    def suggest_from_box(num_evals, **kwargs):
         pass
 
     @property
