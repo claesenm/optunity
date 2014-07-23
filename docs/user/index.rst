@@ -21,11 +21,20 @@ to test a specific parameter tuple must do the following:
 2. Test the SVM model on an independent test set.
 3. Compute some score measure for the test predictions, for example accuracy.
 
-Optunity offers the following main functions:
+Optunity consists of a set of core functions that are offered in each environment,
+which we will now discuss briefly. Clicking on a function will take you to its Python
+API documentation. If you are using a different environment, you can still get the
+general idea on the Python pages. Optunity offers the following core functions:
 
 - :func:`optunity.maximize` 
 - :func:`optunity.minimize` 
 - :func:`optunity.optimize` 
+- :func:`optunity.suggest_solver` 
+- :func:`optunity.make_solver`
+- :func:`optunity.manual`
+- :func:`optunity.cross_validated`
+
+
 
 .. toctree::
     :maxdepth: 2
