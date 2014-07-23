@@ -7,19 +7,34 @@ The main module provides the basic user functionality. For more advanced
 use, please refer to the submodules. Everything discussed on this page is available
 in all Optunity wrappers, though specialized submodule features might not be. 
 
-Some basic terminology we will use consistently throughout the documentation:
+To avoid confusion, we will first introduce some basic terminology we will use consistently 
+throughout the documentation:
 
-- *hyperparameters*: user-specified parameters for a given machine learning approach.
-  These will serve as optimization variables in our context.
-  Example: kernel parameters.
-- *score*: some measure to quantify the quality of a certain model.
-  Example: accuracy of a classifier.
-- *objective function*: the function that must be optimized. The arguments to this function
-  are a tuple of hyperparameters. 
-  Example: accuracy of an SVM classifier with certain kernel and regularization parameters.
-- *solver*: a strategy to optimize hyperparameters.
-  Example: grid search.
-- *train-predict-score (TPS) chain*: 
+hyperparameters
+    User-specified parameters for a given machine learning approach.
+    These will serve as optimization variables in our context.
+    Example: kernel parameters.
+
+score
+    Some measure to quantify the quality of a certain model.
+    Example: accuracy of a classifier.
+
+objective function
+    The function that must be optimized. The arguments to this function are hyperparameters
+    and the result is some score measure of a model constructed using these hyperparameters.
+    
+    Example: accuracy of an SVM classifier with certain kernel and regularization parameters.
+
+
+solver
+    A strategy to optimize hyperparameters.
+    
+    Example: grid search.
+
+train-predict-score (TPS) chain
+    A sequence of code which trains a model, uses it to predict an independent test set and 
+    then computes some score measure based on the predictions. TPS chains must be specified 
+    by the user as they depend entirely on the method that is being tuned and the evaluation criteria.
 
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function which does the work
