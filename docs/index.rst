@@ -25,6 +25,11 @@ integration in other machine learning environments, including
 
 Optunity is free software, using a BSD-style license.
 
+Obtaining Optunity
+===================
+
+Optunity is available on the `PyPI https://pypi.python.org/pypi/Optunity`_ (releases) and `GitHub https://github.com/claesenm/>`_ (development version).
+
 User Guide
 ==============
 
