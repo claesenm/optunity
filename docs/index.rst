@@ -35,7 +35,7 @@ Issue the following commands to get started on Linux:
 .. code-block:: bash
 
     git clone https://github.com/claesenm/optunity.git
-    export PYTHONPATH=#PYTHONPATH:$(pwd)/optunity/
+    export PYTHONPATH=$PYTHONPATH:$(pwd)/optunity/
 
 Afterwards, importing ``optunity`` should work in Python:
 

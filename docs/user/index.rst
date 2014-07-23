@@ -5,10 +5,21 @@ Optunity User Guide
 This page contains a high-level overview of Optunity. 
 The main module provides the basic user functionality. For more advanced
 use, please refer to the submodules. Everything discussed on this page is available
-in all Optunity wrappers, though specialized submodule features might not be. We
-will now elaborate on the basic approach of a general tuning task:
+in all Optunity wrappers, though specialized submodule features might not be. 
 
-BLAH
+Some basic terminology we will use consistently throughout the documentation:
+
+- *hyperparameters*: user-specified parameters for a given machine learning approach.
+  These will serve as optimization variables in our context.
+  Example: kernel parameters.
+- *score*: some measure to quantify the quality of a certain model.
+  Example: accuracy of a classifier.
+- *objective function*: the function that must be optimized. The arguments to this function
+  are a tuple of hyperparameters. 
+  Example: accuracy of an SVM classifier with certain kernel and regularization parameters.
+- *solver*: a strategy to optimize hyperparameters.
+  Example: grid search.
+- *train-predict-score (TPS) chain*: 
 
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function which does the work
