@@ -14,11 +14,12 @@ and a plethora of score functions.
     * :doc:`Installation <user/installation>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
-    Obtaining Optunity:
+    **Obtaining Optunity**
+
     * at PyPI_ (releases)
     * at GitHub_ (development)
 
-.. _PyPI: https://pypi.python.org/pypi/Optunity`
+.. _PyPI: https://pypi.python.org/pypi/Optunity
 .. _GitHub: https://github.com/claesenm/optunity
 
 From an optimization point of view, the tuning problem can be considered as 
@@ -31,11 +32,6 @@ integration in other machine learning environments, including
 :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
 
 Optunity is free software, using a BSD-style license.
-
-Obtaining Optunity
-===================
-
-Optunity is available on the `PyPI https://pypi.python.org/pypi/Optunity`_ (releases) and `GitHub https://github.com/claesenm/>`_ (development version).
 
 User Guide
 ==============
