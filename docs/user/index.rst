@@ -30,7 +30,9 @@ use cases. Subsequently we will introduce the expert interface functions which h
 bells and whistles that can be configured.
 
 A variety of solvers is available, but they are not discussed on this page. 
-For more details about our solvers, please visit :doc:`/user/solvers`.
+For more details about our solvers, please visit :doc:`/user/solvers`. If you want to
+learn by example, please consult our :doc:`/examples/index`, which use various features
+of Optunity to cover a wide variety of tuning tasks.
 
 Simple interface
 ----------------
@@ -50,6 +52,8 @@ please refer to the expert functions listed below or to submodules.
 - :func:`optunity.suggest_solver`: suggests a solver and its configuration
     Optunity will make suggestions based on the number of evaluations and
     box constraints.
+- :func:`cross_validated`: decorator to perform k-fold cross-validation
+    TODO
 
 Expert interface
 -----------------
