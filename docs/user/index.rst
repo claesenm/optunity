@@ -7,6 +7,8 @@ The main module provides the basic user functionality. For more advanced
 use, please refer to the submodules. Everything discussed on this page is available
 in all Optunity wrappers, though specialized submodule features might not be. 
 
+If you want to learn by example, please consult our :doc:`/examples/index`, 
+which use various features of Optunity to cover a wide variety of tuning tasks. 
 In case of confusion, we provide a list of basic `Terminology`_.
 
 Introduction
@@ -30,9 +32,7 @@ use cases. Subsequently we will introduce the expert interface functions which h
 bells and whistles that can be configured.
 
 A variety of solvers is available, but they are not discussed on this page. 
-For more details about our solvers, please visit :doc:`/user/solvers`. If you want to
-learn by example, please consult our :doc:`/examples/index`, which use various features
-of Optunity to cover a wide variety of tuning tasks.
+For more details about our solvers, please visit :doc:`/user/solvers`. 
 
 Simple interface
 ----------------
@@ -49,15 +49,15 @@ please refer to the expert functions listed below or to submodules.
     Adheres to a prespecified upper bound on the number of function evaluations.
     The solution will be within given box constraints. Optunity determines
     the best solver and its configuration for you.
-- :func:`optunity.suggest_solver`: suggests a solver and its configuration
-    Optunity will make suggestions based on the number of evaluations and
-    box constraints.
-- :func:`cross_validated`: decorator to perform k-fold cross-validation
+- :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
     TODO
 
 Expert interface
 -----------------
 
+- :func:`optunity.suggest_solver`: suggests a solver and its configuration
+    Optunity will make suggestions based on the number of evaluations and
+    box constraints.
 - :func:`optunity.optimize` 
 - :func:`optunity.make_solver`
 - :func:`optunity.manual`
