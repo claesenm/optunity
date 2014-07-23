@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if startup_msg.get('manual', False):
         solver_name = startup_msg.get('solver', None)
         try:
-            manual, solver_names = optunity._manual_lines(solver_name)
+            manual, solver_names = optunity.api._manual_lines(solver_name)
         except KeyError:
             msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
             comm.send(comm.json_encode(msg))
