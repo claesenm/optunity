@@ -7,8 +7,11 @@ setup(
     author_email='marc.claesen@esat.kuleuven.be',
     packages=['optunity', 'optunity.test'],
     scripts=[],
-    url='https://github.com/claesenm/optunity',
+    url='http://optunity.readthedocs.org',
     license='LICENSE.txt',
     description='Optimization routines for hyperparameter tuning.',
     long_description=open('README.rst').read(),
+    install_requires=[
+          'deap >= 1.0.1',
+      ],
 )

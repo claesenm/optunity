@@ -28,8 +28,8 @@ typically expensive to evaluate. Tuning examples include optimizing regularizati
 or kernel parameters.
 
 The Optunity library is implemented in Python and allows straightforward
-integration in other machine learning environments, including 
-:doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
+integration in other machine learning environments. Optunity will soon become
+available in :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
 
 Optunity is free software, using a BSD-style license.
 
