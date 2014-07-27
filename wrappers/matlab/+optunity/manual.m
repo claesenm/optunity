@@ -8,9 +8,9 @@ function [solver_names] = manual( varargin )
 [m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
 
 if nargin > 0
-    init = struct('manual',true, 'solver', varargin{1});
+    init = struct('manual', varargin{1});
 else
-    init = struct('manual',true);
+    init = struct('manual','');
 end
 
 json_request = optunity.comm.json_encode(init);

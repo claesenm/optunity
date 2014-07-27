@@ -50,33 +50,72 @@ Requesting manuals
 
 Request:
 
-+-------------+----------------------------------------------------------+----------+
-| Parameter   | Description                                              | Optional |
-+=============+==========================================================+==========+
-| solver_name | (string) name of the solver whose manual is requested    | yes      |
-+-------------+----------------------------------------------------------+----------+
++--------+------------------------------------------------------------+----------+
+| Key    | Value                                                      | Optional |
++========+============================================================+==========+
+| manual | name of the solver whose manual we want or empty string    | no       |
++--------+------------------------------------------------------------+----------+
 
 Reply:
 
-+--------------+------------------------------------------+-----------------+
-| Parameter    | Description                              | Type            |
-+==============+==========================================+=================+
-| manual       | the manual that was requested            | list of strings |
-+--------------+------------------------------------------+-----------------+
-| solver_names | the names of all registered solver,      | list of strings |
-|              | or the solver used in the manual request |                 |
-+--------------+------------------------------------------+-----------------+
-
-
-Maximize or minimize
------------------------
-
-Optimize
----------
++--------------+-----------------------------------------------+-----------------+
+| Key          | Value                                         | Type            |
++==============+===============================================+=================+
+| manual       | the manual that was requested                 | list of strings |
++--------------+-----------------------------------------------+-----------------+
+| solver_names | the name of the solver whose manual was       | list of strings |
+|              | requested or a list of all registered solvers |                 |
++--------------+-----------------------------------------------+-----------------+
 
 
 Generate cross-validation folds
 ---------------------------------
+
+Request:
+
++----------------+-----------------------------------------------------+----------+
+| Key            | Value                                               | Optional |
++================+=====================================================+==========+
+| generate_folds | - **num_instances** number of instances to consider | no       |
+|                | - **num_folds** number of folds                     | yes (10) |
+|                | - **num_iter** number of iterations                 | yes (1)  |
+|                | - **strata** to account for in fold generation      | yes      |
+|                | - **clusters** to account for in fold generation    | yes      |
++----------------+-----------------------------------------------------+----------+
+
+.. note::
+    strata and cluster indices must be 0-based
+
+Reply:
+
++--------------+---------------------+-----------------+
+| Key          | Value               | Type            |
++==============+=====================+=================+
+| folds        | the resulting folds | nested lists    |
++--------------+---------------------+-----------------+
+
+The folds are returned as a list (iterations) of lists (folds). The inner lists
+contain the instance indices per fold.
+
+Maximize or minimize
+-----------------------
+
+Request:
+
+
+Reply:
+
+
+Minimize
+---------
+
+Identical to maximize (above) except that the initial message has the key
+``minimize`` instead of ``maximize``.
+
+
+Optimize
+---------
+
 
 
 .. moduleauthor:: Marc Claesen
@@ -96,8 +135,10 @@ if __name__ == '__main__':
     startup_json = comm.receive()
     startup_msg = comm.json_decode(startup_json)
 
-    if startup_msg.get('manual', False):
-        solver_name = startup_msg.get('solver', None)
+    if not startup_msg.get('manual', None) == None:
+        solver_name = startup_msg['manual']
+        if len(solver_name) == 0:
+            solver_name = None
         try:
             manual, solver_names = optunity.api._manual_lines(solver_name)
         except KeyError:
@@ -113,7 +154,7 @@ if __name__ == '__main__':
         comm.send(comm.json_encode(msg))
         exit(0)
 
-    elif startup_msg.get('generate_folds', False):
+    elif not startup_msg.get('generate_folds', None) == None:
         import optunity.cross_validation as cv
         cv_opts = startup_msg['generate_folds']
 
