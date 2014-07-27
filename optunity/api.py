@@ -254,6 +254,14 @@ Returns the solution and a ``namedtuple`` with further details.
 def make_solver(solver_name, *args, **kwargs):
     """Creates a Solver from given parameters.
 
+    :param solver_name: the solver to instantiate
+    :type solver_name: string
+    :param args: positional arguments to solver constructor.
+    :param kwargs: keyword arguments to solver constructor.
+
+    Use :func:`optunity.manual` to get a list of registered solvers.
+    For constructor arguments per solver, please refer to :doc:`/user/solvers`.
+
     Raises ``KeyError`` if
 
     - ``solver_name`` is not registered
