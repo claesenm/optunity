@@ -275,6 +275,9 @@ def make_solver(solver_name, *args, **kwargs):
 def wrap_call_log(f, call_dict):
     """Wraps an existing call log (as dictionary) around f.
 
+    This allows you to communicate known function values to solvers.
+    (currently available solvers do not use this info)
+
     """
     f = fun.logged(f)
     call_log = fun.dict2call_log(call_dict)
@@ -312,7 +315,7 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
         :math:`lb < x \leq ub`
     :type range_oc: dict with 2-element lists as values ([lb, ub])
     :param range_cc: range constraints (closed lb and closed ub)
-        :math:`lb \leq x leq ub`
+        :math:`lb \leq x \leq ub`
     :type range_cc: dict with 2-element lists as values ([lb, ub])
 
     >>> def f(x):
@@ -371,9 +374,12 @@ def _wrap_hard_box_constraints(f, box, default):
     and defaults function values if constraints are violated.
 
     :param f: the function to be wrapped with constraints
-    :param box: the box, as a dict: ``{'param_name': [lb, ub], ...}
+    :type f: callable
+    :param box: the box, as a dict: ``{'param_name': [lb, ub], ...}``
+    :type box: dict
     :param default: function value to default to when constraints
         are violated
+    :type default: number
 
     """
     return wrap_constraints(f, default, range_oo=box)
