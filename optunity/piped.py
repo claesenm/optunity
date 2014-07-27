@@ -62,6 +62,7 @@ Reply:
 | Parameter    | Description                              | Type            |
 +==============+==========================================+=================+
 | manual       | the manual that was requested            | list of strings |
++--------------+------------------------------------------+-----------------+
 | solver_names | the names of all registered solver,      | list of strings |
 |              | or the solver used in the manual request |                 |
 +--------------+------------------------------------------+-----------------+
