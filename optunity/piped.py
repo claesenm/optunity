@@ -48,6 +48,8 @@ are keys in the JSON root message.
 Requesting manuals
 -------------------
 
+Emulates :func:`optunity.manual`.
+
 Request:
 
 +--------+------------------------------------------------------------+----------+
@@ -71,34 +73,42 @@ Reply:
 Generate cross-validation folds
 ---------------------------------
 
+Use the Python library to generate k-fold cross-validation folds.
+Emulates :func:`optunity.cross_validated`.
+This requires one message back and forth.
+
 Request:
 
-+----------------+-----------------------------------------------------+----------+
-| Key            | Value                                               | Optional |
-+================+=====================================================+==========+
-| generate_folds | - **num_instances** number of instances to consider | no       |
-|                | - **num_folds** number of folds                     | yes (10) |
-|                | - **num_iter** number of iterations                 | yes (1)  |
-|                | - **strata** to account for in fold generation      | yes      |
-|                | - **clusters** to account for in fold generation    | yes      |
-+----------------+-----------------------------------------------------+----------+
++----------------+-----------------------------------------------------+------------+
+| Key            | Value                                               | Optional   |
++================+=====================================================+============+
+| generate_folds | dictionary:                                         | no         |
+|                | - **num_instances** number of instances to consider | - no       |
+|                | - **num_folds** number of folds                     | - yes (10) |
+|                | - **num_iter** number of iterations                 | - yes (1)  |
+|                | - **strata** to account for in fold generation      | - yes      |
+|                | - **clusters** to account for in fold generation    | - yes      |
++----------------+-----------------------------------------------------+------------+
+
+Strata and clusters are sent as list (strata/clusters) of lists (instance indices).
 
 .. note::
     strata and cluster indices must be 0-based
 
 Reply:
 
-+--------------+---------------------+-----------------+
-| Key          | Value               | Type            |
-+==============+=====================+=================+
-| folds        | the resulting folds | nested lists    |
-+--------------+---------------------+-----------------+
++--------------+---------------------+------------------------------------+
+| Key          | Value               | Type                               |
++==============+=====================+====================================+
+| folds        | the resulting folds | list (iterations) of lists (folds) |
++--------------+---------------------+------------------------------------+
 
-The folds are returned as a list (iterations) of lists (folds). The inner lists
-contain the instance indices per fold.
+The inner lists contain the instance indices per fold (0-based indexing).
 
-Maximize or minimize
------------------------
+Maximize
+---------
+
+Emulates :func:`optunity.maximize`.
 
 Request:
 
@@ -109,6 +119,7 @@ Reply:
 Minimize
 ---------
 
+Emulates :func:`optunity.minimize`.
 Identical to maximize (above) except that the initial message has the key
 ``minimize`` instead of ``maximize``.
 
@@ -116,6 +127,7 @@ Identical to maximize (above) except that the initial message has the key
 Optimize
 ---------
 
+Emulates :func:`optunity.optimize`.
 
 
 .. moduleauthor:: Marc Claesen
