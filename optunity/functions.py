@@ -227,8 +227,8 @@ def logged(f):
         d.update(dict([('pos_' + str(i), item)
                        for i, item in enumerate(args)]))
         if not wrapped_f.argtuple:
-            f.argtuple = collections.namedtuple('args', d.keys())
-        t = f.argtuple(**d)
+            wrapped_f.argtuple = collections.namedtuple('args', d.keys())
+        t = wrapped_f.argtuple(**d)
         with lock:
             value = wrapped_f.call_log.get(t, False)
         if value is False:

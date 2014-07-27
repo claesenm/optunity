@@ -38,6 +38,37 @@ communication session.
     as a subprocess to access functionality from non-Python environments.
     Do not import this module as a Python user.
 
+
+This module implements several use cases to provide the main Optunity API in
+other environments. It communicates with the external environment using JSON messages.
+
+We will discuss the use cases as if they are ordinary function calls. Parameter names
+are keys in the JSON root message.
+
+Requesting manuals
+-------------------
+
+:param solver_name: name of the solver whose manual is requested
+:type solver_name: string
+
+:result manual: the requested manual
+:type manual: list of strings (lines)
+:result solver_names: the names of all registered solvers (if ``solver_name`` was None)
+    or the name of the solver whose manual was requested
+:type list of strings:
+
+
+Maximize or minimize
+-----------------------
+
+Optimize
+---------
+
+
+Generate cross-validation folds
+---------------------------------
+
+
 .. moduleauthor:: Marc Claesen
 
 """
@@ -100,6 +131,41 @@ if __name__ == '__main__':
 
         msg = {'folds': folds}
         comm.send(comm.json_encode(msg))
+        exit(0)
+
+    elif startup_msg.get('maximize', None) or startup_msg.get('minimize', None):
+        if startup_msg.get('maximize', False):
+            kwargs = startup_msg['maximize']
+            solve_fun = optunity.maximize
+        else:
+            kwargs = startup_msg['minimize']
+            solve_fun = optunity.minimize
+
+        # prepare objective function
+        mgr = comm.EvalManager()
+        func = optunity.wrap_constraints(comm.make_piped_function(mgr),
+                                         startup_msg.get('default', None),
+                                         **startup_msg.get('constraints', {})
+                                         )
+        if startup_msg.get('call_log', False):
+            func = optunity.wrap_call_log(func, startup_msg['call_log'])
+        else:
+            func = functions.logged(func)
+
+        # solve problem
+        try:
+            solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
+        except EOFError:
+            msg = {'error_msg': 'Broken pipe.'}
+            comm.send(comm.json_encode(msg))
+            exit(1)
+
+        # send solution and exit
+        result = rslt._asdict()
+        result['solution'] = solution
+        result['solver'] = solver
+        result_json = comm.json_encode(result)
+        comm.send(result_json)
         exit(0)
 
     else:  # solving a given problem

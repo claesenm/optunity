@@ -52,6 +52,7 @@ import functools
 import timeit
 import sys
 import operator
+import collections
 
 # optunity imports
 from . import functions as fun
@@ -141,13 +142,16 @@ def suggest_solver(num_evals=50, solver_name=None, **kwargs):
     return suggestion
 
 
-def maximize(f, num_evals=50, solver_name=None, **kwargs):
+def maximize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
     """Basic function maximization routine. Maximizes ``f`` within
     the given box constraints.
 
     :param f: the function to be maximized
     :param num_evals: number of permitted function evaluations
     :param solver_name: name of the solver to use (optional)
+    :type solver_name: string
+    :param pmap: the map function to use
+    :type pmap: callable
     :param kwargs: box constraints, a dict of the following form
         ``{'parameter_name': [lower_bound, upper_bound], ...}``
     :returns: retrieved maximum, extra information and solver info
@@ -164,17 +168,21 @@ def maximize(f, num_evals=50, solver_name=None, **kwargs):
 
     suggestion = suggest_solver(num_evals, solver_name, **kwargs)
     solver = make_solver(**suggestion)
-    solution, details = optimize(solver, func, maximize=True, max_evals=num_evals)
+    solution, details = optimize(solver, func, maximize=True, max_evals=num_evals,
+                                 pmap=pmap)
     return solution, details, suggestion
 
 
-def minimize(f, num_evals=50, solver_name=None, **kwargs):
+def minimize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
     """Basic function minimization routine. Minimizes ``f`` within
     the given box constraints.
 
     :param f: the function to be minimized
     :param num_evals: number of permitted function evaluations
     :param solver_name: name of the solver to use (optional)
+    :type solver_name: string
+    :param pmap: the map function to use
+    :type pmap: callable
     :param kwargs: box constraints, a dict of the following form
         ``{'parameter_name': [lower_bound, upper_bound], ...}``
     :returns: retrieved minimum, extra information and solver info
@@ -191,7 +199,8 @@ def minimize(f, num_evals=50, solver_name=None, **kwargs):
 
     suggestion = suggest_solver(num_evals, solver_name, **kwargs)
     solver = make_solver(**suggestion)
-    solution, details = optimize(solver, func, maximize=False, max_evals=num_evals)
+    solution, details = optimize(solver, func, maximize=False, max_evals=num_evals,
+                                 pmap=pmap)
     return solution, details, suggestion
 
 
@@ -207,9 +216,6 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
     - ``solver_config`` is invalid to instantiate ``solver_name``
 
     """
-    ## FIXME: negating function values is fragile, since the function
-    # may already be logged by the user, in which case the log will
-    # be polluted with negated function values
 
     if max_evals > 0:
         f = fun.max_evals(max_evals)(func)
@@ -233,7 +239,10 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
         solution = operator.itemgetter(index)(f.call_log.keys())._asdict()
     time = timeit.default_timer() - time
 
-    optimum = f(**solution)
+    # FIXME: logged function's argtuple type remains None
+    t = collections.namedtuple('args', *solution.keys())
+#    optimum = f(**solution)
+    optimum = f.call_log[t(**solution)]
     num_evals += len(f.call_log)
 
     # use namedtuple to enforce uniformity in case of changes

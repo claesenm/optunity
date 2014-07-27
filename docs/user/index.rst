@@ -128,4 +128,4 @@ train-predict-score (TPS) chain
     /user/installation
     /user/solvers
     /user/cross_validation
-    /user/functions
+    /user/decorators

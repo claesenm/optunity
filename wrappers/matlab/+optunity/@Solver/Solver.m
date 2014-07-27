@@ -19,10 +19,19 @@ classdef Solver
        end % Solver constructor
        function [solution, details] = maximize(obj, f, varargin)
            % Maximizes f using this solver. Equivalent to:
-           % [solution, details] = optunity.maximize(obj, f, varargin);
-           % Please refer to optunity.maximize for more details.
-           [solution, details] = optunity.maximize(obj, f, varargin{:}); 
+           % Please refer to optunity.optimize for more details.
+           [solution, details] = optunity.optimize(obj, f, maximize, 'true', varargin{:}); 
        end % maximize
+       function [solution, details] = minimize(obj, f, varargin)
+           % Minimizes f using this solver. Equivalent to:
+           % Please refer to optunity.optimize for more details.
+           [solution, details] = optunity.optimize(obj, f, maximize, 'false', varargin{:}); 
+       end % minimize
+       function [solution, details] = optimize(obj, f, varargin)
+           % Optimize f using this solver. Equivalent to:
+           % Please refer to optunity.optimize for more details.
+           [solution, details] = optunity.optimize(obj, f, varargin{:}); 
+       end % optimize
        function result = toStruct(obj)
            % Returns a struct representation of the Solver.
            result = struct('solver', obj.name, 'config', obj.config);  
