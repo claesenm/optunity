@@ -113,6 +113,23 @@ Emulates :func:`optunity.maximize`.
 
 Request:
 
++----------+----------------------------------------------------------+------------+
+| Key      | Value                                                    | Optional   |
++==========+==========================================================+============+
+| maximize | dictionary:                                              | no         |
+|          |                                                          |            |
+|          | - **num_evals** number of permitted function evaluations | - no       |
+|          | - **box constraints** dictionary                         | - no       |
++----------+----------------------------------------------------------+------------+
+| call_log | a call log of previous function evaluations         | yes        |
++----------+-----------------------------------------------------+------------+
+| constraints | domain constraints on the objective function     | yes        |
+|             |                                                  |            |
+|             | - **ub_{oc} upper bound (open/closed)            | - no       |
+|             | - **lb_{oc} lower bound (open/closed)            | - no       |
+|             | - **range_{oc}{oc} interval bounds               | - no       |
++-------------+--------------------------------------------------+------------+
+
 
 Reply:
 
@@ -120,15 +137,20 @@ Reply:
 Minimize
 ---------
 
-Emulates :func:`optunity.minimize`.
 Identical to maximize (above) except that the initial message has the key
 ``minimize`` instead of ``maximize``.
 
+Emulates :func:`optunity.minimize`.
 
 Optimize
 ---------
 
 Emulates :func:`optunity.optimize`.
+
+
+Optimization related fields
+----------------------------
+
 
 
 .. moduleauthor:: Marc Claesen
