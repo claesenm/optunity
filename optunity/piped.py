@@ -48,14 +48,23 @@ are keys in the JSON root message.
 Requesting manuals
 -------------------
 
-:param solver_name: name of the solver whose manual is requested
-:type solver_name: string
+Request:
 
-:result manual: the requested manual
-:type manual: list of strings (lines)
-:result solver_names: the names of all registered solvers (if ``solver_name`` was None)
-    or the name of the solver whose manual was requested
-:type list of strings:
++-------------+----------------------------------------------------------+----------+
+| Parameter   | Description                                              | Optional |
++=============+==========================================================+==========+
+| solver_name | (string) name of the solver whose manual is requested    | yes      |
++-------------+----------------------------------------------------------+----------+
+
+Reply:
+
++--------------+------------------------------------------+-----------------+
+| Parameter    | Description                              | Type            |
++==============+==========================================+=================+
+| manual       | the manual that was requested            | list of strings |
+| solver_names | the names of all registered solver,      | list of strings |
+|              | or the solver used in the manual request |                 |
++-------------+-------------------------------------------+-----------------+
 
 
 Maximize or minimize
