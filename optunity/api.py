@@ -292,7 +292,7 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
 
     :param f: the function that will be constrained
     :type f: callable
-    :default: function value to default to in case of constraint violations
+    :param default: function value to default to in case of constraint violations
     :type default: number
     :param ub_o: open upper bound constraints, e.g. :math:`x < c`
     :type ub_o: dict
@@ -306,7 +306,6 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
         :math:`lb < x < ub`
     :type range_??: dict with 2-element lists as values ([lb, ub])
 
-    Example:
     >>> def f(x):
     ...     return x
     >>> fc = wrap_constraints(f, default=-1, range_cc={'x': [0, 1]})
