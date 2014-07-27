@@ -22,9 +22,9 @@ function. A solver determines an optimal tuple of hyperparameters.
 
 .. sidebar:: **Jump to**
 
-    * :doc:`Solver docs <user/solvers>`
-    * :doc:`Cross-validation <user/cross_validation>`
-    * :doc:`Function decorators <user/decorators>`
+    * :doc:`Solver docs </user/solvers>`
+    * :doc:`Cross-validation </user/cross_validation>`
+    * :doc:`Function decorators </user/decorators>`
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
@@ -70,16 +70,20 @@ please refer to the expert functions listed below or to submodules.
 Expert interface
 -----------------
 
-- :func:`optunity.suggest_solver`: suggests a solver and its configuration
-    Optunity will make suggestions based on the number of evaluations and
-    box constraints.
+The following functions are recommended for more advanced use of Optunity. This
+part of the API allows you to fully configure every detail about the provided solvers.
+In addition to more control in configuration, you can also perform parallel function
+evaluations via this interface (turned off by default due to problems in IPython).
+
 - :func:`optunity.optimize`: optimizes an objective function with given solver
     Some solvers are capable of vector evaluations. By default, the optimization
     is done through sequential function evaluations but this can be parallelized
     by specifying an appropriate ``pmap`` argument (cfr. :func:`optunity.parallel.pmap`).
 - :func:`optunity.make_solver`: constructs one of Optunity's registered solvers.
     See the solver-specific manuals for more information per solver.
-- :func:`optunity.manual`
+- :func:`optunity.suggest_solver`: suggests a solver and its configuration
+    Suggests a solver and configuration for a given tuning problem, based
+    on the permitted number of function evaluations and box constraints.
 
 
 Terminology
