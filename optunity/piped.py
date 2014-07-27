@@ -73,9 +73,9 @@ Reply:
 Generate cross-validation folds
 ---------------------------------
 
-Use the Python library to generate k-fold cross-validation folds.
-Emulates :func:`optunity.cross_validated`.
-This requires one message back and forth.
+Use the Python library to generate k-fold cross-validation folds. This requires one message back and forth.
+
+Emulates :func:`optunity.generate_folds`.
 
 Request:
 
@@ -83,6 +83,7 @@ Request:
 | Key            | Value                                               | Optional   |
 +================+=====================================================+============+
 | generate_folds | dictionary:                                         | no         |
+|                |                                                     |            |
 |                | - **num_instances** number of instances to consider | - no       |
 |                | - **num_folds** number of folds                     | - yes (10) |
 |                | - **num_iter** number of iterations                 | - yes (1)  |
