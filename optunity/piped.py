@@ -113,22 +113,22 @@ Emulates :func:`optunity.maximize`.
 
 Request:
 
-+----------+----------------------------------------------------------+------------+
-| Key      | Value                                                    | Optional   |
-+==========+==========================================================+============+
-| maximize | dictionary:                                              | no         |
-|          |                                                          |            |
-|          | - **num_evals** number of permitted function evaluations | - no       |
-|          | - **box constraints** dictionary                         | - no       |
-+----------+----------------------------------------------------------+------------+
-| call_log | a call log of previous function evaluations         | yes        |
-+----------+-----------------------------------------------------+------------+
-| constraints | domain constraints on the objective function     | yes        |
-|             |                                                  |            |
-|             | - **ub_{oc} upper bound (open/closed)            | - no       |
-|             | - **lb_{oc} lower bound (open/closed)            | - no       |
-|             | - **range_{oc}{oc} interval bounds               | - no       |
-+-------------+--------------------------------------------------+------------+
++-------------+----------------------------------------------------------+------------+
+| Key         | Value                                                    | Optional   |
++=============+==========================================================+============+
+| maximize    | dictionary:                                              | no         |
+|             |                                                          |            |
+|             | - **num_evals** number of permitted function evaluations | - no       |
+|             | - **box constraints** dictionary                         | - no       |
++-------------+----------------------------------------------------------+------------+
+| call_log    | a call log of previous function evaluations              | yes        |
++-------------+----------------------------------------------------------+------------+
+| constraints | domain constraints on the objective function             | yes        |
+|             |                                                          |            |
+|             | - **ub_{oc} upper bound (open/closed)                    | - yes      |
+|             | - **lb_{oc} lower bound (open/closed)                    | - yes      |
+|             | - **range_{oc}{oc} interval bounds                       | - yes      |
++-------------+----------------------------------------------------------+------------+
 
 
 Reply:
