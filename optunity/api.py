@@ -285,17 +285,33 @@ def wrap_call_log(f, call_dict):
     return f
 
 
-def wrap_constraints(f, default=None, **kwargs):
-    """Decorates f with all constraints listed in kwargs.
+def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
+                     lb_o=None, lb_c=None, range_oo=None,
+                     range_co=None, range_oc=None, range_cc=None):
+    """Decorates f with given input domain constraints.
 
-    constraint_dict may have the following keys:
+    :param f: the function that will be constrained
+    :type f: callable
+    :default: function value to default to in case of constraint violations
+    :type default: number
+    :param ub_o: open upper bound constraints, e.g. :math:`x < c`
+    :type ub_o: dict
+    :param ub_c: closed upper bound constraints, e.g. :math:`x \leq c`
+    :type ub_c: dict
+    :param lb_o: open lower bound constraints, e.g. :math:`x > c`
+    :type lb_o: dict
+    :param lb_c: closed lower bound constraints, e.g. :math:`x \geq c`
+    :type lb_c: dict
+    :param range_??: range constraints (? is either o or c, for open/closed)
+        :math:`lb < x < ub`
+    :type range_??: dict with 2-element lists as values ([lb, ub])
 
-    - ``ub_?``: upper bound
-    - ``lb_?``: lower bound
-    - ``range_??``: range'
-
-    where '?' can be either 'o' (open) or 'c' (closed).
-    The values of constraint_dict are dicts with argname-value pairs.
+    Example:
+    >>> def f(x):
+    ...     return x
+    >>> fc = wrap_constraints(f, default=-1, range_cc={'x': [0, 1]})
+    >>> fc(5)
+    -1
 
     """
     if not kwargs:
