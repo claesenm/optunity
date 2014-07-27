@@ -14,4 +14,20 @@ setup(
     install_requires=[
           'deap >= 1.0.1',
       ],
+    classifiers=[
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'Programming Language :: Python',
+    'Topic :: Scientific/Engineering',
+    'License :: OSI Approved :: BSD License'
+    'Topic :: Scientific/Engineering :: Artificial Intelligence'
+    'Topic :: Scientific/Engineering :: Information Analysis'
+    ],
+    platforms=['any'],
+    keywords=['machine learning', 'parameter tuning',
+              'hyperparameter optimization', 'meta-optimization',
+              'direct search', 'model selection'
+    ],
 )

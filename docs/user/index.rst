@@ -20,6 +20,12 @@ some tuple of hyperparameters. Specifying the objective function must be done by
 the user. The software offers a diverse set of solvers to optimize the objective
 function. A solver determines an optimal tuple of hyperparameters.
 
+.. sidebar:: **Jump to**
+
+    * :doc:`Solver docs <user/solvers>`
+    * :doc:`Cross-validation <user/cross_validation>`
+    * :doc:`Function decorators <user/decorators>`
+
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
 API documentation. If you are using a different environment, you can still get the
@@ -58,7 +64,8 @@ please refer to the expert functions listed below or to submodules.
         :doc:`/api/optunity.solvers` for more details.
 
 - :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
-    TODO
+    Wrap a function with cross-validation functionality. The way cross-validation
+    is performed is highly configurable, including support for strata and clusters.
 
 Expert interface
 -----------------
@@ -66,10 +73,13 @@ Expert interface
 - :func:`optunity.suggest_solver`: suggests a solver and its configuration
     Optunity will make suggestions based on the number of evaluations and
     box constraints.
-- :func:`optunity.optimize` 
-- :func:`optunity.make_solver`
+- :func:`optunity.optimize`: optimizes an objective function with given solver
+    Some solvers are capable of vector evaluations. By default, the optimization
+    is done through sequential function evaluations but this can be parallelized
+    by specifying an appropriate ``pmap`` argument (cfr. :func:`optunity.parallel.pmap`).
+- :func:`optunity.make_solver`: constructs one of Optunity's registered solvers.
+    See the solver-specific manuals for more information per solver.
 - :func:`optunity.manual`
-- :func:`optunity.cross_validated`
 
 
 Terminology
