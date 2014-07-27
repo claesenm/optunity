@@ -302,9 +302,18 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     :type lb_o: dict
     :param lb_c: closed lower bound constraints, e.g. :math:`x \geq c`
     :type lb_c: dict
-    :param range_??: range constraints (? is either o or c, for open/closed)
+    :param range_oo: range constraints (open lb and open ub)
         :math:`lb < x < ub`
-    :type range_??: dict with 2-element lists as values ([lb, ub])
+    :type range_oo: dict with 2-element lists as values ([lb, ub])
+    :param range_co: range constraints (closed lb and open ub)
+        :math:`lb < x < ub`
+    :type range_co: dict with 2-element lists as values ([lb, ub])
+    :param range_oc: range constraints (open lb and closed ub)
+        :math:`lb < x < ub`
+    :type range_oc: dict with 2-element lists as values ([lb, ub])
+    :param range_cc: range constraints (closed lb and closed ub)
+        :math:`lb < x < ub`
+    :type range_cc: dict with 2-element lists as values ([lb, ub])
 
     >>> def f(x):
     ...     return x
