@@ -306,13 +306,13 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
         :math:`lb < x < ub`
     :type range_oo: dict with 2-element lists as values ([lb, ub])
     :param range_co: range constraints (closed lb and open ub)
-        :math:`lb < x < ub`
+        :math:`lb \leq x < ub`
     :type range_co: dict with 2-element lists as values ([lb, ub])
     :param range_oc: range constraints (open lb and closed ub)
-        :math:`lb < x < ub`
+        :math:`lb < x \leq ub`
     :type range_oc: dict with 2-element lists as values ([lb, ub])
     :param range_cc: range constraints (closed lb and closed ub)
-        :math:`lb < x < ub`
+        :math:`lb \leq x leq ub`
     :type range_cc: dict with 2-element lists as values ([lb, ub])
 
     >>> def f(x):
@@ -322,6 +322,13 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     -1
 
     """
+    kwargs = locals()
+    del kwargs['f']
+    del kwargs['default']
+    for k, v in kwargs.items():
+        if v is None:
+            del kwargs[k]
+
     if not kwargs:
         return f
 

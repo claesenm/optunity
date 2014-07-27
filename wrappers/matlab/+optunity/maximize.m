@@ -69,7 +69,9 @@ while true
 end
 
 if isfield(reply, 'error_msg')
-    error(['Error: ', reply.error_msg]);
+    display('Oops ... something went wrong in Optunity');
+    display(['Last request: ', optunity.comm.json_encode(msg)]);
+    error(reply.error_msg);
 end
 
 solution = reply.solution;
