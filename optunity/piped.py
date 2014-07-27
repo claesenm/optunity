@@ -125,9 +125,9 @@ Request:
 +-------------+----------------------------------------------------------+------------+
 | constraints | domain constraints on the objective function             | yes        |
 |             |                                                          |            |
-|             | - **ub_{oc} upper bound (open/closed)                    | - yes      |
-|             | - **lb_{oc} lower bound (open/closed)                    | - yes      |
-|             | - **range_{oc}{oc} interval bounds                       | - yes      |
+|             | - **ub_{oc}** upper bound (open/closed)                  | - yes      |
+|             | - **lb_{oc}** lower bound (open/closed)                  | - yes      |
+|             | - **range_{oc}{oc}** interval bounds                     | - yes      |
 +-------------+----------------------------------------------------------+------------+
 
 
