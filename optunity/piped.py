@@ -58,6 +58,11 @@ Request:
 | manual | name of the solver whose manual we want or empty string    | no       |
 +--------+------------------------------------------------------------+----------+
 
+Examples::
+
+    {"manual": ""}
+    {"manual": "grid search"}
+
 Reply:
 
 +--------------+-----------------------------------------------+-----------------+
@@ -69,6 +74,7 @@ Reply:
 |              | requested or a list of all registered solvers |                 |
 +--------------+-----------------------------------------------+-----------------+
 
+Manuals are returned as a list of strings, each string is a line of the manual.
 
 Generate cross-validation folds
 ---------------------------------
@@ -96,15 +102,24 @@ Strata and clusters are sent as list (strata/clusters) of lists (instance indice
 .. note::
     strata and cluster indices must be 0-based
 
+Example::
+
+    {"generate_folds": {"num_instances": 10, "num_folds": 2, "num_iter": 5, "strata": [[1, 2], [3, 4]], "clusters": [[5, 6], [7, 8]]}}
+
 Reply:
 
-+--------------+---------------------+------------------------------------+
-| Key          | Value               | Type                               |
-+==============+=====================+====================================+
-| folds        | the resulting folds | list (iterations) of lists (folds) |
-+--------------+---------------------+------------------------------------+
++--------------+---------------------+---------------------------------------------------------+
+| Key          | Value               | Type                                                    |
++==============+=====================+=========================================================+
+| folds        | the resulting folds | list (iterations) of lists (folds) of lists (instances) |
++--------------+---------------------+---------------------------------------------------------+
 
 The inner lists contain the instance indices per fold (0-based indexing).
+
+Example::
+
+    {"folds": [[[2, 3, 0, 5, 8], [1, 4, 7, 6, 9]], [[2, 4, 7, 8, 0], [1, 3, 6, 9, 5]], [[2, 4, 9, 7, 8], [1, 3, 0, 5, 6]], [[1, 3, 7, 6, 5], [2, 4, 9, 8, 0]], [[2, 3, 5, 8, 0], [1, 4, 6, 9, 7]]]}
+
 
 Maximize
 ---------
