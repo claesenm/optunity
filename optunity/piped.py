@@ -209,7 +209,7 @@ Emulates :func:`optunity.make_solver`.
 |             | - **solver_name** name of the solver to be instantiated | - no     |
 |             | - everything necessary for the solver constructor       | - no     |
 |             |                                                         |          |
-|             | see :doc:`/api/optunity.solvers` for details           |          |
+|             | see :doc:`/api/optunity.solvers` for details.           |          |
 +-------------+---------------------------------------------------------+----------+
 
 Example::
