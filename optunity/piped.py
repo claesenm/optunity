@@ -193,6 +193,30 @@ Identical to maximize (above) except that the initial message has the key
 
 Emulates :func:`optunity.minimize`.
 
+
+Make solver
+------------
+
+Attempt to instantiate a solver from given configuration. This serves as a sanity-check.
+
+Emulates :func:`optunity.make_solver`.
+
++-------------+---------------------------------------------------------+----------+
+| Key         | Value                                                   | Optional |
++=============+=========================================================+==========+
+| make_solver | dictionary                                              | no       |
+|             |                                                         |          |
+|             | - **solver_name** name of the solver to be instantiated | - no     |
+|             | - everything necessary for the solver constructor       | - no     |
+|             |                                                         |          |
+|             | see :doc:`/api/optunity.solvers.` for details           |          |
++-------------+---------------------------------------------------------+----------+
+
+Optunity replies with one of two things:
+
+- ``{"success": true}``: the solver was correctly instantiated
+- ``{"error_msg": "..."}: instantiating the solver failed
+
 Optimize
 ---------
 
@@ -267,6 +291,19 @@ def fold_request(cv_opts):
     exit(0)
 
 
+def make_solver(solver_config):
+    try:
+        optunity.make_solver(**solver_config)
+    except KeyError as e:
+        msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
+        comm.send(comm.json_encode(msg))
+        exit(1)
+
+    msg = {'success': 'true'}
+    comm.send(comm.json_encode(msg))
+    exit(0)
+
+
 def prepare_fun(mgr, constraints, default, call_log):
     """Creates the objective function and wraps it with domain constraints
     and an existing call log, if applicable."""
@@ -337,6 +374,9 @@ if __name__ == '__main__':
         import optunity.cross_validation as cv
         cv_opts = startup_msg['generate_folds']
         fold_request(cv_opts)
+
+    elif not startup_msg.get('make_solver', None) == None:
+        make_solver(startup_msg['make_solver'])
 
     elif startup_msg.get('maximize', None) or startup_msg.get('minimize', None):
         if startup_msg.get('maximize', False):

@@ -13,7 +13,8 @@ assert(mod(numel(varargin), 2) == 0, ...
     'varargin should be of the form [key,value,...]');
 
 cfg = struct(varargin{:});
-msg = struct('solver', name, 'config', cfg);
+cfg.solver_name = name;
+msg = struct('make_solver', cfg);
 
 %% launch SOAP subprocess
 [m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
@@ -30,8 +31,5 @@ if isfield(reply, 'error_msg')
 end
 
 solver = optunity.Solver(name, cfg);
-
-% the optunity subprocess is automatically cleaned up by cleaner
-% the subprocess is killed and all pipes are closed
 
 end
