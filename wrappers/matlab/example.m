@@ -14,6 +14,12 @@ folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', st
 grid_solver = optunity.make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
 [grid_solution, grid_details] = optunity.optimize(grid_solver, f, 'return_call_log', true);
 
+%% simple API
+% maximization
+[max_solution, max_details, max_solver] = optunity.maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5]);
+% minimization
+[min_solution, min_details, min_solver] = optunity.minimize(f, 200, 'x', [-5, 5], 'y', [-5, 5]);
+
 %% optimize using random-search
 rnd_solver = optunity.make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], 'num_evals', 400);
 [rnd_solution, rnd_details] = optunity.optimize(rnd_solver, f, 'return_call_log', true);

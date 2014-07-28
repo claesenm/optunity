@@ -111,7 +111,16 @@ Maximize
 
 Emulates :func:`optunity.maximize`.
 
-Request:
+Using the simple maximize functionality involves sending an initial message with the
+arguments to :func:`optunity.maximize` as shown below.
+
+Subsequently, the solver will send objective function evaluation requests sequentially.
+These requests can be for scalar or vector evaluations (details below).
+
+When the solution is found, or the
+maximum number of evaluations is reached a final message is sent with all details.
+
+Setup request:
 
 +-------------+----------------------------------------------------------+------------+
 | Key         | Value                                                    | Optional   |
@@ -130,8 +139,42 @@ Request:
 |             | - **range_{oc}{oc}** interval bounds                     | - yes      |
 +-------------+----------------------------------------------------------+------------+
 
+After the initial setup message, Optunity will send objective function evaluation requests.
+These request may be for a scalar or a vector evaluation, and look like this:
 
-Reply:
+**Scalar evaluation request**: the message is a dictionary containing the hyperparameter
+names as keys and their associated values as values.
+
+An example request to evaluate f(x, y) in (x=1, y=2):
+
+.. highlight:: JSON
+
+    {"x": 1, "y": 2}
+
+
+**Vector evaluation request**: the message is a list of dictionaries with the same form as
+the dictionary of a scalar evaluation request.
+
+An example request to evaluate f(x, y) in (x=1, y=2) and (x=2, y=3):
+
+.. highlight:: JSON
+
+    [{"x": 1, "y": 2}, {"x": 2, "y": 3}]
+
+The replies to evaluation requests are simple:
+
+- scalar request: dictionary with key *value* and value the objective function value
+- vector request: dictionary with key *values* and value a list of function values
+
+.. note::
+
+    Results of vector evaluations must be returned in the same order as the request.
+
+
+When a solution is found, Optunity will send a final message with all necessary information
+and then exit. This final message contains the following:
+
+
 
 
 Minimize
@@ -166,58 +209,126 @@ from . import functions
 import optunity
 
 
+def manual_request(solver_name):
+    """Emulates :func:`optunity.manual`."""
+    if len(solver_name) == 0:
+        solver_name = None
+    try:
+        manual, solver_names = optunity.api._manual_lines(solver_name)
+    except KeyError:
+        msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
+        comm.send(comm.json_encode(msg))
+        print(startup_msg, file=sys.stderr)
+        exit(1)
+    except EOFError:
+        msg = {'error_msg': 'Broken pipe.'}
+        comm.send(comm.json_encode(msg))
+        exit(1)
+    msg = {'manual': manual, 'solver_names': solver_names}
+    comm.send(comm.json_encode(msg))
+    exit(0)
+
+
+def fold_request(cv_opts):
+    """Computes k-fold cross-validation folds.
+    Emulates :func:`optunity.cross_validated`."""
+    try:
+        num_instances = cv_opts['num_instances']
+    except KeyError:
+        msg = {'error_msg': 'number of instances num_instances must be set.'}
+        comm.send(comm.json_encode(msg))
+        print(startup_msg, file=sys.stderr)
+        exit(1)
+
+    num_folds = cv_opts.get('num_folds', 10)
+    strata = cv_opts.get('strata', None)
+    clusters = cv_opts.get('clusters', None)
+    num_iter = cv_opts.get('num_iter', 1)
+
+    idx2cluster = None
+    if clusters:
+        idx2cluster = cv.map_clusters(clusters)
+
+    folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
+                                     strata=strata, clusters=clusters,
+                                     idx2cluster=idx2cluster)
+             for _ in range(num_iter)]
+
+    msg = {'folds': folds}
+    comm.send(comm.json_encode(msg))
+    exit(0)
+
+
+def prepare_fun(mgr, constraints, default, call_log):
+    """Creates the objective function and wraps it with domain constraints
+    and an existing call log, if applicable."""
+    func = optunity.wrap_constraints(comm.make_piped_function(mgr),
+                                     default, **constraints)
+    if call_log:
+        func = optunity.wrap_call_log(func, call_log)
+    else:
+        func = functions.logged(func)
+    return func
+
+
+def max_or_min(solve_fun, kwargs, constraints, default, call_log):
+    """Emulates :func:`optunity.maximize` and :func:`optunity.minimize`."""
+    # prepare objective function
+    mgr = comm.EvalManager()
+    func = prepare_fun(mgr, constraints, default, call_log)
+
+    # solve problem
+    try:
+        solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
+    except EOFError:
+        msg = {'error_msg': 'Broken pipe.'}
+        comm.send(comm.json_encode(msg))
+        exit(1)
+
+    # send solution and exit
+    result = rslt._asdict()
+    result['solution'] = solution
+    result['solver'] = solver
+    result_json = comm.json_encode(result)
+    comm.send(result_json)
+    exit(0)
+
+
+def optimize(solver, constraints, default, call_log):
+    """Emulates :func:`optunity.optimize`."""
+    # prepare objective function
+    mgr = comm.EvalManager()
+    func = prepare_fun(mgr, constraints, default, call_log)
+
+    # solve problem
+    try:
+        solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
+    except EOFError:
+        msg = {'error_msg': 'Broken pipe.'}
+        comm.send(comm.json_encode(msg))
+        exit(1)
+
+    # send solution and exit
+    result = rslt._asdict()
+    result['solution'] = solution
+    result['solver'] = solver
+    result_json = comm.json_encode(result)
+    comm.send(result_json)
+    exit(0)
+
+
 if __name__ == '__main__':
     startup_json = comm.receive()
     startup_msg = comm.json_decode(startup_json)
 
     if not startup_msg.get('manual', None) == None:
         solver_name = startup_msg['manual']
-        if len(solver_name) == 0:
-            solver_name = None
-        try:
-            manual, solver_names = optunity.api._manual_lines(solver_name)
-        except KeyError:
-            msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
-            comm.send(comm.json_encode(msg))
-            print(startup_msg, file=sys.stderr)
-            exit(1)
-        except EOFError:
-            msg = {'error_msg': 'Broken pipe.'}
-            comm.send(comm.json_encode(msg))
-            exit(1)
-        msg = {'manual': manual, 'solver_names': solver_names}
-        comm.send(comm.json_encode(msg))
-        exit(0)
+        manual_request(solver_name)
 
     elif not startup_msg.get('generate_folds', None) == None:
         import optunity.cross_validation as cv
         cv_opts = startup_msg['generate_folds']
-
-        try:
-            num_instances = cv_opts['num_instances']
-        except KeyError:
-            msg = {'error_msg': 'number of instances num_instances must be set.'}
-            comm.send(comm.json_encode(msg))
-            print(startup_msg, file=sys.stderr)
-            exit(1)
-
-        num_folds = cv_opts.get('num_folds', 10)
-        strata = cv_opts.get('strata', None)
-        clusters = cv_opts.get('clusters', None)
-        num_iter = cv_opts.get('num_iter', 1)
-
-        idx2cluster = None
-        if clusters:
-            idx2cluster = cv.map_clusters(clusters)
-
-        folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
-                                         strata=strata, clusters=clusters,
-                                         idx2cluster=idx2cluster)
-                 for _ in range(num_iter)]
-
-        msg = {'folds': folds}
-        comm.send(comm.json_encode(msg))
-        exit(0)
+        fold_request(cv_opts)
 
     elif startup_msg.get('maximize', None) or startup_msg.get('minimize', None):
         if startup_msg.get('maximize', False):
@@ -227,32 +338,11 @@ if __name__ == '__main__':
             kwargs = startup_msg['minimize']
             solve_fun = optunity.minimize
 
-        # prepare objective function
-        mgr = comm.EvalManager()
-        func = optunity.wrap_constraints(comm.make_piped_function(mgr),
-                                         startup_msg.get('default', None),
-                                         **startup_msg.get('constraints', {})
-                                         )
-        if startup_msg.get('call_log', False):
-            func = optunity.wrap_call_log(func, startup_msg['call_log'])
-        else:
-            func = functions.logged(func)
+        max_or_min(solve_fun, kwargs,
+                   startup_msg.get('constraints', {}),
+                   startup_msg.get('default', None),
+                   startup_msg.get('call_log', None))
 
-        # solve problem
-        try:
-            solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
-        except EOFError:
-            msg = {'error_msg': 'Broken pipe.'}
-            comm.send(comm.json_encode(msg))
-            exit(1)
-
-        # send solution and exit
-        result = rslt._asdict()
-        result['solution'] = solution
-        result['solver'] = solver
-        result_json = comm.json_encode(result)
-        comm.send(result_json)
-        exit(0)
 
     else:  # solving a given problem
         mgr = comm.EvalManager()

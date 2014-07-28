@@ -164,11 +164,11 @@ def maximize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
     assert all([len(v) == 2 and v[0] < v[1]
                 for v in kwargs.values()]), 'Box constraints improperly specified: should be [lb, ub] pairs'
 
-    func = _wrap_hard_box_constraints(f, kwargs, sys.float_info.min)
+    f = _wrap_hard_box_constraints(f, kwargs, sys.float_info.min)
 
     suggestion = suggest_solver(num_evals, solver_name, **kwargs)
     solver = make_solver(**suggestion)
-    solution, details = optimize(solver, func, maximize=True, max_evals=num_evals,
+    solution, details = optimize(solver, f, maximize=True, max_evals=num_evals,
                                  pmap=pmap)
     return solution, details, suggestion
 
@@ -240,7 +240,7 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
     time = timeit.default_timer() - time
 
     # FIXME: logged function's argtuple type remains None
-    t = collections.namedtuple('args', *solution.keys())
+    t = collections.namedtuple('args', f.keys)
 #    optimum = f(**solution)
     optimum = f.call_log[t(**solution)]
     num_evals += len(f.call_log)

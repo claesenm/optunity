@@ -1,18 +1,20 @@
-function [solution, details] = maximize(f, num_evals, varargin)
-%MAXIMIZE: Maximizes f using the given solver and extra options.
+function [solution, details, solver] = maximize(f, num_evals, varargin)
+%MAXIMIZE: Maximizes f in num_evals evaluations within box constraints.
 %
 % This function accepts the following arguments:
 % - f: the objective function to be maximized
 % - varargin: a list of optional key:value pairs
 %   - solver_name: name of the solver to use (default '')
 %   - parallelize: (boolean) whether or not to parallelize evaluations
-%   (default true)
-%   - box constraints: pairs like this: ..., 'parameter name', [lb, ub], ...
+%       (default true)
+%   - box constraints: key-value pairs
+%       key: hyperparameter name
+%       value: [lower_bound, upper_bound]
 
 %% process varargin
 defaults = struct('solver_name', '', ...
     'parallelize', true);
-options = optunity.process_varargin(defaults, varargin);
+options = optunity.process_varargin(defaults, varargin, false);
 parallelize = options.parallelize;
 options = rmfield(options, 'parallelize');
 solver_name = options.solver_name;
@@ -33,17 +35,11 @@ pipe_send = @(data) optunity.comm.writepipe(m2py, optunity.comm.json_encode(data
 pipe_receive = @() optunity.comm.json_decode(optunity.comm.readpipe(py2m));
 
 %% initialize solver
-msg = struct('solver',solver.name,'config',solver.config, ...
-    'return_call_log', options.return_call_log, 'maximize', true);
-if isstruct(options.constraints)
-    msg.constraints = options.constraints;
-    if ~isnan(options.default)
-        msg.default = options.default;
-    end
-end
-if isstruct(options.call_log)
-    msg.call_log = options.call_log;
-end
+msg = options;
+msg.num_evals = num_evals;
+msg.solver_name = solver_name;
+
+msg = struct('maximize', msg);
 pipe_send(msg);
 
 %% iteratively send function evaluation results until solved
@@ -53,8 +49,8 @@ while true
     
     if isfield(reply, 'solution') || isfield(reply, 'error_msg')
         break;
-    end
-    
+    end    
+   
     if iscell(reply)
         results = zeros(numel(reply), 1);
         if parallelize
@@ -66,7 +62,14 @@ while true
                 results(ii) = f(reply{ii});
             end
         end
-        msg = struct('values', results);
+        
+        % make sure the json becomes [] instead of a scalar
+        % matlab automatically treats length-1 vectors as scalars
+        if isscalar(results)
+            msg = struct('values', [results, 0]); % ugly hack
+        else
+            msg = struct('values', results);
+        end
     else
         msg = struct('value', f(reply));
     end
@@ -82,5 +85,7 @@ end
 
 solution = reply.solution;
 details = reply;
+solver = details.solver;
+rmfield(details, 'solver');
 
 end

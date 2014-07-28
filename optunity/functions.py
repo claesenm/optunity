@@ -226,8 +226,10 @@ def logged(f):
         d = kwargs.copy()
         d.update(dict([('pos_' + str(i), item)
                        for i, item in enumerate(args)]))
-        if not wrapped_f.argtuple:
-            wrapped_f.argtuple = collections.namedtuple('args', d.keys())
+        if not wrapped_f.keys:
+            with lock:
+                wrapped_f.keys.extend(d.keys())
+                wrapped_f.argtuple = collections.namedtuple('args', wrapped_f.keys)
         t = wrapped_f.argtuple(**d)
         with lock:
             value = wrapped_f.call_log.get(t, False)
@@ -237,7 +239,8 @@ def logged(f):
                 wrapped_f.call_log[t] = value
         return value
     wrapped_f.call_log = collections.OrderedDict()
-    wrapped_f.argtuple = None
+    wrapped_f.keys = []
+    wrapped_f.argtuple = None  # FIXME: clean up
     return wrapped_f
 
 

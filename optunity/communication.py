@@ -88,10 +88,10 @@ class EvalManager(object):
         self._queue = None
 
         # lock to use to add evaluations to the queue
-        self._add_lock = multiprocessing.Lock()
+        self._queue_lock = multiprocessing.Lock()
 
         # lock to get results
-        self._get_lock = multiprocessing.Lock()
+        self._result_lock = multiprocessing.Lock()
 
         # used to check whether Future started running
         self._semaphore = None
@@ -162,11 +162,11 @@ class EvalManager(object):
 
     def add_to_queue(self, **kwargs):
         try:
-            self.add_lock.acquire()
+            self.queue_lock.acquire()
             self.queue.append(kwargs)
             idx = len(self.queue) - 1
         finally:
-            self.add_lock.release()
+            self.queue_lock.release()
         return idx
 
     @property
@@ -178,20 +178,20 @@ class EvalManager(object):
         return self._queue
 
     @property
-    def add_lock(self):
-        return self._add_lock
+    def queue_lock(self):
+        return self._queue_lock
 
     def get(self, number):
         try:
-            self._get_lock.acquire()
+            self._result_lock.acquire()
             value = self._results[number]
         finally:
-            self._get_lock.release()
+            self._result_lock.release()
         return value
 
     def flush_queue(self):
         self._results = []
-        if self.queue:
+        if self._queue:
             json_data = json_encode(self.queue)
             send(json_data)
 
@@ -201,7 +201,6 @@ class EvalManager(object):
                 sys.stderr('ERROR: ' + decoded['error'])
                 sys.exit(1)
             self._results = decoded['values']
-        return None
 
 
 def make_piped_function(mgr):
