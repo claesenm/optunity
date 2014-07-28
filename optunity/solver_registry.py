@@ -75,7 +75,7 @@ def manual():
     manual.append(' ')
     manual.append("For a solver-specific manual, include its name in the request.")
     manual.append("For more detailed info, please consult the Optunity user wiki at:")
-    manual.append("https://github.com/claesenm/optunity/wiki/User-homepage")
+    manual.append("http://optunity.readthedocs.org/en/latest/")
     return manual
 
 
