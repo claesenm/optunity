@@ -122,22 +122,25 @@ maximum number of evaluations is reached a final message is sent with all detail
 
 Setup request:
 
-+-------------+----------------------------------------------------------+------------+
-| Key         | Value                                                    | Optional   |
-+=============+==========================================================+============+
-| maximize    | dictionary:                                              | no         |
-|             |                                                          |            |
-|             | - **num_evals** number of permitted function evaluations | - no       |
-|             | - **box constraints** dictionary                         | - no       |
-+-------------+----------------------------------------------------------+------------+
-| call_log    | a call log of previous function evaluations              | yes        |
-+-------------+----------------------------------------------------------+------------+
-| constraints | domain constraints on the objective function             | yes        |
-|             |                                                          |            |
-|             | - **ub_{oc}** upper bound (open/closed)                  | - yes      |
-|             | - **lb_{oc}** lower bound (open/closed)                  | - yes      |
-|             | - **range_{oc}{oc}** interval bounds                     | - yes      |
-+-------------+----------------------------------------------------------+------------+
++-------------+-------------------------------------------------------------+----------+
+| Key         | Value                                                       | Optional |
++=============+=============================================================+==========+
+| maximize    | dictionary:                                                 | no       |
+|             |                                                             |          |
+|             | - **num_evals** number of permitted function evaluations    | - no     |
+|             | - **box constraints** dictionary                            | - no     |
++-------------+-------------------------------------------------------------+----------+
+| call_log    | a call log of previous function evaluations                 | yes      |
++-------------+-------------------------------------------------------------+----------+
+| constraints | domain constraints on the objective function                | yes      |
+|             |                                                             |          |
+|             | - **ub_{oc}** upper bound (open/closed)                     | - yes    |
+|             | - **lb_{oc}** lower bound (open/closed)                     | - yes    |
+|             | - **range_{oc}{oc}** interval bounds                        | - yes    |
++-------------+-------------------------------------------------------------+----------+
+| default     | number, default function value if constraints are violated  | yes      |
++-------------+-------------------------------------------------------------+----------+
+
 
 After the initial setup message, Optunity will send objective function evaluation requests.
 These request may be for a scalar or a vector evaluation, and look like this:
@@ -220,16 +223,91 @@ Example::
 Optunity replies with one of two things:
 
 - ``{"success": true}``: the solver was correctly instantiated
-- ``{"error_msg": "..."}: instantiating the solver failed
+- ``{"error_msg": "..."}``: instantiating the solver failed
 
 Optimize
 ---------
 
+Using the optimize functionality involves sending an initial message with the
+arguments to :func:`optunity.optimize` as shown below.
+
+Subsequently, the solver will send objective function evaluation requests sequentially.
+These requests can be for scalar or vector evaluations (details below).
+
+When the solution is found, or the
+maximum number of evaluations is reached a final message is sent with all details.
+
 Emulates :func:`optunity.optimize`.
 
++-------------+-----------------------------------------------------------------+----------+
+| Key         | Value                                                           | Optional |
++=============+=================================================================+==========+
+| optimize    | dictionary                                                      | no       |
+|             |                                                                 |          |
+|             | - **max_evals**: maximum number of evaluations, or 0            | - yes    |
+|             | - **maximize**: boolean, indicates maximization (default: true) | - yes    |
++-------------+-----------------------------------------------------------------+----------+
+| solver      | dictionary                                                      | no       |
+|             |                                                                 |          |
+|             | - **solver_name**: name of the solver                           | - no     |
+|             | - everything necessary for the solver constructor               | - no     |
+|             |                                                                 |          |
+|             | see :doc:`/api/optunity.solvers` for details.                   |          |
++-------------+-----------------------------------------------------------------+----------+
+| call_log    | a call log of previous function evaluations                     | yes      |
++-------------+-----------------------------------------------------------------+----------+
+| constraints | domain constraints on the objective function                    | yes      |
+|             |                                                                 |          |
+|             | - **ub_{oc}** upper bound (open/closed)                         | - yes    |
+|             | - **lb_{oc}** lower bound (open/closed)                         | - yes    |
+|             | - **range_{oc}{oc}** interval bounds                            | - yes    |
++-------------+-----------------------------------------------------------------+----------+
+| default     | number, default function value if constraints are violated      | yes      |
++-------------+-----------------------------------------------------------------+----------+
 
-Optimization related fields
-----------------------------
+After the initial setup message, Optunity will send objective function evaluation requests.
+These request may be for a scalar or a vector evaluation, and look like this:
+
+**Scalar evaluation request**: the message is a dictionary containing the hyperparameter
+names as keys and their associated values as values.
+
+An example request to evaluate f(x, y) in (x=1, y=2)::
+
+    {"x": 1, "y": 2}
+
+
+**Vector evaluation request**: the message is a list of dictionaries with the same form as
+the dictionary of a scalar evaluation request.
+
+An example request to evaluate f(x, y) in (x=1, y=2) and (x=2, y=3)::
+
+    [{"x": 1, "y": 2}, {"x": 2, "y": 3}]
+
+The replies to evaluation requests are simple:
+
+- scalar request: dictionary with key *value* and value the objective function value
+- vector request: dictionary with key *values* and value a list of function values
+
+.. note::
+
+    Results of vector evaluations must be returned in the same order as the request.
+
+
+When a solution is found, Optunity will send a final message with all necessary information
+and then exit. This final message contains the following:
+
++----------+--------------------------------------------------------+--------------+
+| Key      | Value                                                  | Type         |
++==========+========================================================+==============+
+| solution | the optimal hyperparameters                            | dictionary   |
++----------+--------------------------------------------------------+--------------+
+| details  | various details about the solving process              | dictionary   |
+|          |                                                        |              |
+|          | - **optimum**: f(solution)                             | - number     |
+|          | - **stats**: number of evaluations and wall clock time | - dictionary |
+|          | - **call_log**: record of all function evaluations     | - dictionary |
+|          | - **report**: optional solver report                   | - optional   |
++----------+--------------------------------------------------------+--------------+
 
 
 
@@ -302,6 +380,7 @@ def make_solver(solver_config):
     except KeyError as e:
         msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
         comm.send(comm.json_encode(msg))
+        print(solver_config, file=sys.stderr)
         exit(1)
 
     msg = {'success': 'true'}
@@ -344,15 +423,25 @@ def max_or_min(solve_fun, kwargs, constraints, default, call_log):
     exit(0)
 
 
-def optimize(solver, constraints, default, call_log):
+def optimize(solver_config, constraints, default, call_log, maximize, max_evals):
     """Emulates :func:`optunity.optimize`."""
     # prepare objective function
     mgr = comm.EvalManager()
     func = prepare_fun(mgr, constraints, default, call_log)
 
+    # make the solver
+    try:
+        solver = optunity.make_solver(**solver_config)
+    except KeyError as e:
+        msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
+        comm.send(comm.json_encode(msg))
+        print(solver_config, file=sys.stderr)
+        exit(1)
+
     # solve problem
     try:
-        solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
+        solution, rslt = optunity.optimize(solver, func, maximize=maximize,
+                                           max_evals=max_evals, pmap=mgr.pmap)
     except EOFError:
         msg = {'error_msg': 'Broken pipe.'}
         comm.send(comm.json_encode(msg))
@@ -361,7 +450,6 @@ def optimize(solver, constraints, default, call_log):
     # send solution and exit
     result = rslt._asdict()
     result['solution'] = solution
-    result['solver'] = solver
     result_json = comm.json_encode(result)
     comm.send(result_json)
     exit(0)
@@ -371,19 +459,19 @@ if __name__ == '__main__':
     startup_json = comm.receive()
     startup_msg = comm.json_decode(startup_json)
 
-    if not startup_msg.get('manual', None) == None:
+    if 'manual' in startup_msg:
         solver_name = startup_msg['manual']
         manual_request(solver_name)
 
-    elif not startup_msg.get('generate_folds', None) == None:
+    elif 'generate_folds' in startup_msg:
         import optunity.cross_validation as cv
         cv_opts = startup_msg['generate_folds']
         fold_request(cv_opts)
 
-    elif not startup_msg.get('make_solver', None) == None:
+    elif 'make_solver' in startup_msg:
         make_solver(startup_msg['make_solver'])
 
-    elif startup_msg.get('maximize', None) or startup_msg.get('minimize', None):
+    elif 'maximize' in startup_msg or 'minimize' in startup_msg:
         if startup_msg.get('maximize', False):
             kwargs = startup_msg['maximize']
             solve_fun = optunity.maximize
@@ -396,6 +484,22 @@ if __name__ == '__main__':
                    startup_msg.get('default', None),
                    startup_msg.get('call_log', None))
 
+    elif 'optimize' in startup_msg:
+        max_evals = startup_msg['optimize'].get('max_evals', 0)
+        maximize = startup_msg['optimize'].get('maximize', True)
+
+        # sanity check
+        if not 'solver' in startup_msg:
+            msg = {'error_msg': 'No solver specified in startup message.'}
+            comm.send(comm.json_encode(msg))
+            print(startup_msg, file=sys.stderr)
+            exit(1)
+
+        optimize(startup_msg['solver'],
+                 startup_msg.get('constraints', {}),
+                 startup_msg.get('default', None),
+                 startup_msg.get('call_log', None),
+                 maximize, max_evals)
 
     else:  # solving a given problem
         mgr = comm.EvalManager()

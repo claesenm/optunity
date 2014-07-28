@@ -34,7 +34,8 @@ classdef Solver
        end % optimize
        function result = toStruct(obj)
            % Returns a struct representation of the Solver.
-           result = struct('solver', obj.name, 'config', obj.config);  
+           result = obj.config;
+           result.solver_name = obj.name;
        end % toStruct
    end % methods
 end % Solver class
