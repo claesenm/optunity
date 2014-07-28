@@ -145,9 +145,7 @@ These request may be for a scalar or a vector evaluation, and look like this:
 **Scalar evaluation request**: the message is a dictionary containing the hyperparameter
 names as keys and their associated values as values.
 
-An example request to evaluate f(x, y) in (x=1, y=2):
-
-.. highlight:: JSON
+An example request to evaluate f(x, y) in (x=1, y=2)::
 
     {"x": 1, "y": 2}
 
@@ -155,9 +153,7 @@ An example request to evaluate f(x, y) in (x=1, y=2):
 **Vector evaluation request**: the message is a list of dictionaries with the same form as
 the dictionary of a scalar evaluation request.
 
-An example request to evaluate f(x, y) in (x=1, y=2) and (x=2, y=3):
-
-.. highlight:: JSON
+An example request to evaluate f(x, y) in (x=1, y=2) and (x=2, y=3)::
 
     [{"x": 1, "y": 2}, {"x": 2, "y": 3}]
 
