@@ -86,6 +86,6 @@ end
 solution = reply.solution;
 details = reply;
 solver = details.solver;
-rmfield(details, 'solver');
+details = rmfield(details, 'solver');
 
 end

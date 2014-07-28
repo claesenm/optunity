@@ -170,8 +170,20 @@ The replies to evaluation requests are simple:
 When a solution is found, Optunity will send a final message with all necessary information
 and then exit. This final message contains the following:
 
-
-
++----------+------------------------------------------------------+------------+
+| Key      | Value                                                | Type       |
++==========+======================================================+============+
+| solution | the optimal hyperparameters                          | dictionary |
++----------+------------------------------------------------------+------------+
+| details  | various details about the solving process            | dictionary |
+|          |                                                      |            |
+|          | - *optimum*: f(solution)                             | number     |
+|          | - *stats*: number of evaluations and wall clock time | dictionary |
+|          | - *call_log*: record of all function evaluations     | dictionary |
+|          | - *report*: optional solver report                   |            |
++----------+------------------------------------------------------+------------+
+| solver   | information about the solver that was used           | dictionary |
++----------+------------------------------------------------------+------------+
 
 Minimize
 ---------
