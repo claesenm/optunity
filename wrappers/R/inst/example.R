@@ -1,5 +1,4 @@
-source('optunity.R')
-
+library("optunity")
 
 ## fold generation
 strata <- list(c(1,2,3), c(6,7,8,9))
