@@ -1,4 +1,3 @@
-source("comm.R")
 
 manual <- function(solver_name=''){
     cons <- launch()

@@ -1,4 +1,3 @@
-library("rjson")
 
 # TODO: fix hardcoded path
 py2r_name = "/tmp/py2r_pipe"

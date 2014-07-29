@@ -3,7 +3,7 @@ Version: 0.1-1
 Title: Optunity provides optimizers for hyperparameter tuning
 Description: Optunity is a library containing various optimizers for hyperparameter tuning.
 Authors@R: c(person("Jaak", "Simm", role = c("aut", "cre"), email = "jaak.simm@gmail.com"), person("Marc", "Claesen", role = c("aut") ), person("Dusan", "Popovic", role = c("aut") ))
-Depends: cvTools
+Depends: rjson
 Suggests: testthat
 SystemRequirements: Python (2.6, 2.7, or 3)
 License: BSD_3_clause
