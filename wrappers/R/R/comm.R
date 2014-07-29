@@ -26,7 +26,10 @@ launch <- function(){
     # FIXME: fifo does not exist on windows
     system(paste('rm -f',py2r_name,sep=' '))
     system(paste('mkfifo',py2r_name,sep=" "))
-    cmd <- paste('python -m optunity.piped >',py2r_name,sep=' ')
+    optunitydir <- find.package("optunity")
+    cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s'", 
+                   optunitydir, 
+                   py2r_name)
     r2py <- pipe(cmd, 'w')
     py2r <- fifo(py2r_name,'r', blocking=TRUE)
     conn <- list(py2r = py2r, r2py = r2py, py2r_name=py2r_name)
