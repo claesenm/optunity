@@ -6,7 +6,7 @@ Authors@R: c(person("Jaak", "Simm", role = c("aut", "cre"), email = "jaak.simm@g
 Depends: cvTools
 Suggests: testthat
 SystemRequirements: Python (2.6, 2.7, or 3)
-License: BSD
+License: BSD_3_clause
 URL: http://optunity.org
 Packaged: 2014-07-29 11:16:12 UTC; wucloud
 Maintainer: Jaak Simm <jaak.simm@gmail.com>
