@@ -39,7 +39,7 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-solve <- function(solver_name, solver_config, f,
+tune <- function(solver_name, solver_config, f,
                   constraints = NaN, call_log = NaN,
                   return_call_log = FALSE,
                   default = NaN){
