@@ -241,8 +241,11 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
 
     # FIXME: logged function's argtuple type remains None
     t = collections.namedtuple('args', f.keys)
+    print(f.keys)
+    print(solution)
 #    optimum = f(**solution)
     optimum = f.call_log[t(**solution)]
+#    optimum = f.call_log[solution]
     num_evals += len(f.call_log)
 
     # use namedtuple to enforce uniformity in case of changes

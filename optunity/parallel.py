@@ -83,6 +83,8 @@ def pmap(f, *args):
     # FIXME: strong coupling between pmap and functions.logged
     if hasattr(f, 'call_log'):
         keys = res[0][3]
+        if not f.keys:
+            f.keys.extend(keys)
         if f.argtuple is None:
             f.argtuple = collections.namedtuple('args', keys)
         for _, _, d, _ in sorted(res):
