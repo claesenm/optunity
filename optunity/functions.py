@@ -228,7 +228,6 @@ def logged(f):
                        for i, item in enumerate(args)]))
         if not wrapped_f.keys:
             with lock:
-                print('updating keys')
                 wrapped_f.keys.extend(d.keys())
                 wrapped_f.argtuple = collections.namedtuple('args', wrapped_f.keys)
         if wrapped_f.argtuple is None:
