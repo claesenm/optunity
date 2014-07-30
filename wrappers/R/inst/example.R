@@ -1,5 +1,4 @@
-source('optunity.R')
-
+library("optunity")
 
 ## fold generation
 strata <- list(c(1,2,3), c(6,7,8,9))
@@ -12,4 +11,4 @@ manual()
 ## solver demo
 f <- function(x, y) return (-x^2-y^2)
 cfg <- list(x = seq(-5, 5, by=0.5), y = seq(-5, 5, by=0.5))
-result <- solve('grid search', cfg, f, return_call_log=TRUE)
+result <- tune('grid search', cfg, f, return_call_log=TRUE)
