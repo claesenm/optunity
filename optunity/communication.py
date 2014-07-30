@@ -38,6 +38,8 @@ import sys
 import itertools
 from . import functions
 from . import parallel
+import math
+
 
 import multiprocessing
 import threading
@@ -80,9 +82,17 @@ def receive(channel=sys.stdin):
 
 class EvalManager(object):
 
-    def __init__(self):
+    def __init__(self, max_vectorized=100):
+        """Constructs an EvalManager object.
+
+        :param max_vectorized: the maximum size of a vector evaluation
+            larger vectorizations will be chunked
+        :type max_vectorized: int
+
+        """
         # are we doing a parallel function evaluation?
         self._vectorized = False
+        self._max_vectorized = max_vectorized
 
         # the queue used for parallel evaluations
         self._queue = None
@@ -100,6 +110,10 @@ class EvalManager(object):
         self._processed_semaphore = None
 
     @property
+    def max_vectorized(self):
+        return self._max_vectorized
+
+    @property
     def cv(self):
         return self._cv
 
@@ -112,6 +126,27 @@ class EvalManager(object):
         return self._processed_semaphore
 
     def pmap(self, f, *args):
+        """Performs vector evaluations through pipes.
+
+        :param f: the objective function (piped_function_eval)
+        :type f: callable
+        :param args: function arguments
+        :type args: iterables
+
+        The vector evaluation is sent in chunks of size self.max_vectorized.
+
+        """
+        argslist = zip(*args)
+        results = []
+
+        # partition the vector evaluation in chunks <= self.max_vectorized
+        for idx in range(int(math.ceil(1.0 * len(argslist) / self.max_vectorized))):
+            chunk = argslist[idx * self.max_vectorized:(idx + 1) * self.max_vectorized]
+            results.extend(self._vector_eval(f, *zip(*chunk)))
+
+        return results
+
+    def _vector_eval(self, f, *args):
         self._queue = []
         self._vectorized = True
         self._semaphore = multiprocessing.Semaphore(0)
