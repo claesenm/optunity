@@ -10,6 +10,6 @@ License: BSD_3_clause
 URL: http://optunity.org
 Packaged: 2014-07-29 11:16:12 UTC; wucloud
 Maintainer: Jaak Simm <jaak.simm@gmail.com>
-NeedsCompilation: yes
+NeedsCompilation: no
 Repository: CRAN
 Date/Publication: 2014-07-29 16:06:15
