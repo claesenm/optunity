@@ -375,13 +375,8 @@ def fold_request(cv_opts):
     clusters = cv_opts.get('clusters', None)
     num_iter = cv_opts.get('num_iter', 1)
 
-    idx2cluster = None
-    if clusters:
-        idx2cluster = cv.map_clusters(clusters)
-
     folds = [optunity.generate_folds(num_instances, num_folds=num_folds,
-                                     strata=strata, clusters=clusters,
-                                     idx2cluster=idx2cluster)
+                                     strata=strata, clusters=clusters)
              for _ in range(num_iter)]
 
     msg = {'folds': folds}
