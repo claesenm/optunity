@@ -49,6 +49,7 @@ import itertools as it
 import functools
 import collections
 import operator as op
+import array
 
 
 __all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
@@ -74,20 +75,6 @@ def random_permutation(data):
     return d
 
 
-def map_clusters(clusters):
-    """Maps data instance indices to cluster indices.
-
-    :param clusters: list of lists of instance indices
-    :returns: a dictionary mapping instance indices to clusters
-    """
-    idx2cluster = collections.defaultdict(collections.deque)
-    if clusters:
-        for cluster, indices in enumerate(clusters):
-            for index in indices:
-                idx2cluster[index].append(cluster)
-    return idx2cluster
-
-
 def strata_by_labels(labels):
     """Constucts a list of strata (lists) based on unique values of ``labels``.
 
@@ -97,10 +84,23 @@ def strata_by_labels(labels):
     return [list(zip(*g)[0])
             for _, g in it.groupby(enumerate(labels), op.itemgetter(1))]
 
+def _fold_sizes(num_rows, num_folds):
+    """Generates fold sizes to partition specified number of rows into number of folds.
 
-# TODO: implement support for clusters
-def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
-                   idx2cluster=None):
+    :param num_rows: number of rows (instances)
+    :type num_rows: integer
+    :param num_folds: number of folds
+    :type num_folds: integer
+    :returns: an array.array of fold sizes (of length num_folds)
+
+    """
+    sizes = array.array('i', [0] * num_folds)
+    for i in range(num_folds):
+        sizes[i] = int(math.floor(float(num_rows - sum(sizes)) / (num_folds - i)))
+    return sizes
+
+
+def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
     """Generates folds for a given number of rows.
 
     :param num_rows: number of data instances
@@ -111,59 +111,91 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None,
     :param clusters: (optional) list of lists indicating clustered instances.
         Clustered instances must be placed in a single fold to avoid
         information leaks.
-    :param idx2cluster: (optional) mapping of instance indices to cluster ids.
     :returns: a list of folds, each fold is a list of instance indices
 
     .. warning::
-        Returned folds are not necessarily of the same size, but should be
-        comparable. Size differences may grow for large numbers of (small) strata.
+        Instances in strata are not necessarily spread out over all folds. Some
+        folds may already be full due to clusters. This effect should be negligible.
+
     """
 
-    # FIXME: current partitioning has some issues
-    # fold sizes not necessarily (close to) equal
-    # if many small strata exist
-    def get_folds(rows, num_folds, require=False):
-        """Partitions rows in num_folds.
+    # sizes per fold and initialization of folds
+    sizes = _fold_sizes(num_rows, num_folds)
+    folds = [[] for _ in range(num_folds)]
 
-        If require is true, len(rows) > num_folds or an exception is raised.
-        """
-        if require and num_folds > len(rows):
-            raise ValueError
+    # the folds that still need to be filled
+    fill_queue = set(range(num_folds))
 
-        folds = [None] * num_folds
-        idx = random_permutation(rows)
-        for fold in range(num_folds):
-            fold_size = int(len(idx) / (num_folds - fold))
-            folds[fold] = idx[:fold_size]
-            del idx[:fold_size]
+    # the instances that still need to be assigned
+    instances = set(range(num_rows))
 
-        # permute so the largest folds are not always at the back
-        return random_permutation(folds)
+    if not strata:
+        strata = []
 
-    if clusters and not idx2cluster:
-        idx2cluster = map_clusters(clusters)
+    if not clusters:
+        clusters = []
 
-    if strata:  # stratified cross-validation
-        ## keep lists per stratum + 1 extra for no-care instances
-        permuted_strata = map(random_permutation, strata)
-        nocares = list(set(range(num_rows)) - set(it.chain(*strata)))
+    # instances not in any stratum/cluster are treated as a final stratum
+    if strata:
+        assigned = set(it.chain(*strata))
+    else:
+        assigned = set()
+    if clusters:
+        assigned.update(it.chain(*clusters))
 
-        # we  do not require points of each stratum in each fold,
-        # since strata can be smaller than number of folds
-        folds_per_stratum = map(lambda x: get_folds(x, num_folds, False),
-                                permuted_strata)
-        # nocare points need not be in every fold
-        folds_nocare = get_folds(nocares, num_folds, False)
+    if assigned:
+        strata.append(filter(lambda x: x not in assigned, instances))
+    else:
+        strata.append(list(instances))
 
-        # merge folds across strata
-        folds_per_stratum.append(folds_nocare)
-        folds = [list(it.chain(*x)) for x in zip(*folds_per_stratum)]
+    if clusters:
+        # sort clusters by size
+        sorted_cluster_indices, _ = zip(*sorted(enumerate(clusters),
+                                                key=lambda x: len(x[1]),
+                                                reverse=True))
 
-    else:  # no stratification required
-        folds = get_folds(range(num_rows), num_folds, True)
+        # assign clusters
+        for cluster_idx in sorted_cluster_indices:
+            # retrieve eligible folds: folds that will not surpass maximum
+            # when we assign given cluster to them
+            cluster = clusters[cluster_idx]
+            cluster_size = len(cluster)
+            eligible = filter(lambda x: len(folds[x]) + cluster_size <= sizes[x],
+                              fill_queue)
+
+            if not eligible:
+                raise ValueError('Unable to assign all clusters to folds.')
+
+            # choose a fold at random
+            fold_idx = random.choice(eligible)
+            folds[fold_idx].extend(cluster)
+
+            # update instances to-be-assigned
+            instances.difference_update(cluster)
+
+            # remove fold from fill_queue if it is full
+            if len(folds[fold_idx]) >= sizes[fold_idx]:
+                fill_queue.remove(fold_idx)
+
+    # assign strata
+    for stratum in strata:
+        stratum = random_permutation(filter(lambda x: x in instances, stratum))
+        while stratum:
+            eligible = filter(lambda x: len(folds[x]) < sizes[x], fill_queue)
+            eligible = random_permutation(eligible)
+
+            if not eligible:
+                raise ValueError('Unable to assign all instances to folds.')
+
+            for instance_idx, fold_idx in zip(stratum[:], eligible):
+                folds[fold_idx].append(instance_idx)
+                if len(folds[fold_idx]) >= sizes[fold_idx]:
+                    fill_queue.remove(fold_idx)
+                instances.remove(instance_idx)
+
+            stratum = stratum[len(eligible):]
 
     return folds
-
 
 def mean(x):
     return float(sum(x)) / len(x)
@@ -202,7 +234,6 @@ class cross_validated_callable(object):
         self._y = y
         self._strata = strata
         self._clusters = clusters
-        self._idx2cluster = map_clusters(clusters)
         # TODO: sanity check between strata & clusters? define what is allowed
         self._regenerate_folds = regenerate_folds
         self._f = f
@@ -212,8 +243,7 @@ class cross_validated_callable(object):
             assert (len(folds[0] == num_folds)), 'Number of folds does not match num_folds.'
             self._folds = folds
         else:
-            self._folds = [generate_folds(len(x), num_folds, self.strata,
-                                          self.clusters, self.idx2cluster)
+            self._folds = [generate_folds(len(x), num_folds, self.strata, self.clusters)
                            for _ in range(num_iter)]
         functools.update_wrapper(self, f)
 
@@ -241,14 +271,6 @@ class cross_validated_callable(object):
     def clusters(self):
         """Clusters that were used to compute folds."""
         return self._clusters
-
-    @property
-    def idx2cluster(self):
-        """A mapping of data instances to cluster ids.
-
-        cluster ids are stored in a list, since single
-        instances may occur in several clusters."""
-        return self._idx2cluster
 
     @property
     def x(self):
@@ -352,3 +374,4 @@ if __name__ == '__main__':
         '''floopsie docstring'''
         print(x_train)
         return 0
+
