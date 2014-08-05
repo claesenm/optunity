@@ -30,7 +30,7 @@ nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
 if nm_available
-    nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'xtol', 1e-4);
+    nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
     [nm_solution, nm_details] = optunity.optimize(nm_solver, f);
 end
 

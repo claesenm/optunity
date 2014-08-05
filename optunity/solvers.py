@@ -70,18 +70,13 @@ import collections
 import abc
 import functools
 import random
-import operator
 import math
+import array
+import operator as op
 
 # optunity imports
 from . import functions as fun
 from .solver_registry import register_solver
-
-_scipy_available = True
-try:
-    import scipy.optimize
-except ImportError:
-    _scipy_available = False
 
 _numpy_available = True
 try:
@@ -234,8 +229,8 @@ class GridSearch(Solver):
             comp = max
         else:
             comp = min
-        best_idx, _ = comp(enumerate(scores), key=operator.itemgetter(1))
-        best_pars = operator.itemgetter(best_idx)(zip(*tuples))
+        best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
+        best_pars = op.itemgetter(best_idx)(zip(*tuples))
         return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
 
@@ -320,8 +315,8 @@ class RandomSearch(Solver):
             comp = max
         else:
             comp = min
-        best_idx, _ = comp(enumerate(scores), key=operator.itemgetter(1))
-        best_pars = operator.itemgetter(best_idx)(zip(*tuples))
+        best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
+        best_pars = op.itemgetter(best_idx)(zip(*tuples))
         return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
 
@@ -409,12 +404,20 @@ class Direct(Solver):
 
         return best_pars, None  # no useful statistics to report
 
+@register_solver('nelder-mead',
+                 'simplex method for unconstrained optimization',
+                 ['Simplex method for unconstrained optimization',
+                 ' ',
+                 'The simplex algorithm is a simple way to optimize a fairly well-behaved function.',
+                 'The function is assumed to be convex. If not, this solver may yield poor solutions.',
+                 ' ',
+                 'This solver requires the following arguments:',
+                 '- start :: starting point for the solver (through kwargs)',
+                 '- ftol :: accuracy up to which to optimize the function (default 1e-4)'
+                 ])
 class NelderMead(Solver):
     """
-    Performs Nelder-Mead optimization to minimize f. Requires scipy.
-
-    In scipy < 0.11.0, scipy.optimize.fmin is used.
-    In scipy >= 0.11.0, scipy.optimize.minimize is used.
+    Performs Nelder-Mead optimization to minimize f.
 
     >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
     >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
@@ -423,30 +426,36 @@ class NelderMead(Solver):
 
     """
 
-    def __init__(self, xtol=1e-4, **kwargs):
+    def __init__(self, ftol=1e-4, max_iter=None, **kwargs):
         """Initializes the solver with a tuple indicating parameter values.
 
-        >>> s = NelderMead(x=1, xtol=2) #doctest:+SKIP
+        >>> s = NelderMead(x=1, ftol=2) #doctest:+SKIP
         >>> s.start #doctest:+SKIP
         {'x': 1}
-        >>> s.xtol #doctest:+SKIP
+        >>> s.ftol #doctest:+SKIP
         2
 
         """
-        if not _scipy_available:
-            raise ImportError('This solver requires SciPy but it is missing.')
 
         self._start = kwargs
-        self._xtol = xtol
+        self._ftol = ftol
+        self._max_iter = max_iter
+        if max_iter is None:
+            self._max_iter = len(kwargs) * 200
 
     @staticmethod
     def suggest_from_seed(num_evals, **kwargs):
         return kwargs
 
     @property
-    def xtol(self):
+    def ftol(self):
         """Returns the tolerance."""
-        return self._xtol
+        return self._ftol
+
+    @property
+    def max_iter(self):
+        """Returns the maximum number of iterations."""
+        return self._max_iter
 
     @property
     def start(self):
@@ -459,33 +468,114 @@ class NelderMead(Solver):
             f = fun.negated(f)
 
         sortedkeys = sorted(self.start.keys())
-        x0 = [self.start[k] for k in sortedkeys]
+        x0 = [float(self.start[k]) for k in sortedkeys]
 
         f = fun.static_key_order(sortedkeys)(f)
+
         def func(x):
-            return f(*list(x))
+            return f(*x)
 
-        version = scipy.__version__
-        if int(version.split('.')[1]) >= 11:
-            print('HALP: wrong scipy version')
-            pass  # TODO
-        else:
-            xopt = scipy.optimize.fmin(func, np.array(x0),
-                                        xtol=self.xtol, disp=False)
-            return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None
+        xopt = self._solve(func, x0)
+        return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None
 
-if _scipy_available:
-    NelderMead = register_solver('nelder-mead',
-                                 'simplex method for unconstrained optimization',
-                                 ['Simplex method for unconstrained optimization',
-                                  ' ',
-                                  'The simplex algorithm is a simple way to optimize a fairly well-behaved function.',
-                                  'The function is assumed to be convex. If not, this solver may yield poor solutions.',
-                                  ' ',
-                                  'This solver requires the following arguments:',
-                                  '- start :: starting point for the solver (through kwargs)',
-                                  '- xtol :: accuracy up to which to optimize the function (default 1e-4)'
-                                 ])(NelderMead)
+    def _solve(self, func, x0):
+        def f(x):
+            return func(list(x))
+
+        x0 = array.array('f', x0)
+        N = len(x0)
+
+        vertices = [x0]
+        values = [f(x0)]
+
+        # defaults taken from Wikipedia and SciPy
+        alpha = 1.; gamma = 2.; rho = -0.5; sigma = 0.5;
+        one2np1 = range(1,N+1)
+        nonzdelt = 0.05
+        zdelt = 0.00025
+
+        # generate vertices
+        for k in range(N):
+            vert = vertices[0][:]
+            if vert[k] != 0:
+                vert[k] = (1 + nonzdelt) * vert[k]
+            else:
+                vert[k] = zdelt
+
+            vertices.append(vert)
+            values.append(f(vert))
+
+        niter = 1
+        while niter < self.max_iter:
+
+            # sort vertices by ftion value
+            vertices, values = NelderMead.sort_vertices(vertices, values)
+
+            # check for convergence
+            if abs(values[0] - values[-1]) <= self.ftol:
+                break
+
+            niter += 1
+
+            # compute center of gravity
+            x0 = NelderMead.simplex_center(vertices[:-1])
+
+            # reflect
+            xr = NelderMead.reflect(x0, vertices[-1], alpha)
+            fxr = f(xr)
+            if vertices[0] < fxr < vertices[-2]:
+                vertices[-1] = xr
+                values[-1] = fxr
+                continue
+
+            # expand
+            if fxr < values[0]:
+                xe = NelderMead.reflect(x0, vertices[-1], gamma)
+                fxe = f(xe)
+                if fxe < fxr:
+                    vertices[-1] = xe
+                    values[-1] = fxe
+                else:
+                    vertices[-1] = xr
+                    values[-1] = fxr
+                continue
+
+            # contract
+            xc = NelderMead.reflect(x0, vertices[-1], rho)
+            fxc = f(xc)
+            if fxc < values[-1]:
+                vertices[-1] = xc
+                values[-1] = fxc
+                continue
+
+            # reduce
+            for idx in range(1, len(vertices)):
+                vertices[idx] = NelderMead.reflect(vertices[0], vertices[idx],
+                                                   sigma)
+                values[idx] = f(vertices[idx])
+
+        return list(vertices[min(enumerate(values), key=op.itemgetter(1))[0]])
+
+    @staticmethod
+    def simplex_center(vertices):
+        vector_sum = map(sum, zip(*vertices))
+        return array.array('f', map(lambda x: x / len(vertices), vector_sum))
+
+    @staticmethod
+    def sort_vertices(vertices, values):
+        sort_idx, values = zip(*sorted(enumerate(values), key=op.itemgetter(1)))
+        vertices = map(lambda x: vertices[x], sort_idx)
+        return list(vertices), list(values)
+
+    @staticmethod
+    def scale(vertex, coeff):
+        return array.array('f', map(lambda x: coeff * x, vertex))
+
+    @staticmethod
+    def reflect(x0, xn1, alpha):
+        diff = map(op.sub, x0, xn1)
+        xr = array.array('f', map(op.add, x0, NelderMead.scale(diff, alpha)))
+        return xr
 
 
 class CMA_ES(Solver):
@@ -614,7 +704,7 @@ class ParticleSwarm(Solver):
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
-        self._smin = map(operator.neg, self.smax)
+        self._smin = map(op.neg, self.smax)
 
         self._toolbox = deap.base.Toolbox()
         self._toolbox.register("particle", self.generate)
@@ -679,18 +769,18 @@ class ParticleSwarm(Solver):
     def updateParticle(self, part, best, phi1, phi2):
         u1 = (random.uniform(0, phi1) for _ in range(len(part)))
         u2 = (random.uniform(0, phi2) for _ in range(len(part)))
-        v_u1 = map(operator.mul, u1,
-                    map(operator.sub, part.best, part))
-        v_u2 = map(operator.mul, u2,
-                    map(operator.sub, best, part))
-        part.speed = list(map(operator.add, part.speed,
-                                map(operator.add, v_u1, v_u2)))
+        v_u1 = map(op.mul, u1,
+                    map(op.sub, part.best, part))
+        v_u2 = map(op.mul, u2,
+                    map(op.sub, best, part))
+        part.speed = list(map(op.add, part.speed,
+                                map(op.add, v_u1, v_u2)))
         for i, speed in enumerate(part.speed):
             if speed < self.smin[i]:
                 part.speed[i] = self.smin[i]
             elif speed > self.smax[i]:
                 part.speed[i] = self.smax[i]
-        part[:] = list(map(operator.add, part, part.speed))
+        part[:] = list(map(op.add, part, part.speed))
 
     @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
