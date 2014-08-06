@@ -2,5 +2,5 @@ import(rjson)
 
 export(manual)
 export(generate_folds)
-export(tune)
+export(optimize2)
 

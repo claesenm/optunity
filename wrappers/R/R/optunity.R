@@ -38,18 +38,18 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-tune <- function(solver_name, solver_config, f,
-                  constraints = NaN, call_log = NaN,
+optimize2 <- function(solver_name, solver_config, f,
+                  constraints = NULL, call_log = NULL,
                   return_call_log = FALSE,
-                  default = NaN){
+                  default = NULL){
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(solver=solver_name, config=solver_config,
+    msg <- list(solver=list(solver_name=solver_name, config=solver_config,
                return_call_log = return_call_log)
-    if (!is.nan(call_log)) msg$call_log <- call_log
-    if (!is.nan(constraints)) msg$constraints <- constraints
-    if (!is.nan(default)) msg$default <- default
+    if (!is.null(call_log)) msg$call_log <- call_log
+    if (!is.null(constraints)) msg$constraints <- constraints
+    if (!is.null(default)) msg$default <- default
 
     send(cons$r2py, msg)
     repeat{
