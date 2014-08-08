@@ -12,13 +12,31 @@ manual <- function(solver_name=''){
     return (content$solver_names)
 }
 
+make_solver <- function(solver_name, ...){
+  cons <- launch()
+  on.exit(close_pipes(cons))
+  
+  # create solver config
+  cfg <- as.list(c(solver_name = solver_name, ...))
+  
+  msg <- list(make_solver = cfg)
+  send(cons$r2py, msg)
+  
+  reply <- receive(cons$py2r)
+  if (reply$success) {
+    return(TRUE)
+  } else {
+    stop(reply$error_msg)
+  }
+}
+
 generate_folds <- function(num_instances, num_folds=10,
                            num_iter=1, strata=list(),
                            clusters=list()){
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    # create solver config
+    # create config for generating folds
     cfg <- list(num_instances = num_instances,
                 num_folds = num_folds, num_iter = num_iter)
     if (length(strata) > 0) cfg$strata <- strata
@@ -59,6 +77,7 @@ optimize2 <- function(f,
                     solver_config )
                     #return_call_log = return_call_log)
     )
+
     if (!is.null(call_log)) msg$call_log <- call_log
     if (!is.null(constraints)) msg$constraints <- constraints
     if (!is.null(default)) msg$default <- default
