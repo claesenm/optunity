@@ -11,4 +11,4 @@ manual()
 ## solver demo
 f <- function(x, y) return (-x^2-y^2)
 cfg <- list(x = seq(-5, 5, by=0.5), y = seq(-5, 5, by=0.5))
-result <- tune('grid search', cfg, f, return_call_log=TRUE)
+result <- optimize2(f, solver_name='grid search', solver_config=cfg, return_call_log=TRUE)

@@ -38,15 +38,27 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-optimize2 <- function(solver_name, solver_config, f,
-                  constraints = NULL, call_log = NULL,
-                  return_call_log = FALSE,
-                  default = NULL){
+optimize2 <- function(f,
+                      solver_name,
+                      solver_config = list(),
+                      constraints = NULL,
+                      maximize    = TRUE,
+                      max_evals   = 0,
+                      call_log    = NULL,
+                      return_call_log = FALSE,
+                      default = NULL){
+    if ( ! is.logical(return_call_log)) stop("Input 'return_call_log' has to be TRUE or FALSE.")
+    if ( ! is.logical(maximize))        stop("Input 'maximize' has to be TRUE or FALSE.")
+
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(solver=list(solver_name=solver_name, config=solver_config,
-               return_call_log = return_call_log)
+    msg <- list(
+      optimize = list(max_evals = max_evals, maximize=maximize),
+      solver   = c( list(solver_name = solver_name),
+                    solver_config )
+                    #return_call_log = return_call_log)
+    )
     if (!is.null(call_log)) msg$call_log <- call_log
     if (!is.null(constraints)) msg$constraints <- constraints
     if (!is.null(default)) msg$default <- default
