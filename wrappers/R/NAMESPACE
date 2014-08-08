@@ -3,4 +3,5 @@ import(rjson)
 export(manual)
 export(generate_folds)
 export(optimize2)
+export(make_solver)
 
