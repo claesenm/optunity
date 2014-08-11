@@ -3,8 +3,7 @@ manual <- function(solver_name=''){
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(manual = TRUE)
-    if (solver_name != '') msg$solver <- solver_name
+    msg <- list(manual = solver_name)
     send(cons$r2py, msg)
 
     content <- receive(cons$py2r)
