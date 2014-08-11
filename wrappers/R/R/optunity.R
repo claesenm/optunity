@@ -25,7 +25,8 @@ make_solver <- function(solver_name, ...){
   if (reply$success) {
     return(TRUE)
   } else {
-    stop(reply$error_msg)
+    return(FALSE)
+    #stop(reply$error_msg)
   }
 }
 
