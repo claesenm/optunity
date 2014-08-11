@@ -56,6 +56,18 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
+random_search <- function(f,
+                          vars,
+                          maximize  = TRUE,
+                          num_evals = 50) {
+  # {"optimize" : {"max_evals": 0}, 
+  #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
+  if ( ! is.list(vars)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
+  conf <- as.list(vars)
+  conf$num_evals = num_evals
+  return( optimize2(f, solver_name="random search", solver_config = conf) )
+}
+
 optimize2 <- function(f,
                       solver_name,
                       solver_config = list(),
@@ -87,8 +99,27 @@ optimize2 <- function(f,
         reply <- receive(cons$py2r)
         if ("solution" %in% names(reply)) break
 
-        value <- do.call(f, reply)
-        send(cons$r2py, list(value=value))
+        if (is.null(names(reply))) {
+          ## vector evaluation
+          values <- simplify2array(
+            lapply(reply, function(param) do.call(f, param))
+          )
+          if ( ! is.vector(values) || ! is.numeric(values) ) {
+            problem <- which( ! sapply(values, is.numeric) | sapply(values, length) != 1)
+            i <- problem[1]
+            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."), 
+                 toString( reply[[i]] ),
+                 toString( values[[i]] )
+            )
+          }
+          ## returning results of vector evaluation
+          send(cons$r2py, list(values=values))
+        } else {
+          ## single evaluation
+          value <- do.call(f, reply)
+          send(cons$r2py, list(value=value))
+        }
+        
     }
     return (reply)
 }
