@@ -1,2 +1,0 @@
-{"solver": "random-search", "config": {"upper": {"x": 5, "y": 5}, "lower": {"x": -5, "y": -5}, "num_evals": 100}, "return_call_log": true}
-

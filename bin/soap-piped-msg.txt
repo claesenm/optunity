@@ -1,9 +1,0 @@
-{"manual": true, "solver": "random-search"}
-
-{"manual": true}
-
-{"manual": true, "solver": "unknown"}
-
-{"manual": true, "solver": "grid-search"}
-
-
