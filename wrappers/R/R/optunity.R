@@ -3,13 +3,31 @@ manual <- function(solver_name=''){
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(manual = TRUE)
-    if (solver_name != '') msg$solver <- solver_name
+    msg <- list(manual = solver_name)
     send(cons$r2py, msg)
 
     content <- receive(cons$py2r)
     cat(content$manual, sep="\n")
     return (content$solver_names)
+}
+
+make_solver <- function(solver_name, ...){
+  cons <- launch()
+  on.exit(close_pipes(cons))
+  
+  # create solver config
+  cfg <- as.list(c(solver_name = solver_name, ...))
+  
+  msg <- list(make_solver = cfg)
+  send(cons$r2py, msg)
+  
+  reply <- receive(cons$py2r)
+  if (reply$success) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+    #stop(reply$error_msg)
+  }
 }
 
 generate_folds <- function(num_instances, num_folds=10,
@@ -18,7 +36,7 @@ generate_folds <- function(num_instances, num_folds=10,
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    # create solver config
+    # create config for generating folds
     cfg <- list(num_instances = num_instances,
                 num_folds = num_folds, num_iter = num_iter)
     if (length(strata) > 0) cfg$strata <- strata
@@ -38,15 +56,40 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-optimize2 <- function(solver_name, solver_config, f,
-                  constraints = NULL, call_log = NULL,
-                  return_call_log = FALSE,
-                  default = NULL){
+random_search <- function(f,
+                          vars,
+                          maximize  = TRUE,
+                          num_evals = 50) {
+  # {"optimize" : {"max_evals": 0}, 
+  #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
+  if ( ! is.list(vars)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
+  conf <- as.list(vars)
+  conf$num_evals = num_evals
+  return( optimize2(f, solver_name="random search", solver_config = conf) )
+}
+
+optimize2 <- function(f,
+                      solver_name,
+                      solver_config = list(),
+                      constraints = NULL,
+                      maximize    = TRUE,
+                      max_evals   = 0,
+                      call_log    = NULL,
+                      return_call_log = FALSE,
+                      default = NULL){
+    if ( ! is.logical(return_call_log)) stop("Input 'return_call_log' has to be TRUE or FALSE.")
+    if ( ! is.logical(maximize))        stop("Input 'maximize' has to be TRUE or FALSE.")
+
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(solver=list(solver_name=solver_name, config=solver_config,
-               return_call_log = return_call_log)
+    msg <- list(
+      optimize = list(max_evals = max_evals, maximize=maximize),
+      solver   = c( list(solver_name = solver_name),
+                    solver_config )
+                    #return_call_log = return_call_log)
+    )
+
     if (!is.null(call_log)) msg$call_log <- call_log
     if (!is.null(constraints)) msg$constraints <- constraints
     if (!is.null(default)) msg$default <- default
@@ -56,8 +99,27 @@ optimize2 <- function(solver_name, solver_config, f,
         reply <- receive(cons$py2r)
         if ("solution" %in% names(reply)) break
 
-        value <- do.call(f, reply)
-        send(cons$r2py, list(value=value))
+        if (is.null(names(reply))) {
+          ## vector evaluation
+          values <- simplify2array(
+            lapply(reply, function(param) do.call(f, param))
+          )
+          if ( ! is.vector(values) || ! is.numeric(values) ) {
+            problem <- which( ! sapply(values, is.numeric) | sapply(values, length) != 1)
+            i <- problem[1]
+            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."), 
+                 toString( reply[[i]] ),
+                 toString( values[[i]] )
+            )
+          }
+          ## returning results of vector evaluation
+          send(cons$r2py, list(values=values))
+        } else {
+          ## single evaluation
+          value <- do.call(f, reply)
+          send(cons$r2py, list(value=value))
+        }
+        
     }
     return (reply)
 }

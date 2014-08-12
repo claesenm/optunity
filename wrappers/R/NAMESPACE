@@ -3,4 +3,6 @@ import(rjson)
 export(manual)
 export(generate_folds)
 export(optimize2)
+export(random_search)
+export(make_solver)
 
