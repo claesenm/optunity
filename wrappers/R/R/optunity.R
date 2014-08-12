@@ -22,12 +22,7 @@ make_solver <- function(solver_name, ...){
   send(cons$r2py, msg)
   
   reply <- receive(cons$py2r)
-  if (reply$success) {
-    return(TRUE)
-  } else {
-    return(FALSE)
-    #stop(reply$error_msg)
-  }
+  return(TRUE)
 }
 
 generate_folds <- function(num_instances, num_folds=10,
