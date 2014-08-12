@@ -387,7 +387,7 @@ def fold_request(cv_opts):
 def make_solver(solver_config):
     try:
         optunity.make_solver(**solver_config)
-    except KeyError as e:
+    except (KeyError, TypeError) as e:
         msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
         comm.send(comm.json_encode(msg))
         print(solver_config, file=sys.stderr)
@@ -465,7 +465,7 @@ def optimize(solver_config, constraints, default, call_log, maximize, max_evals)
     exit(0)
 
 
-if __name__ == '__main__':
+def main():
     startup_json = comm.receive()
     startup_msg = comm.json_decode(startup_json)
 
@@ -553,3 +553,8 @@ if __name__ == '__main__':
         result_json = comm.json_encode(result)
         comm.send(result_json)
         exit(0)
+
+
+
+if __name__ == '__main__':
+    main()
