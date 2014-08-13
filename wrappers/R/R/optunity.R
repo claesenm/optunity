@@ -16,7 +16,7 @@ make_solver <- function(solver_name, ...){
   on.exit(close_pipes(cons))
   
   # create solver config
-  cfg <- as.list(c(solver_name = solver_name, ...))
+  cfg <- c(list(), solver_name = solver_name, ...)
   
   msg <- list(make_solver = cfg)
   send(cons$r2py, msg)
@@ -58,7 +58,7 @@ random_search <- function(f,
   # {"optimize" : {"max_evals": 0}, 
   #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
   if ( ! is.list(vars)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
-  conf <- as.list(vars)
+  conf <- vars
   conf$num_evals = num_evals
   return( optimize2(f, solver_name="random search", solver_config = conf) )
 }
