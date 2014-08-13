@@ -3,8 +3,7 @@ manual <- function(solver_name=''){
     cons <- launch()
     on.exit(close_pipes(cons))
 
-    msg <- list(manual = TRUE)
-    if (solver_name != '') msg$solver <- solver_name
+    msg <- list(manual = solver_name)
     send(cons$r2py, msg)
 
     content <- receive(cons$py2r)
@@ -17,17 +16,13 @@ make_solver <- function(solver_name, ...){
   on.exit(close_pipes(cons))
   
   # create solver config
-  cfg <- as.list(c(solver_name = solver_name, ...))
+  cfg <- c(list(), solver_name = solver_name, ...)
   
   msg <- list(make_solver = cfg)
   send(cons$r2py, msg)
   
   reply <- receive(cons$py2r)
-  if (reply$success) {
-    return(TRUE)
-  } else {
-    stop(reply$error_msg)
-  }
+  return(TRUE)
 }
 
 generate_folds <- function(num_instances, num_folds=10,
@@ -54,6 +49,27 @@ generate_folds <- function(num_instances, num_folds=10,
         }
     }
     return (folds)
+}
+
+random_search <- function(f,
+                          box,
+                          maximize  = TRUE,
+                          num_evals = 50) {
+  # {"optimize" : {"max_evals": 0}, 
+  #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
+  if ( ! is.list(box)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
+  conf <- box
+  conf$num_evals = num_evals
+  return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = conf) )
+}
+
+grid_search <- function(f,
+                        ...,
+                        maximize  = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "grid search", "x":[0,10]}}
+  args <- list(...)
+  if ( length(args) == 0) stop("Please provide grid for f, e.g., grid_search(f, varname1=c(1, 3, 5)).")
+  return( optimize2(f, solver_name="grid search", solver_config = args) )
 }
 
 optimize2 <- function(f,
@@ -87,8 +103,27 @@ optimize2 <- function(f,
         reply <- receive(cons$py2r)
         if ("solution" %in% names(reply)) break
 
-        value <- do.call(f, reply)
-        send(cons$r2py, list(value=value))
+        if (is.null(names(reply))) {
+          ## vector evaluation
+          values <- simplify2array(
+            lapply(reply, function(param) do.call(f, param))
+          )
+          if ( ! is.vector(values) || ! is.numeric(values) ) {
+            problem <- which( ! sapply(values, is.numeric) | sapply(values, length) != 1)
+            i <- problem[1]
+            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."), 
+                 toString( reply[[i]] ),
+                 toString( values[[i]] )
+            )
+          }
+          ## returning results of vector evaluation
+          send(cons$r2py, list(values=values))
+        } else {
+          ## single evaluation
+          value <- do.call(f, reply)
+          send(cons$r2py, list(value=value))
+        }
+        
     }
     return (reply)
 }

@@ -1,6 +1,0 @@
-{"solver": "grid-search", "config": {"x": [1, 2], "y": [1, 2]}, "return_call_log": true, "call_log": {"args": {"x": [1, 2]}, "values": [2, 3]}}
-{"value": 1}
-{"value": 2}
-{"value": 3}
-{"value": 4}
-

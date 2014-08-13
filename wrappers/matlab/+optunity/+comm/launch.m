@@ -13,8 +13,13 @@ function [ m2py, py2m, stderr, handle, cleaner ] = launch()
 % find the current path used by python
 % necessary to pass as an env variable when launching Optunity
 persistent env
+persistent path_to_bin
 if isempty(env)
-    [~, pathstr] = system('python -c "import sys; print(sys.path)"');
+    path = mfilename('fullpath');
+    path = path(1:strfind(path, '/wrappers/matlab/+optunity/+comm/launch'));
+    path_to_bin = [path,'/bin/'];
+    
+    [~, pathstr] = system([path_to_bin, 'print_system_path.py']);
     pathstr = pathstr(pathstr ~= '''');
     pathstr = pathstr(pathstr ~= '[');
     pathstr = pathstr(pathstr ~= ']');
@@ -22,12 +27,10 @@ if isempty(env)
     env = ['PYTHONPATH=', pathstr];
     
     % attach optunity's path to env
-    path = mfilename('fullpath');
-    path = path(1:strfind(path, '/wrappers/matlab/+optunity/+comm/launch'));
     env = [env, ':', path];
 end
 
-cmd = 'python -m optunity.piped';
+cmd = [path_to_bin, 'run_optunity_piped.py'];
 [m2py, py2m, stderr, handle] = optunity.comm.popen( cmd, env );
 
 % provide RAII-style automatic cleanup when cleaner goes out of scope
