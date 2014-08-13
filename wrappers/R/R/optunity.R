@@ -52,15 +52,24 @@ generate_folds <- function(num_instances, num_folds=10,
 }
 
 random_search <- function(f,
-                          vars,
+                          box,
                           maximize  = TRUE,
                           num_evals = 50) {
   # {"optimize" : {"max_evals": 0}, 
   #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
-  if ( ! is.list(vars)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
-  conf <- vars
+  if ( ! is.list(box)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
+  conf <- box
   conf$num_evals = num_evals
-  return( optimize2(f, solver_name="random search", solver_config = conf) )
+  return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = conf) )
+}
+
+grid_search <- function(f,
+                        ...,
+                        maximize  = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "grid search", "x":[0,10]}}
+  args <- list(...)
+  if ( length(args) == 0) stop("Please provide grid for f, e.g., grid_search(f, varname1=c(1, 3, 5)).")
+  return( optimize2(f, solver_name="grid search", solver_config = args) )
 }
 
 optimize2 <- function(f,
