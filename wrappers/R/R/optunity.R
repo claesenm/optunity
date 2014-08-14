@@ -51,13 +51,10 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-random_search <- function(f,
-                          box,
-                          maximize  = TRUE,
-                          num_evals = 50) {
+random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
-  if ( ! is.list(box)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
-  conf <- box
+  conf <- list(...)
+  if (length(conf) == 0) stop("Please provide bounds for each variable of f, e.g. random_search(f, var1=c(-5, 5), var2=c(-1,1)).")
   conf$num_evals = num_evals
   return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = conf) )
 }
@@ -72,9 +69,18 @@ grid_search <- function(f, ..., maximize  = TRUE) {
 nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "nelder-mead", "x":2}}
   args <- list(...)
-  args$max_iter = as.integer(num_evals / 2) - 1
   if ( length(args) == 0) stop("Please provide initial value for f, e.g., nelder_mead(f, var1=1, var2=3).")
+  args$max_iter = as.integer(num_evals / 2) - 1
   return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
+}
+
+particle_swarm <- function(f, ..., num_particles=10, num_generations=5, maximize = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "particle swarm", "x":[2, 6]}}
+  args <- list(...)
+  if (length(args) == 0) stop("Please provide bounds for each variable of f, e.g. particle_swarm(f, var1=c(-5, 5), var2=c(0.1, 10)).")
+  args$num_particles   = num_particles
+  args$num_generations = num_generations
+  return( optimize2(f, solver_name="particle swarm", maximize=maximize, solver_config = args) )
 }
 
 optimize2 <- function(f,
