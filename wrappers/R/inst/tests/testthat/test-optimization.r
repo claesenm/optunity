@@ -7,6 +7,7 @@ context("Grid search")
 test_that("grid search works", {
   solution <- grid_search(f, x=c(-5,1,5), y=c(-5,1,5) )
   expect_equal( solution$stats$num_evals, 9)
+  expect_equal( solution$optimum, f(1,1) )
 })
 
 context("Random search")
