@@ -10,3 +10,5 @@ export(grid_search)
 export(nelder_mead)
 export(particle_swarm)
 export(cma_es)
+
+export(cv.setup)
