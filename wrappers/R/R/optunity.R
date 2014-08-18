@@ -77,7 +77,7 @@ nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
 }
 
-particle_swarm <- function(f, ..., num_particles=10, num_generations=5, maximize = TRUE) {
+particle_swarm <- function(f, ..., num_particles=5, num_generations=10, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "particle swarm", "x":[2, 6]}}
   args <- list(...)
   check_box(args, "particle_swarm")
@@ -87,7 +87,7 @@ particle_swarm <- function(f, ..., num_particles=10, num_generations=5, maximize
   return( optimize2(f, solver_name="particle swarm", maximize=maximize, solver_config = args) )
 }
 
-cma_es <- function(f, ..., num_generations=5, maximize = TRUE) {
+cma_es <- function(f, ..., num_generations=10, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "cma-es", "num_generations":5, "x":[2, 6]}}
   args <- list(...)
   check_args(f, args, "initial values", "2.5")
