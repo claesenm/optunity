@@ -72,7 +72,7 @@ nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "nelder-mead", "x":2}}
   args <- list(...)
   if ( length(args) == 0) stop("Please provide initial value for f, like nelder_mead(f, var1=1, var2=3).")
-  check_args(f, args, "initial values", "2")
+  check_args(f, args, "initial values", "2.5")
   args$max_iter = as.integer(num_evals / 2) - 1
   return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
 }
@@ -85,6 +85,14 @@ particle_swarm <- function(f, ..., num_particles=10, num_generations=5, maximize
   args$num_particles   = num_particles
   args$num_generations = num_generations
   return( optimize2(f, solver_name="particle swarm", maximize=maximize, solver_config = args) )
+}
+
+cma_es <- function(f, ..., num_generations=5, maximize = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "cma-es", "num_generations":5, "x":[2, 6]}}
+  args <- list(...)
+  check_args(f, args, "initial values", "2.5")
+  args$num_generations = num_generations
+  return( optimize2(f, solver_name="cma-es", maximize=maximize, solver_config = args) )
 }
 
 ## check all required args are supplied
