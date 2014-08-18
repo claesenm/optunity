@@ -25,30 +25,33 @@ make_solver <- function(solver_name, ...){
   return(TRUE)
 }
 
-generate_folds <- function(num_instances, num_folds=10,
+generate_folds <- function(num_instances, num_folds=5,
                            num_iter=1, strata=list(),
                            clusters=list()){
-    cons <- launch()
-    on.exit(close_pipes(cons))
-
-    # create config for generating folds
-    cfg <- list(num_instances = num_instances,
-                num_folds = num_folds, num_iter = num_iter)
-    if (length(strata) > 0) cfg$strata <- strata
-    if (length(clusters) > 0) cfg$clusters <- clusters
-
-    msg <- list(generate_folds = cfg)
-    send(cons$r2py, msg)
-
-    reply <- receive(cons$py2r)
-
-    folds <- array(0, dim=c(num_instances, num_iter))
-    for (iter in 1:num_iter){
-        for (fold in 1:num_folds){
-            folds[1+reply$folds[[iter]][[fold]], iter] <- fold
-        }
+  if ( ! is.numeric(num_iter)) stop("num_iter has to be numeric.")
+  if ( ! is.numeric(num_folds)) stop("num_folds has to be numeric.")
+  
+  cons <- launch()
+  on.exit(close_pipes(cons))
+  
+  # create config for generating folds
+  cfg <- list(num_instances = num_instances,
+              num_folds = num_folds, num_iter = num_iter)
+  if (length(strata) > 0) cfg$strata <- strata
+  if (length(clusters) > 0) cfg$clusters <- clusters
+  
+  msg <- list(generate_folds = cfg)
+  send(cons$r2py, msg)
+  
+  reply <- receive(cons$py2r)
+  
+  folds <- array(0, dim=c(num_instances, num_iter))
+  for (iter in 1:num_iter){
+    for (fold in 1:num_folds){
+      folds[1+reply$folds[[iter]][[fold]], iter] <- fold
     }
-    return (folds)
+  }
+  return (folds)
 }
 
 random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
