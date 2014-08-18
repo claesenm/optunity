@@ -51,25 +51,88 @@ generate_folds <- function(num_instances, num_folds=10,
     return (folds)
 }
 
-random_search <- function(f,
-                          box,
-                          maximize  = TRUE,
-                          num_evals = 50) {
-  # {"optimize" : {"max_evals": 0}, 
-  #  "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
-  if ( ! is.list(box)) stop("Input 'var' has to be a list of lower and upper bounds for vars of f, like vars=list(gamma=c(0,10)).")
-  conf <- box
-  conf$num_evals = num_evals
-  return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = conf) )
+random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
+  args <- list(...)
+  check_box(args, "random_search")
+  check_args(f, args)
+  args$num_evals = num_evals
+  return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = args) )
 }
 
-grid_search <- function(f,
-                        ...,
-                        maximize  = TRUE) {
+grid_search <- function(f, ..., maximize  = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "grid search", "x":[0,10]}}
   args <- list(...)
-  if ( length(args) == 0) stop("Please provide grid for f, e.g., grid_search(f, varname1=c(1, 3, 5)).")
-  return( optimize2(f, solver_name="grid search", solver_config = args) )
+  if ( length(args) == 0) stop("Please provide grid for f, like grid_search(f, var1=c(1, 3, 5)).")
+  check_args(f, args, "grid", "c(0.01, 0.1, 1.0)")
+  return( optimize2(f, solver_name="grid search", maximize=maximize, solver_config = args) )
+}
+
+nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "nelder-mead", "x":2}}
+  args <- list(...)
+  if ( length(args) == 0) stop("Please provide initial value for f, like nelder_mead(f, var1=1, var2=3).")
+  check_args(f, args, "initial values", "2.5")
+  args$max_iter = as.integer(num_evals / 2) - 1
+  return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
+}
+
+particle_swarm <- function(f, ..., num_particles=5, num_generations=10, maximize = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "particle swarm", "x":[2, 6]}}
+  args <- list(...)
+  check_box(args, "particle_swarm")
+  check_args(f, args)
+  args$num_particles   = num_particles
+  args$num_generations = num_generations
+  return( optimize2(f, solver_name="particle swarm", maximize=maximize, solver_config = args) )
+}
+
+cma_es <- function(f, ..., num_generations=10, maximize = TRUE) {
+  # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "cma-es", "num_generations":5, "x":[2, 6]}}
+  args <- list(...)
+  check_args(f, args, "initial values", "2.5")
+  args$num_generations = num_generations
+  return( optimize2(f, solver_name="cma-es", maximize=maximize, solver_config = args) )
+}
+
+## check all required args are supplied
+check_args <- function(f, args, vartype = "bounds", example = "c(0.1, 10)") {
+  if ("" %in% names(args)) {
+    stop(sprintf("Positional arguments for ... are not supported. Please provide named arguments, like var1=%s.", example))
+  }
+  fargs <- formals(f)
+  fargs.req <- names(fargs)[ sapply(fargs, is.symbol) ]
+  missing <- fargs.req[ ! (fargs.req %in% names(args)) ]
+  if (length(missing) > 0) {
+    stop(sprintf("Missing %s for argument '%s' for the target function. ", vartype, missing))
+  }
+}
+
+## check box constraints
+check_box <- function(args, methodName) {
+  if (length(args) == 0) stop(
+    sprintf("Please provide bounds for each variable of f, like %s(f, var1=c(-5, 5), var2=c(0.1, 10)).", methodName)
+  )
+  u <- which(sapply(args, length) != 2)
+  if (length(u) > 0) {
+    stop(sprintf("Bounds for variable '%s' has %d values. It should be two values: c(lower, upper). ",
+                 names(args)[u],
+                 length(args[u])
+    ))
+  }
+  ## bounds are numeric
+  u <- which( ! sapply(args, is.numeric))
+  if (length(u) > 0) stop(sprintf("Bounds for variable '%s' have to be numeric. ", names(args)[u] ))
+  
+  ## check bounds are ordered correctly
+  u <- which( ! sapply(args, function(x) x[1] <= x[2]))
+  if (length(u) > 0) {
+    stop(sprintf("Bounds for variable '%s' has lower bound bigger (%f) than upper bound (%f). ",
+                 names(args)[u],
+                 args[u][1],
+                 args[u][2]
+    ))
+  }
 }
 
 optimize2 <- function(f,
@@ -111,7 +174,7 @@ optimize2 <- function(f,
           if ( ! is.vector(values) || ! is.numeric(values) ) {
             problem <- which( ! sapply(values, is.numeric) | sapply(values, length) != 1)
             i <- problem[1]
-            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."), 
+            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."),
                  toString( reply[[i]] ),
                  toString( values[[i]] )
             )
