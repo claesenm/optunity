@@ -28,5 +28,21 @@ context("Particle swarm")
 
 test_that("particle_swarm works", {
   solution <- particle_swarm(f, x=c(-5,5), y=c(-5,5), num_particles=10, num_generations=4 )
-  expect_equal( solution$stats$num_evals, 40)
+  expect_true( solution$stats$num_evals <= 40)
+})
+
+test_that("particle_swarm gives error if bound has 1 value", {
+  expect_error( {particle_swarm(f, x=c(5, 10), y=c(3) )} )
+})
+
+test_that("particle_swarm gives error if bound has 3 values", {
+  expect_error( {particle_swarm(f, x=c(5, 10), y=c(3,4,5) )} )
+})
+
+test_that("particle_swarm gives error if bound has 3 values", {
+  expect_error( {particle_swarm(f, x=c(10, 5), y=c(3,4) )}, regex="lower bound" )
+})
+
+test_that("particle_swarm gives error if bound is not numeric", {
+  expect_error( {particle_swarm(f, x=c("5", "10"), y=c(4,6), regex="have to be numeric")} )
 })
