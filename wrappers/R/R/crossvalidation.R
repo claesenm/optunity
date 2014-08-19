@@ -20,3 +20,26 @@ cv.setup <- function(x, y=NULL, num_folds=5, num_iter=1,
   class(setup) <- "cv.setup"
   return(setup)
 }
+
+
+cv.run <- function(setup, f, ...) {
+  if ( ! inherits(setup, "cv.setup"))
+    stop("Input setup has to be of class 'cv.setup'. Use cv.setup() to create it.")
+  
+  results = sapply(1:nrows(setup$folds), function(iter) {
+    sapply(1:setup$num_folds, function(fold) {
+      itrain = setup$folds[setup$folds != fold]
+      itest  = setup$folds[setup$folds == fold]
+      xtrain = setup$x[ itrain, ]
+      xtest  = setup$x[ itest,  ]
+      ytrain = setup$y[ itrain ]
+      ytest  = setup$y[ itest  ]
+      score <- f(xtrain, ytrain, xtest, ytest, ...)
+      if (length(score) > 1) stop("f returned a vector, but should return 1 numeric value.")
+      if ( ! is.numeric(score)) stop("f returned non-numeric value.")
+      return(score)
+    })
+  })
+  results = vector("numeric")
+  mean(results)
+}
