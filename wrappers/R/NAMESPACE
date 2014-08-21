@@ -13,3 +13,10 @@ export(cma_es)
 
 export(cv.setup)
 export(cv.run)
+
+export(score.neg.mse)
+export(score.accuracy)
+export(score.roc.auc)
+export(score.pr.auc)
+export(score.rie)
+export(score.bedroc)
