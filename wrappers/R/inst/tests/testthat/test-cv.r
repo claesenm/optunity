@@ -19,4 +19,7 @@ test_that("cv.run works with regression", {
     xtest %*% beta
   }
   result <- cv.run(cv, regr)
+  expect_equal(nrow(result$scores), cv$num_folds)
+  expect_equal(ncol(result$scores), cv$num_iter)
+  expect_equal(length(result$score.iter.mean), cv$num_iter)
 })
