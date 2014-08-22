@@ -13,10 +13,10 @@ test_that("cv.setup can be created", {
 
 test_that("cv.run works with regression", {
   cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 5, num_iter = 2)
-  ## linear regression (w-o intercept)
-  regr <- function(x, y, xtest) {
+  ## linear regression
+  regr <- function(x, y, xtest, ytest) {
     beta = solve(t(x) %*% x, t(x) %*% y)
     xtest %*% beta
   }
-  
+  result <- cv.run(cv, regr)
 })

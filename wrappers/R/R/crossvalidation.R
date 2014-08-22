@@ -6,7 +6,7 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
     stop("x has to be either a matrix or data.frame")
   
   if (missing(score))
-    stop("Please provide score function(ytrue, yscore), like score.accuracy for classification or score.neg.mse for regression.")
+    stop("Please set score to NULL or provide score function(ytrue, yscore), like score.accuracy for classification or score.neg.mse for regression. score=NULL means f returns score instead of predictions.")
   
   setup <- list()
   setup$x = x
@@ -40,7 +40,7 @@ cv.run <- function(setup, f, ..., maximize = TRUE) {
       xtest  = setup$x[ itest,  ]
       ytrain = setup$y[ itrain ]
       ytest  = setup$y[ itest  ]
-      yhat <- f(xtrain, ytrain, xtest, ...)
+      yhat <- f(xtrain, ytrain, xtest, ytest, ...)
       if (is.null(setup$score)) {
         s <- yhat
         if (length(s) > 1) stop("f returned a vector, but should return 1 numeric value (score).")
@@ -52,9 +52,10 @@ cv.run <- function(setup, f, ..., maximize = TRUE) {
     })
   })
   out <- list()
+  out$scores     = scores
   out$score.mean = mean(scores)
   out$score.sd   = sd(scores)
-  out$scores     = scores
+  out$score.iter.mean = colMeans(scores)
   return( out )
 }
 
