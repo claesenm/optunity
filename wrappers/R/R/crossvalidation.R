@@ -59,6 +59,10 @@ cv.run <- function(setup, f, ...) {
   return( out )
 }
 
+cv.grid_search <- function(setup, f, ..., maximize = TRUE) {
+  ## TODO, maximize with grid_search
+}
+
 score.neg.mse <- function(ytrue, yhat) {
   - mean((ytrue-yhat)^2)
 }
