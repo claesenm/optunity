@@ -28,7 +28,7 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
 }
 
 
-cv.run <- function(setup, f, ..., maximize = TRUE) {
+cv.run <- function(setup, f, ...) {
   if ( ! inherits(setup, "cv.setup"))
     stop("Input setup has to be of class 'cv.setup'. Use cv.setup() to create it.")
   
