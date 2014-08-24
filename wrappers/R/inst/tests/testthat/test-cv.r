@@ -23,3 +23,31 @@ test_that("cv.run works with regression", {
   expect_equal(ncol(result$scores), cv$num_iter)
   expect_equal(length(result$score.iter.mean), cv$num_iter)
 })
+
+test_that("cv.run works with regression that has 1 param", {
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 5, num_iter = 2)
+  ## linear regression + L2 regularization
+  regr <- function(x, y, xtest, ytest, reg) {
+    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
+    xtest %*% beta
+  }
+  result <- cv.run(cv, regr, reg = 2.5)
+  expect_equal(nrow(result$scores), cv$num_folds)
+  expect_equal(ncol(result$scores), cv$num_iter)
+  expect_equal(length(result$score.iter.mean), cv$num_iter)
+})
+
+test_that("cv.run and grid_search over lambda",{
+  ## linear regression + L2 regularization
+  regr <- function(x, y, xtest, ytest, reg) {
+    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
+    xtest %*% beta
+  }
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 4, num_iter = 2)
+  regr.cv <- function(reg) cv.run(cv, regr, reg = reg)$score.mean
+  
+  ## optimize
+  result <- grid_search(regr.cv, reg=c(0, 1e-2, 1e-1, 1))
+  expect_equal(length(result$call_log$values), 4)
+  expect_equal(result$stats$num_evals, 4)
+})
