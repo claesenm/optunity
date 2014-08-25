@@ -60,7 +60,30 @@ cv.run <- function(setup, f, ...) {
 }
 
 cv.grid_search <- function(setup, f, ..., maximize = TRUE) {
-  ## TODO, maximize with grid_search
+  args <- list(...)
+  if (length(args) == 0)
+    stop("Please provide grid for f, like cv.grid_search(setup, f, param1=c(1, 3, 5)).")
+  check_cv_args(f, args)
+  
+  fcv <- function(...) cv.run(setup, f, ...)$score.mean
+  
+  res <- grid_search(fcv, ..., maximize = maximize)
+  return(res)
+}
+
+check_cv_args <- function(f, args) {
+  if ("" %in% names(args)) {
+    stop(sprintf("Positional arguments for parameters (...) are not supported. Please provide named arguments."))
+  }
+  fargs <- formals(f)
+  if ( ! "..." %in% names(fargs)) {
+    ## checking if there are args that are not accepted by f
+    for (arg in names(args)) {
+      if ( ! arg %in% names(fargs) ) {
+        stop(sprintf("Argument '%s' supplied but not present in f.", arg))
+      }
+    }
+  }
 }
 
 score.neg.mse <- function(ytrue, yhat) {

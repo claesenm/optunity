@@ -43,11 +43,46 @@ test_that("cv.run and grid_search over lambda",{
     beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
     xtest %*% beta
   }
-  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 4, num_iter = 2)
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 3, num_iter = 2)
   regr.cv <- function(reg) cv.run(cv, regr, reg = reg)$score.mean
   
   ## optimize
-  result <- grid_search(regr.cv, reg=c(0, 1e-2, 1e-1, 1))
-  expect_equal(length(result$call_log$values), 4)
-  expect_equal(result$stats$num_evals, 4)
+  result <- grid_search(regr.cv, reg=c(0, 1e-2, 1e-1))
+  expect_equal(length(result$call_log$values), 3)
+  expect_equal(result$stats$num_evals, 3)
 })
+
+test_that("cv.grid_search fails with wrong parameter", {
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 3, num_iter = 2)
+  regr <- function(x, y, xtest, ytest, reg) {
+    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
+    xtest %*% beta
+  }
+  expect_error( {cv.grid_search(cv, regr, noparam = c(1,2) )} )
+})
+
+
+test_that("cv.grid_search works", {
+  regr <- function(x, y, xtest, ytest, reg) {
+    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
+    xtest %*% beta
+  }
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 3, num_iter = 2)
+  res <- cv.grid_search(cv, regr, reg = c(0, 1e-2, 1e-1) )
+})
+
+d2 <- function(x1, x2) {
+  nsq1 = rowSums(x1^2)
+  nsq2 = rowSums(x2^2)
+  matrix(nsq1, nrow(x1), nrow(x2)) + matrix(nsq2, nrow(x1), nrow(x2), byrow=T) - 2 * tcrossprod(x1, x2)
+}
+
+test_that("cv.grid_search works with 2 params", {
+  regr <- function(x, y, xtest, ytest, reg, unused) {
+    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
+    xtest %*% beta
+  }
+  cv <- cv.setup(x, y, score=score.neg.mse, num_folds = 3, num_iter = 2)
+  res <- cv.grid_search(cv, regr, reg = c(0, 1e-2, 1e-1), unused=c(1) )
+})
+

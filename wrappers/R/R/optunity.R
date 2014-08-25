@@ -68,6 +68,11 @@ grid_search <- function(f, ..., maximize  = TRUE) {
   args <- list(...)
   if ( length(args) == 0) stop("Please provide grid for f, like grid_search(f, var1=c(1, 3, 5)).")
   check_args(f, args, "grid", "c(0.01, 0.1, 1.0)")
+  for (a in names(args)) {
+    if (length(args[[a]]) == 1) {
+      args[[a]] = list(unname(args[[a]]))
+    }
+  }
   return( optimize2(f, solver_name="grid search", maximize=maximize, solver_config = args) )
 }
 
@@ -105,7 +110,7 @@ check_args <- function(f, args, vartype = "bounds", example = "c(0.1, 10)") {
   }
   fargs <- formals(f)
   fargs.req <- names(fargs)[ sapply(fargs, is.symbol) ]
-  missing <- fargs.req[ ! (fargs.req %in% names(args)) ]
+  missing <- fargs.req[ ! (fargs.req %in% c("...",names(args)) ) ]
   if (length(missing) > 0) {
     stop(sprintf("Missing %s for argument '%s' for the target function. ", vartype, missing))
   }
@@ -177,10 +182,10 @@ optimize2 <- function(f,
           if ( ! is.vector(values) || ! is.numeric(values) ) {
             problem <- which( ! sapply(values, is.numeric) | sapply(values, length) != 1)
             i <- problem[1]
-            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value."),
-                 toString( reply[[i]] ),
-                 toString( values[[i]] )
-            )
+            stop(sprintf("Call f(%s) gave output '%s'. Function f has to return a single numeric value.",
+                         toString( reply[[i]] ),
+                         toString( values[[i]] )
+            ))
           }
           ## returning results of vector evaluation
           send(cons$r2py, list(values=values))

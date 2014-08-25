@@ -1,4 +1,6 @@
 import(rjson)
+import(ROCR)
+import(enrichvs)
 
 export(manual)
 export(generate_folds)
@@ -13,6 +15,7 @@ export(cma_es)
 
 export(cv.setup)
 export(cv.run)
+export(cv.grid_search)
 
 export(score.neg.mse)
 export(score.accuracy)
