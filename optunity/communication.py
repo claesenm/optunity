@@ -47,6 +47,33 @@ import threading
 __DEBUG = False
 
 
+def _find_replacement(key, kwargs):
+    """Finds a replacement for key that doesn't collide with anything in kwargs."""
+    key += '_'
+    while key in kwargs:
+        key += '_'
+    return key
+
+
+def _find_replacements(illegal_keys, kwargs):
+    """Finds replacements for all illegal keys listed in kwargs."""
+    replacements = {}
+    for key in illegal_keys:
+        if key in kwargs:
+            replacements[key] = _find_replacement(key, kwargs)
+    return replacements
+
+
+def _replace_keys(kwargs, replacements):
+    """Replace illegal keys in kwargs with another value."""
+
+    for key, replacement in replacements.items():
+        if key in kwargs:
+            kwargs[replacement] = kwargs[key]
+            del kwargs[key]
+    return kwargs
+
+
 def json_encode(data):
     """Encodes given data in a JSON string."""
     return json.dumps(data)
@@ -82,12 +109,14 @@ def receive(channel=sys.stdin):
 
 class EvalManager(object):
 
-    def __init__(self, max_vectorized=100):
+    def __init__(self, max_vectorized=100, replacements={}):
         """Constructs an EvalManager object.
 
         :param max_vectorized: the maximum size of a vector evaluation
             larger vectorizations will be chunked
         :type max_vectorized: int
+        :param replacements: a mapping of `original:replacement` keyword names
+        :type replacements: dict
 
         """
         # are we doing a parallel function evaluation?
@@ -108,6 +137,15 @@ class EvalManager(object):
 
         # used to signal Future's to get their result
         self._processed_semaphore = None
+
+        # keys that must be replaced
+        self._replacements = dict((v, k) for k, v in replacements.items())
+
+    @property
+    def replacements(self):
+        """Keys that must be replaced: keys are current values, values are
+        what must be sent through the pipe."""
+        return self._replacements
 
     @property
     def max_vectorized(self):
@@ -185,6 +223,9 @@ class EvalManager(object):
         return results
 
     def pipe_eval(self, **kwargs):
+        # fix python keywords back to original
+        kwargs = _replace_keys(kwargs, self.replacements)
+
         json_data = json_encode(kwargs)
         send(json_data)
 
@@ -196,6 +237,7 @@ class EvalManager(object):
         return decoded['value']
 
     def add_to_queue(self, **kwargs):
+        kwargs = _replace_keys(kwargs, self.replacements)
         try:
             self.queue_lock.acquire()
             self.queue.append(kwargs)
