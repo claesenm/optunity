@@ -332,11 +332,20 @@ and then exit. This final message contains the following:
 
 from __future__ import print_function
 import sys
+import keyword
 
 # optunity imports
 from . import communication as comm
 from . import functions
 import optunity
+
+# list of all Python keywords, which may be used as argument names in wrappers
+_illegal_keys = keyword.kwlist
+
+
+def _change_keys_in_solver_config(cfg):
+    replacements = comm._find_replacements(_illegal_keys, solver_config)
+    return comm._replace_keys(solver_config, replacements), replacements
 
 
 def manual_request(solver_name):
@@ -412,13 +421,17 @@ def prepare_fun(mgr, constraints, default, call_log):
 
 def max_or_min(solve_fun, kwargs, constraints, default, call_log):
     """Emulates :func:`optunity.maximize` and :func:`optunity.minimize`."""
+    replacements = comm._find_replacements(_illegal_keys, kwargs)
+    solver_config = comm._replace_keys(kwargs, replacements)
+    constraints = comm._replace_keys(constraints, replacements)
+
     # prepare objective function
-    mgr = comm.EvalManager()
+    mgr = comm.EvalManager(replacements=replacements)
     func = prepare_fun(mgr, constraints, default, call_log)
 
     # solve problem
     try:
-        solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **kwargs)
+        solution, rslt, solver = solve_fun(func, pmap=mgr.pmap, **solver_config)
     except EOFError:
         msg = {'error_msg': 'Broken pipe.'}
         comm.send(comm.json_encode(msg))
@@ -435,8 +448,12 @@ def max_or_min(solve_fun, kwargs, constraints, default, call_log):
 
 def optimize(solver_config, constraints, default, call_log, maximize, max_evals):
     """Emulates :func:`optunity.optimize`."""
+    replacements = comm._find_replacements(_illegal_keys, solver_config)
+    solver_config = comm._replace_keys(solver_config, replacements)
+    constraints = comm._replace_keys(constraints, replacements)
+
     # prepare objective function
-    mgr = comm.EvalManager()
+    mgr = comm.EvalManager(replacements=replacements)
     func = prepare_fun(mgr, constraints, default, call_log)
 
     # make the solver
@@ -479,7 +496,10 @@ def main():
         fold_request(cv_opts)
 
     elif 'make_solver' in startup_msg:
-        make_solver(startup_msg['make_solver'])
+        solver_config = startup_msg['make_solver']
+        replacements = comm._find_replacements(_illegal_keys, solver_config)
+        solver_config = comm._replace_keys(solver_config, replacements)
+        make_solver(solver_config)
 
     elif 'maximize' in startup_msg or 'minimize' in startup_msg:
         if startup_msg.get('maximize', False):
@@ -553,7 +573,6 @@ def main():
         result_json = comm.json_encode(result)
         comm.send(result_json)
         exit(0)
-
 
 
 if __name__ == '__main__':
