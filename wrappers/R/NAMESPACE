@@ -1,4 +1,6 @@
 import(rjson)
+import(ROCR)
+import(enrichvs)
 
 export(manual)
 export(generate_folds)
