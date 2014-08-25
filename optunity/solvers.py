@@ -203,7 +203,7 @@ class GridSearch(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
-        pass
+        return kwargs
 
     @property
     def parameter_tuples(self):
