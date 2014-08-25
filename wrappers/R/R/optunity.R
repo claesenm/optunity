@@ -105,7 +105,7 @@ check_args <- function(f, args, vartype = "bounds", example = "c(0.1, 10)") {
   }
   fargs <- formals(f)
   fargs.req <- names(fargs)[ sapply(fargs, is.symbol) ]
-  missing <- fargs.req[ ! (fargs.req %in% names(args)) ]
+  missing <- fargs.req[ ! (fargs.req %in% c("...",names(args)) ) ]
   if (length(missing) > 0) {
     stop(sprintf("Missing %s for argument '%s' for the target function. ", vartype, missing))
   }
