@@ -37,7 +37,6 @@ Main classes in this module:
 * :class:`Solver`
 * :class:`GridSearch`
 * :class:`RandomSearch`
-* :class:`DIRECT`
 * :class:`NelderMead`
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
@@ -319,90 +318,6 @@ class RandomSearch(Solver):
         best_pars = op.itemgetter(best_idx)(zip(*tuples))
         return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
 
-
-@register_solver('direct',
-                 'DIviding RECTangles refinement search strategy',
-                 ['This solver implements the technique described here:',
-                  'Jones, Donald R., Cary D. Perttunen, and Bruce E. Stuckman. Lipschitzian optimization without the Lipschitz constant. Journal of Optimization Theory and Applications 79.1 (1993): 157-181.']
-                 )
-class Direct(Solver):
-
-    def __init__(self, num_evals, eps, **kwargs):
-        """Initializes the solver with bounds and a number of allowed evaluations.
-        kwargs must be a dictionary of parameter-bound pairs representing the box constraints.
-        Bounds are a 2-element list: [lower_bound, upper_bound].
-
-        """
-        assert all([len(v) == 2 and v[0] <= v[1]
-                    for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
-        tup = collections.namedtuple('args',kwargs.keys())
-        self._lower = tup(**dict([(k, v[0]) for k, v in kwargs.items()]))
-        self._upper = tup(**dict([(k, v[1]) for k, v in kwargs.items()]))
-        self._num_evals = num_evals
-        self._eps = eps
-
-    def scale_data(self, data):
-        return dict([(k, lb + float(x) * (ub - lb))
-                     for k, x, lb, ub in zip(self.lower._fields, data,
-                                             self.lower, self.upper)])
-
-    @property
-    def tup(self):
-        return self._tup
-
-    @property
-    def eps(self):
-        return self._eps
-
-    @property
-    def upper(self, par=None):
-        """Returns the upper bound of par.
-
-        If par is None, returns all upper bounds."""
-        if par is None:
-            return self._upper
-        return getattr(self._upper, par)
-
-    @property
-    def lower(self, par=None):
-        """Returns the lower bound of par.
-
-        If par is None, returns all lower bounds."""
-        if par is None:
-            return self._lower
-        return getattr(self._lower, par)
-
-    @property
-    def bounds(self):
-        """Returns a dictionary containing the box constraints."""
-        return dict([(k, [lb, ub])
-                     for k, lb, ub in zip(self.lower._fields,
-                                          self.lower, self.upper)])
-
-    @property
-    def num_evals(self):
-        """Returns the number of evaluations this solver may do."""
-        return self._num_evals
-
-    @_copydoc(Solver.optimize)
-    def optimize(self, f, maximize=True, pmap=map):
-
-        def generate_rand_args():
-            return dict([(par, random.uniform(bounds[0], bounds[1]))
-                         for par, bounds in self.bounds.items()])
-
-        parameter_tuples = [generate_rand_args()
-                            for _ in range(self.num_evals)]
-        best_score = float("-inf")
-        best_pars = None
-
-        for pars in parameter_tuples:
-            score = f(**pars)
-            if score > best_score:
-                best_score = score
-                best_pars = pars
-
-        return best_pars, None  # no useful statistics to report
 
 @register_solver('nelder-mead',
                  'simplex method for unconstrained optimization',
