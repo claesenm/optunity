@@ -10,6 +10,12 @@ test_that("grid_search works", {
   expect_equal( solution$optimum, f(1,1) )
 })
 
+test_that("grid_search works", {
+  solution <- grid_search(f, x=c(-5,1,5), y=c(1) )
+  expect_equal( solution$stats$num_evals, 3)
+  expect_equal( solution$optimum, f(1,1) )
+})
+
 context("Random search")
 
 test_that("random_search works", {
