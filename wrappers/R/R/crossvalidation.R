@@ -8,10 +8,27 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
   if (missing(score))
     stop("Please set score to NULL or provide score function(ytrue, yscore), like score.accuracy for classification or score.neg.mse for regression. score=NULL means f returns score instead of predictions.")
   
+  if (!is.list(score) && !is.function(score) && !is.null(score))
+    stop("Score has to be NULL, a function or list of scoring functions.")
+  
+  if (is.list(score)) {
+    if (! all(sapply(score, is.function))) {
+      stop("score can be a list of scoring functions, but a non-function element was included.")
+    }
+  }
+  
   setup <- list()
   setup$x = x
   setup$y = y
   setup$score = score
+  if (is.function(score)) {
+    setup$scorename = deparse(substitute(score))
+  } else if (is.list(score)) {
+    setup$scorename = names(score)
+  } else {
+    setup$scorename = "user.score"
+  }
+  
   setup$num_folds = num_folds
   setup$num_iter  = num_iter
   setup$supervised = ! is.null(y)
@@ -32,32 +49,49 @@ cv.run <- function(setup, f, ...) {
   if ( ! inherits(setup, "cv.setup"))
     stop("Input setup has to be of class 'cv.setup'. Use cv.setup() to create it.")
   
-  scores = aaply(setup$folds, 2, .drop=FALSE, .fun = function(folds) {
-    ## folds of single iteration
-    sapply(1:setup$num_folds, function(fold) {
-      itrain = folds != fold
+  Nscores = max(1, length(setup$score))
+  scores = array(0, dim = c(setup$num_iter, setup$num_folds, Nscores) )
+  dimnames(scores)[[1]] <- as.list( sprintf("iter%d", 1:setup$num_iter) )
+  dimnames(scores)[[2]] <- as.list( sprintf("fold%d", 1:setup$num_folds) )
+  dimnames(scores)[[3]] <- as.list( setup$scorename )
+  
+  for (iter in 1:setup$num_iter) {
+    for (fold in 1:setup$num_folds) {
+      itrain = setup$folds[,iter] != fold
       itest  = ! itrain
       xtrain = setup$x[ itrain, ]
       xtest  = setup$x[ itest,  ]
       ytrain = setup$y[ itrain ]
       ytest  = setup$y[ itest  ]
       yhat <- f(xtrain, ytrain, xtest, ytest, ...)
+      
       if (is.null(setup$score)) {
-        s <- yhat
-        if (length(s) > 1) stop("f returned a vector, but should return 1 numeric value (score).")
-        if ( ! is.numeric(s)) stop("f returned non-numeric value.")
+        if (length(yhay) > 1) stop("f returned a vector, but should return 1 numeric value (score).")
+        if ( ! is.numeric(yhat)) stop("f returned non-numeric value.")
+        scores[iter, fold, 1] <- yhat
       } else {
-        s <- setup$score(ytest, yhat)
+        if (is.list(setup$score)) {
+          ## multiple scores
+          s <- sapply(setup$score, function(si) si(ytest, yhat))
+          if (! is.numeric(s))
+            stop("One of the scores returned non-numeric result. Make sure scores always return numeric.")
+          scores[iter, fold,] <- s
+        } else {
+          ## single score
+          scores[iter, fold, 1] <- setup$score(ytest, yhat)
+        }
       }
-      return(s)
-    })
-  })
-  
+    }
+  }
+
   out <- list()
   out$scores     = scores
-  out$score.mean = mean(scores)
-  out$score.sd   = sd(scores)
-  out$score.iter.mean = rowMeans(scores)
+  
+  out$score.mean = aaply(scores, 3, mean)
+  out$score.sd   = aaply(scores, 3, sd)
+  out$score.iter.mean = matrix(aaply(scores, c(1,3), mean), ncol=Nscores)
+  dimnames(out$score.iter.mean) = dimnames(scores)[c(1,3)]
+
   return( out )
 }
 
@@ -88,19 +122,23 @@ check_cv_args <- function(f, args) {
   }
 }
 
-score.neg.mse <- function(ytrue, yhat) {
-  - mean((ytrue-yhat)^2)
+mean.se <- function(ytrue, yhat) {
+  mean((ytrue-yhat)^2)
 }
 
-score.accuracy <- function(ytrue, yhat) {
+mean.ae <- function(ytrue, yhat) {
+  mean(abs(ytrue-yhat))
+}
+
+accuracy <- function(ytrue, yhat) {
   mean(ytrue==yhat)
 }
 
-score.roc.auc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
+auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
   enrichvs::auc(yscore, ytrue, decreasing=decreasing, top=top)
 }
 
-score.pr.auc <- function(ytrue, yscore, decreasing=TRUE) {
+auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
   perf <- ROCR::performance(ROCR::prediction(yscore, ytrue), "prec", "rec")
   prec <- perf@y.values[[1]]
   if (is.na(prec[1]))
@@ -110,11 +148,11 @@ score.pr.auc <- function(ytrue, yscore, decreasing=TRUE) {
   return( sum(base::diff(rec) * aver) )
 }
 
-score.rie <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
+early.rie <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
   enrichvs::rie(yscore, ytrue, decreasing=decreasing, alpha=alpha)
 }
 
-score.bedroc <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
+early.bedroc <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
   enrichvs::bedroc(yscore, ytrue, decreasing=TRUE, alpha=20.0)
 }
 
