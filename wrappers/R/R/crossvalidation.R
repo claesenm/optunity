@@ -2,8 +2,8 @@
 cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1, 
                      strata=NULL, clusters=NULL,
                      seed=NULL) {
-  if ( ! is.matrix(x) && ! is.data.frame(x))
-    stop("x has to be either a matrix or data.frame")
+  if ( ! is.matrix(x) && ! is.data.frame(x) && ! inherits(x, "Matrix"))
+    stop("x has to be either a matrix, data.frame or of class Matrix.")
   
   if (missing(score))
     stop("Please set score to NULL or provide score function(ytrue, yscore), like score.accuracy for classification or score.neg.mse for regression. score=NULL means f returns score instead of predictions.")
@@ -130,12 +130,25 @@ mean.ae <- function(ytrue, yhat) {
   mean(abs(ytrue-yhat))
 }
 
+accuracy.from.p <- function(ytrue, yprob) {
+  if (is.logical(ytrue)) {
+    return( mean(ytrue == (yprob > 0.5)) )
+  } else if (is.factor(ytrue)) {
+    y2 <- ytrue == levels(ytrue)[2]
+    return( mean(y2 == (yprob > 0.5) ) )
+  } else {
+    y2 <- ytrue == max(ytrue)
+    return( mean(y2 == (yprob > 0.5) ) )
+  }
+}
+
 accuracy <- function(ytrue, yhat) {
   mean(ytrue==yhat)
 }
 
 auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
-  enrichvs::auc(yscore, ytrue, decreasing=decreasing, top=top)
+  pred <- ROCR::prediction(yscore,  ytrue)
+  performance(pred, "auc")@y.values[[1]]
 }
 
 auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
