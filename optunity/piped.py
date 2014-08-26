@@ -354,7 +354,7 @@ def manual_request(solver_name):
         solver_name = None
     try:
         manual, solver_names = optunity.api._manual_lines(solver_name)
-    except KeyError:
+    except (ValueError, KeyError):
         msg = {'error_msg': 'Solver does not exist (' + solver_name + ').'}
         comm.send(comm.json_encode(msg))
         print(startup_msg, file=sys.stderr)
@@ -373,7 +373,7 @@ def fold_request(cv_opts):
     Emulates :func:`optunity.cross_validated`."""
     try:
         num_instances = cv_opts['num_instances']
-    except KeyError:
+    except (KeyError, ValueError):
         msg = {'error_msg': 'number of instances num_instances must be set.'}
         comm.send(comm.json_encode(msg))
         print(startup_msg, file=sys.stderr)
@@ -396,7 +396,7 @@ def fold_request(cv_opts):
 def make_solver(solver_config):
     try:
         optunity.make_solver(**solver_config)
-    except (KeyError, TypeError) as e:
+    except (KeyError, ValueError, TypeError) as e:
         msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
         comm.send(comm.json_encode(msg))
         print(solver_config, file=sys.stderr)
@@ -459,7 +459,7 @@ def optimize(solver_config, constraints, default, call_log, maximize, max_evals)
     # make the solver
     try:
         solver = optunity.make_solver(**solver_config)
-    except KeyError as e:
+    except (ValueError, KeyError) as e:
         msg = {'error_msg': 'Unable to instantiate solver: ' + str(e)}
         comm.send(comm.json_encode(msg))
         print(solver_config, file=sys.stderr)
@@ -549,7 +549,7 @@ def main():
         try:
             solver = optunity.make_solver(startup_msg['solver'],
                                           **startup_msg['config'])
-        except KeyError:
+        except (ValueError, KeyError):
             msg = {'error_msg': 'Unable to instantiate solver.'}
             comm.send(comm.json_encode(msg))
             print(startup_msg, file=sys.stderr)
