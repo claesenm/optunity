@@ -161,12 +161,21 @@ auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
   return( sum(base::diff(rec) * aver) )
 }
 
+to1or0 <- function(y) {
+  if (is.factor(y)) {
+    if (length(levels(y)) > 2) stop("Expected two-level factor, got more.")
+    return( (0:1)[as.numeric(y)] )
+  }
+  if (max(y) == 2) return(y-1)
+  return(y)
+}
+
 early.rie <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
-  enrichvs::rie(yscore, ytrue, decreasing=decreasing, alpha=alpha)
+  enrichvs::rie(yscore, to1or0(ytrue), decreasing=decreasing, alpha=alpha)
 }
 
 early.bedroc <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
-  enrichvs::bedroc(yscore, ytrue, decreasing=TRUE, alpha=20.0)
+  enrichvs::bedroc(yscore, to1or0(ytrue), decreasing=TRUE, alpha=20.0)
 }
 
 
