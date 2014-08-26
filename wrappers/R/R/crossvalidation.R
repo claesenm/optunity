@@ -32,9 +32,10 @@ cv.run <- function(setup, f, ...) {
   if ( ! inherits(setup, "cv.setup"))
     stop("Input setup has to be of class 'cv.setup'. Use cv.setup() to create it.")
   
-  scores = sapply(1:setup$num_iter, function(iter) {
+  scores = aaply(setup$folds, 2, .drop=FALSE, .fun = function(folds) {
+    ## folds of single iteration
     sapply(1:setup$num_folds, function(fold) {
-      itrain = setup$folds[,iter] != fold
+      itrain = folds != fold
       itest  = ! itrain
       xtrain = setup$x[ itrain, ]
       xtest  = setup$x[ itest,  ]
@@ -51,15 +52,16 @@ cv.run <- function(setup, f, ...) {
       return(s)
     })
   })
+  
   out <- list()
   out$scores     = scores
   out$score.mean = mean(scores)
   out$score.sd   = sd(scores)
-  out$score.iter.mean = colMeans(scores)
+  out$score.iter.mean = rowMeans(scores)
   return( out )
 }
 
-cv.grid_search <- function(setup, f, ..., maximize = TRUE) {
+cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   args <- list(...)
   if (length(args) == 0)
     stop("Please provide grid for f, like cv.grid_search(setup, f, param1=c(1, 3, 5)).")
