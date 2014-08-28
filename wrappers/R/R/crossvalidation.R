@@ -159,13 +159,15 @@ auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
 }
 
 auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
-  perf <- ROCR::performance(ROCR::prediction(yscore, ytrue), "prec", "rec")
-  prec <- perf@y.values[[1]]
-  if (is.na(prec[1]))
-    prec[1] <- 1.0
-  rec  <- perf@x.values[[1]]
-  aver <- (prec[-1] + prec[-length(prec)]) / 2
-  return( sum(base::diff(rec) * aver) )
+  tryCatch( {
+    perf <- ROCR::performance(ROCR::prediction(yscore, ytrue), "prec", "rec")
+    prec <- perf@y.values[[1]]
+    if (is.na(prec[1]))
+      prec[1] <- 1.0
+    rec  <- perf@x.values[[1]]
+    aver <- (prec[-1] + prec[-length(prec)]) / 2
+    return( sum(base::diff(rec) * aver) )
+  }, error = function(e) return(NA_real_))
 }
 
 to1or0 <- function(y) {
