@@ -147,8 +147,15 @@ accuracy <- function(ytrue, yhat) {
 }
 
 auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
-  pred <- ROCR::prediction(yscore,  ytrue)
-  performance(pred, "auc")@y.values[[1]]
+  if (length(ytrue) != length(yscore)) {
+    stop(sprintf("length of ytrue(%d) should be the same as length of ycore(%d).", 
+                 length(true), length(yscore) ))
+  }
+  tryCatch( {
+    pred <- ROCR::prediction(yscore,  ytrue)
+    return( performance(pred, "auc")@y.values[[1]] )
+  }, error = function(e) return(NA_real_)
+  )
 }
 
 auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
