@@ -13,7 +13,9 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
   
   if (is.list(score)) {
     if (! all(sapply(score, is.function))) {
-      stop("score can be a list of scoring functions, but a non-function element was included.")
+      notfunc = score[sapply(score, is.function) == FALSE][1]
+      stop(sprintf(
+        "score can be a list of scoring functions, but a non-function element was included: %s.", notfunc))
     }
   }
   
