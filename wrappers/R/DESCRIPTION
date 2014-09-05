@@ -1,5 +1,5 @@
 Package: optunity
-Version: 0.2
+Version: 0.3
 Title: Optunity provides optimizers for hyperparameter tuning
 Description: Optunity is a library containing various optimizers for hyperparameter tuning.
 Authors@R: c(person("Jaak", "Simm", role = c("aut", "cre"), email = "jaak.simm@gmail.com"), person("Marc", "Claesen", role = c("aut") ), person("Dusan", "Popovic", role = c("aut") ))

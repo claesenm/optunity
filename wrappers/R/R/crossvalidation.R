@@ -89,9 +89,9 @@ cv.run <- function(setup, f, ...) {
   out <- list()
   out$scores     = scores
   
-  out$score.mean = aaply(scores, 3, mean)
-  out$score.sd   = aaply(scores, 3, sd)
-  out$score.iter.mean = matrix(aaply(scores, c(1,3), mean), ncol=Nscores)
+  out$score.mean = aaply(scores, 3, mean, na.rm = TRUE)
+  out$score.sd   = aaply(scores, 3, sd, na.rm = TRUE)
+  out$score.iter.mean = matrix(aaply(scores, c(1,3), mean, na.rm = TRUE), ncol=Nscores)
   dimnames(out$score.iter.mean) = dimnames(scores)[c(1,3)]
 
   return( out )
