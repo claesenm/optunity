@@ -30,11 +30,14 @@ if isempty(env)
     env = [env, ':', path];
 end
 
-cmd = [path_to_bin, 'run_optunity_piped.py'];
-[m2py, py2m, stderr, handle] = optunity.comm.popen( cmd, env );
+% cmd = [path_to_bin, 'run_optunity_piped.py'];
+cmd = 'python -m optunity.piped';
+[m2py, py2m, handle, socket] = optunity.comm.popen( cmd, env );
 
 % provide RAII-style automatic cleanup when cleaner goes out of scope
 % e.g. both upon normal caller exit or an error
-cleaner = onCleanup(@()optunity.comm.close_subprocess(m2py, py2m, stderr, ...
-    handle));
+cleaner = onCleanup(@()optunity.comm.close_subprocess(m2py, py2m, ...
+    handle, socket));
+
+stderr = '';
 end

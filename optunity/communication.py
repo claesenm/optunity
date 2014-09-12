@@ -35,6 +35,7 @@
 from __future__ import print_function
 import json
 import sys
+import socket
 import itertools
 from . import functions
 from . import parallel
@@ -45,6 +46,10 @@ import multiprocessing
 import threading
 
 __DEBUG = False
+
+
+__channel_in = sys.stdin
+__channel_out = sys.stdout
 
 
 def _find_replacement(key, kwargs):
@@ -92,19 +97,33 @@ def json_decode(data):
     return json.loads(data)
 
 
-def send(data, channel=sys.stdout):
+def send(data):
     """Writes data to channel and flushes."""
-    print(data, file=channel)
-    channel.flush()
-    return None
+    print(data, file=__channel_out)
+    __channel_out.flush()
 
 
-def receive(channel=sys.stdin):
+def receive():
     """Reads data from channel."""
-    line = channel.readline()[:-1]
+    line = __channel_in.readline()[:-1]
     if not line:
         raise EOFError("Unexpected end of communication.")
     return line
+
+
+def open_socket(port, host=''):
+    """Opens a socket to host:port and reconfigures internal channels."""
+    global __channel_in
+    global __channel_out
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(('', 0))
+        sock.connect((host, port))
+        __channel_in = sock.makefile('r')
+        __channel_out = sock.makefile('w')
+    except (socket.error, OverflowError, ValueError) as e:
+        print('Error making socket: ' + str(e), file=sys.stderr)
+        sys.exit(1)
 
 
 class EvalManager(object):
@@ -140,6 +159,7 @@ class EvalManager(object):
 
         # keys that must be replaced
         self._replacements = dict((v, k) for k, v in replacements.items())
+
 
     @property
     def replacements(self):
