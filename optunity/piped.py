@@ -483,6 +483,20 @@ def optimize(solver_config, constraints, default, call_log, maximize, max_evals)
 
 
 def main():
+
+    # open a socket if port [+ host] specified in commandline args
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError as e:
+            print('Invalid socket port: ' + str(e))
+            sys.exit(1)
+        if len(sys.argv) > 2:
+            host = sys.argv[2]
+        else:
+            host = ''
+        comm.open_socket(port, host)
+
     startup_json = comm.receive()
     startup_msg = comm.json_decode(startup_json)
 
