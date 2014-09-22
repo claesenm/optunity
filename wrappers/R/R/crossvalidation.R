@@ -56,6 +56,8 @@ cv.run <- function(setup, f, ...) {
   dimnames(scores)[[1]] <- as.list( sprintf("iter%d", 1:setup$num_iter) )
   dimnames(scores)[[2]] <- as.list( sprintf("fold%d", 1:setup$num_folds) )
   dimnames(scores)[[3]] <- as.list( setup$scorename )
+
+  first = TRUE
   
   for (iter in 1:setup$num_iter) {
     for (fold in 1:setup$num_folds) {
@@ -68,9 +70,18 @@ cv.run <- function(setup, f, ...) {
       yhat <- f(xtrain, ytrain, xtest, ytest, ...)
       
       if (is.null(setup$score)) {
-        if (length(yhay) > 1) stop("f returned a vector, but should return 1 numeric value (score).")
         if ( ! is.numeric(yhat)) stop("f returned non-numeric value.")
-        scores[iter, fold, 1] <- yhat
+        if (first) {
+          ## first scoring, computing resulting array size
+          Nscores = length(yhat)
+          scores  = array(0, dim = c(setup$num_iter, setup$num_folds, Nscores) )
+          first   = FALSE
+        }
+        if (length(yhat) != Nscores) {
+          stop(sprintf("f returned a vector of %d, but should return %d numeric value (score).", length(yhat), dim(scores)[3] ))
+        } else {
+          scores[iter, fold, ] <- yhat
+        }
       } else {
         if (is.list(setup$score)) {
           ## multiple scores
@@ -83,6 +94,7 @@ cv.run <- function(setup, f, ...) {
           scores[iter, fold, 1] <- setup$score(ytest, yhat)
         }
       }
+      first = FALSE
     }
   }
 
