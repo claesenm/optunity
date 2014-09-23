@@ -11,6 +11,25 @@ regr <- function(x, y, xtest, ytest, reg=0) {
   xtest %*% beta
 }
 
+## linear regression with own scoring function
+regr.score <- function(x, y, xtest, ytest, reg=0) {
+  C =  diag(x=reg, ncol(x))
+  beta = solve(t(x) %*% x + C, t(x) %*% y)
+  sum((xtest %*% beta - ytest)^2)
+}
+
+## linear regression with 2 scoring functions
+regr.score2 <- function(x, y, xtest, ytest, reg=0) {
+  C =  diag(x=reg, ncol(x))
+  beta = solve(t(x) %*% x + C, t(x) %*% y)
+  yhat = xtest %*% beta
+  return( c(
+    sqerror  = sum((yhat - ytest)^2), 
+    abserror = sum(abs(yhat - ytest))
+  ))
+}
+
+
 test_that("cv.setup can be created", {
   cv <- cv.setup(x, y, score=mean.se, num_folds = 10, num_iter = 2)
   expect_equal( cv$supervised, TRUE )
@@ -63,6 +82,34 @@ test_that("cv.run works with multiple score functions", {
   expect_equal(dim(result$score.iter.mean), c(cv$num_iter, length(cv$score)) )
   
   expect_equal(names(result$score.mean), c("mse", "mae"))
+})
+
+test_that("cv.run works with user.score", {
+  cv <- cv.setup(x, y, score="user.score", num_folds = 3, num_iter = 2)
+  result <- cv.run(cv, regr.score)
+  expect_equal(result$Nscores, 1)
+  expect_equal(nrow(result$scores), cv$num_iter)
+  expect_equal(ncol(result$scores), cv$num_folds)
+  expect_equal(dim(result$scores)[3], 1)
+  
+  expect_equal(length(result$score.mean), 1)
+  expect_equal(length(result$score.sd), 1)
+  expect_equal(dim(result$score.iter.mean), c(cv$num_iter, length(cv$score)) )
+})
+
+test_that("cv.run works with 2 user.score's", {
+  cv <- cv.setup(x, y, score="user.score", num_folds = 3, num_iter = 2)
+  result <- cv.run(cv, regr.score2)
+  expect_equal(result$Nscores, 2)
+  expect_equal(nrow(result$scores), cv$num_iter)
+  expect_equal(ncol(result$scores), cv$num_folds)
+  expect_equal(dim(result$scores)[3], 2)
+  
+  expect_equal(length(result$score.mean), 2)
+  expect_equal(length(result$score.sd), 2)
+  expect_equal(dim(result$score.iter.mean), c(cv$num_iter, 2) )
+
+  expect_equal(names(result$score.mean), c("sqerror", "abserror"))
 })
 
 test_that("cv.grid_search fails with wrong parameter", {

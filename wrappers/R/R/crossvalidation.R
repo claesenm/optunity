@@ -6,10 +6,10 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
     stop("x has to be either a matrix, data.frame or of class Matrix.")
   
   if (missing(score))
-    stop("Please set score to NULL or provide score function(ytrue, yscore), like score.accuracy for classification or score.neg.mse for regression. score=NULL means f returns score instead of predictions.")
+    stop("Please set score to 'user.score' or provide score function(ytrue, yscore), like accuracy for classification or mean.se for regression. If score='user.score' then f has to return score(s) instead of predictions.")
   
-  if (!is.list(score) && !is.function(score) && !is.null(score))
-    stop("Score has to be NULL, a function or list of scoring functions.")
+  if (!is.list(score) && !is.function(score) && score != 'user.score')
+    stop("Score has to be 'user.score', a function or list of scoring functions.")
   
   if (is.list(score)) {
     if (! all(sapply(score, is.function))) {
@@ -28,7 +28,7 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
   } else if (is.list(score)) {
     setup$scorename = names(score)
   } else {
-    setup$scorename = "user.score"
+    setup$scorename = ""
   }
   
   setup$num_folds = num_folds
@@ -53,11 +53,9 @@ cv.run <- function(setup, f, ...) {
   
   Nscores = max(1, length(setup$score))
   scores = array(0, dim = c(setup$num_iter, setup$num_folds, Nscores) )
-  dimnames(scores)[[1]] <- as.list( sprintf("iter%d", 1:setup$num_iter) )
-  dimnames(scores)[[2]] <- as.list( sprintf("fold%d", 1:setup$num_folds) )
-  dimnames(scores)[[3]] <- as.list( setup$scorename )
 
   first = TRUE
+  user.score = is.character(setup$score) && setup$score[1] == "user.score"
   
   for (iter in 1:setup$num_iter) {
     for (fold in 1:setup$num_folds) {
@@ -69,13 +67,18 @@ cv.run <- function(setup, f, ...) {
       ytest  = setup$y[ itest  ]
       yhat <- f(xtrain, ytrain, xtest, ytest, ...)
       
-      if (is.null(setup$score)) {
+      if (user.score) {
         if ( ! is.numeric(yhat)) stop("f returned non-numeric value.")
         if (first) {
           ## first scoring, computing resulting array size
           Nscores = length(yhat)
           scores  = array(0, dim = c(setup$num_iter, setup$num_folds, Nscores) )
           first   = FALSE
+          if ( ! is.null(names(yhat)) ) {
+            setup$scorename = names(yhat)
+          } else {
+            setup$scorename = paste0("user.score", 1:length(yhat))
+          }
         }
         if (length(yhat) != Nscores) {
           stop(sprintf("f returned a vector of %d, but should return %d numeric value (score).", length(yhat), dim(scores)[3] ))
@@ -97,9 +100,14 @@ cv.run <- function(setup, f, ...) {
       first = FALSE
     }
   }
+  
+  dimnames(scores)[[1]] <- as.list( sprintf("iter%d", 1:setup$num_iter) )
+  dimnames(scores)[[2]] <- as.list( sprintf("fold%d", 1:setup$num_folds) )
+  dimnames(scores)[[3]] <- as.list( setup$scorename )
 
   out <- list()
   out$scores     = scores
+  out$Nscores    = Nscores
   
   out$score.mean = aaply(scores, 3, mean, na.rm = TRUE)
   out$score.sd   = aaply(scores, 3, sd, na.rm = TRUE)
