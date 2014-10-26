@@ -51,6 +51,12 @@ import collections
 import operator as op
 import array
 
+try:
+    import numpy
+    numpy_available = True
+except ImportError:
+    numpy_available = False
+
 
 __all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
            'generate_folds', 'strata_by_labels']
@@ -58,7 +64,10 @@ __all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
 
 def select(collection, indices):
     """Selects the subset specified by indices from collection."""
-    return [collection[i] for i in indices]
+    if numpy_available and type(collection) is numpy.ndarray:
+        return collection[indices, :]
+    else:
+        return [collection[i] for i in indices]
 
 
 # https://docs.python.org/2/library/itertools.html#itertools.permutations
