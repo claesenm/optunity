@@ -45,6 +45,10 @@ other environments. It communicates with the external environment using JSON mes
 We will discuss the use cases as if they are ordinary function calls. Parameter names
 are keys in the JSON root message.
 
+This standalone subprocess can communicate through stdin/stdout or sockets. To use sockets,
+specify the port as first commandline argument and host as second (omitting host will imply
+`localhost`).
+
 Requesting manuals
 -------------------
 
