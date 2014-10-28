@@ -498,7 +498,7 @@ def main():
         if len(sys.argv) > 2:
             host = sys.argv[2]
         else:
-            host = ''
+            host = 'localhost'
         comm.open_socket(port, host)
 
     startup_json = comm.receive()

@@ -131,7 +131,7 @@ class Future:
         self.__result=func(*param)
 #        except:
 #            self.__result="Exception raised within Future"
-        self.__status=`self.__result`
+        self.__status=str(self.__result)
         self.__S.release()
 
 

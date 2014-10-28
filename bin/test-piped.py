@@ -44,16 +44,29 @@ import sys
 # prepare server socket
 print('Making server socket.')
 serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serv_sock.bind(('', 0))
+try:
+    serv_sock.bind(('', 0))
+except socket.err as msg:
+    print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+    sys.exit()    
+
 serv_sock.listen(0)
 port = serv_sock.getsockname()[1]
 
 # launch piped
-print('Launching piped subprocess.')
+print('Launching piped subprocess (port ' + str(port) + ').')
 piped = subprocess.Popen(['python', '-m', 'optunity.piped', str(port)])
 
+p = piped.poll()
+print('Poll result: ' + str(p))
+
 print('Connected to subprocess.')
-sock = serv_sock.accept()[0]
+sock, address = serv_sock.accept()
+
+p = piped.poll()
+print('Poll result: ' + str(p))
+
+print('Received connection from ' + str(address))
 __channel_in = sock.makefile('r')
 __channel_out = sock.makefile('w')
 
