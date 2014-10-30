@@ -39,8 +39,8 @@ Contributors
 The main contributors to Optunity are:
 
 * Marc Claesen: framework design & implementation, communication infrastructure,
-  MATLAB wrapper and a variety of solvers.
+  MATLAB wrapper and all solvers.
 
 * Jaak Simm: R wrapper.
 
-* Dusan Popovic: genetic algorithm solver.
+* Dusan Popovic: MATLAB examples.
