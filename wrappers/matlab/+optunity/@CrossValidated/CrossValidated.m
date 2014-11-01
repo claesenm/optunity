@@ -1,15 +1,16 @@
 classdef CrossValidated < handle
-    % CROSSVALIDATED : functor that evaluated hyperparameter tuples through
-    % cross-validation. Constructing these objects should be done via
-    % optunity.cross_validate().
+    %CROSSVALIDATED : functor to evaluates hyperparameter tuples through
+    %cross-validation. Constructing these objects should be done via
+    %optunity.cross_validate().
     %
-    % This object works as a functor, e.g. you can use typical MATLAB
-    % function syntax to perform cross-validation:
+    %This object works as a functor, e.g. you can use typical MATLAB
+    %function syntax to perform cross-validation:
+    %   obj = optunity.cross_validate(...);
     %   score = obj(hyperparameter_struct);
     %
-    % To change the function to be cross-validated, you may use the
-    % set_fun() member function. This returns a new CrossValidated object
-    % with identical configuration for the new function.
+    %To change the function to be cross-validated, you may use the
+    %set_fun() member function. This returns a new CrossValidated object
+    %with identical configuration for the new function.
     properties (SetAccess = immutable)
         x = [];
         y = [];
