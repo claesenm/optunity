@@ -131,3 +131,10 @@ call_log = struct('args',struct('x',[1 1 2 2], 'y', [1 2 1 2]), ...
 [warm_solution, warm_details] = ...    
     s_oo2.optimize(f, ...
     'call_log', call_log, 'parallelize', false);
+
+
+
+%% cross-validation
+x = (1:10)';
+cvf = optunity.cross_validate(@cv_fun, x);
+performance = cvf(struct('x',1,'y',2));
