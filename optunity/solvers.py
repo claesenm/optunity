@@ -43,7 +43,7 @@ Main classes in this module:
 
 .. warning::
     :class:`NelderMead` is only available if SciPy_ is available.
-    :class:`ParticleSwarm` and :class:`CMA_ES` require DEAP_.
+    :class:`CMA_ES` require DEAP_.
 
     .. _SciPy: http://http://www.scipy.org/
     .. _DEAP: https://code.google.com/p/deap/
@@ -596,7 +596,8 @@ if _deap_available and _numpy_available:
                          ])(CMA_ES)
 
 
-class ParticleSwarm(Solver):
+# this implementation of the PSO solver has been replaced
+class ParticleSwarmDEAP(Solver):
     """
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
 
@@ -741,24 +742,180 @@ class ParticleSwarm(Solver):
         return dict([(k, v)
                         for k, v in zip(self.bounds.keys(), best)]), None
 
-# PSO solver requires deap > 0.7
-# http://deap.gel.ulaval.ca/doc/dev/examples/pso_basic.html
-# https://code.google.com/p/deap/source/browse/examples/pso/basic.py?name=dev
-if _deap_available:
-    ParticleSwarm = register_solver('particle swarm',
-                         'particle swarm optimization',
-                        ['Maximizes the function using particle swarm optimization.',
-                        ' ',
-                        'This is a two-phase approach:',
-                        '1. Initialization: randomly initializes num_particles particles.',
-                        '   Particles are randomized uniformly within the box constraints.',
-                        '2. Iteration: particles move during num_generations iterations.',
-                        '   Movement is based on their velocities and mutual attractions.',
-                       ' ',
-                        'This function requires the following arguments:',
-                        '- num_particles: number of particles to use in the swarm',
-                        '- num_generations: number of iterations used by the swarm',
-                        '- max_speed: maximum speed of the particles in each direction (in (0, 1])',
-                        '- box constraints via key words: constraints are lists [lb, ub]', ' ',
-                        'This solver performs num_particles*num_generations function evaluations.'
-                        ])(ParticleSwarm)
+@register_solver('particle swarm',
+                 'particle swarm optimization',
+                 ['Maximizes the function using particle swarm optimization.',
+                  ' ',
+                  'This is a two-phase approach:',
+                  '1. Initialization: randomly initializes num_particles particles.',
+                  '   Particles are randomized uniformly within the box constraints.',
+                  '2. Iteration: particles move during num_generations iterations.',
+                  '   Movement is based on their velocities and mutual attractions.',
+                  ' ',
+                  'This function requires the following arguments:',
+                  '- num_particles: number of particles to use in the swarm',
+                  '- num_generations: number of iterations used by the swarm',
+                  '- max_speed: maximum speed of the particles in each direction (in (0, 1])',
+                  '- box constraints via key words: constraints are lists [lb, ub]', ' ',
+                  'This solver performs num_particles*num_generations function evaluations.'
+                  ])
+class ParticleSwarm(Solver):
+    """
+    TODO
+    """
+
+    class Particle:
+        def __init__(self, position, speed, best, fitness, best_fitness):
+            """Constructs a Particle."""
+            self.position = position
+            self.speed = speed
+            self.best = best
+            self.fitness = fitness
+            self.best_fitness = best_fitness
+
+        def clone(self):
+            """Clones this Particle."""
+            return ParticleSwarm.Particle(position=self.position[:], speed=self.speed[:],
+                                          best=self.best[:], fitness=self.fitness,
+                                          best_fitness=self.best_fitness)
+
+        def __str__(self):
+            string = 'Particle{position=' + str(self.position)
+            string += ', speed=' + str(self.speed)
+            string += ', best=' + str(self.best)
+            string += ', fitness=' + str(self.fitness)
+            string += ', best_fitness=' + str(self.best_fitness)
+            string += '}'
+            return string
+
+    def __init__(self, num_particles, num_generations, max_speed=None, **kwargs):
+        """blah"""
+        if not _deap_available:
+            raise ImportError('This solver requires DEAP but it is missing.')
+
+        assert all([len(v) == 2 and v[0] <= v[1]
+                    for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
+        self._bounds = kwargs
+        self._ttype = collections.namedtuple('ttype', kwargs.keys())
+        self._num_particles = num_particles
+        self._num_generations = num_generations
+
+        if max_speed is None:
+            max_speed = 2.0/num_generations
+        self._max_speed = max_speed
+        self._smax = [self.max_speed * (b[1] - b[0])
+                        for _, b in self.bounds.items()]
+        self._smin = map(op.neg, self.smax)
+
+        self._phi1 = 2.0
+        self._phi2 = 2.0
+
+    @property
+    def phi1(self):
+        return self._phi1
+
+    @property
+    def phi2(self):
+        return self._phi2
+
+    @staticmethod
+    def suggest_from_box(num_evals, **kwargs):
+        d = dict(kwargs)
+        if num_evals > 200:
+            d['num_particles'] = 50
+            d['num_generations'] = int(math.ceil(float(num_evals) / 50))
+        elif num_evals > 10:
+            d['num_particles'] = 10
+            d['num_generations'] = int(math.ceil(float(num_evals) / 10))
+        else:
+            d['num_particles'] = num_evals
+            d['num_generations'] = 1
+        return d
+
+    @property
+    def num_particles(self):
+        return self._num_particles
+
+    @property
+    def num_generations(self):
+        return self._num_generations
+
+    @property
+    def toolbox(self):
+        return self._toolbox
+
+    @property
+    def max_speed(self):
+        return self._max_speed
+
+    @property
+    def smax(self):
+        return self._smax
+
+    @property
+    def smin(self):
+        return self._smin
+
+    @property
+    def bounds(self):
+        return self._bounds
+
+    @property
+    def ttype(self):
+        return self._ttype
+
+    def generate(self):
+        part = ParticleSwarm.Particle(position=array.array('d', map(random.uniform,
+                                                                    *zip(*self.bounds.values()))),
+                                      speed=array.array('d', map(random.uniform,
+                                                                 self.smin, self.smax)),
+                                      best=None, fitness=None, best_fitness=None)
+        return part
+
+    def updateParticle(self, part, best, phi1, phi2):
+        u1 = (random.uniform(0, phi1) for _ in range(len(part.position)))
+        u2 = (random.uniform(0, phi2) for _ in range(len(part.position)))
+        v_u1 = map(op.mul, u1,
+                    map(op.sub, part.best, part.position))
+        v_u2 = map(op.mul, u2,
+                    map(op.sub, best.position, part.position))
+        part.speed = array.array('d', map(op.add, part.speed,
+                                          map(op.add, v_u1, v_u2)))
+        for i, speed in enumerate(part.speed):
+            if speed < self.smin[i]:
+                part.speed[i] = self.smin[i]
+            elif speed > self.smax[i]:
+                part.speed[i] = self.smax[i]
+        part.position[:] = array.array('d', map(op.add, part.position, part.speed))
+
+    @_copydoc(Solver.optimize)
+    def optimize(self, f, maximize=True, pmap=map):
+
+        @functools.wraps(f)
+        def evaluate(particle):
+            return f(**dict([(k, v)
+                              for k, v in zip(self.bounds.keys(),
+                                              particle.position)]))
+
+        if maximize:
+            fit = 1.0
+        else:
+            fit = -1.0
+
+        pop = [self.generate() for _ in range(self.num_particles)]
+        best = None
+
+        for g in range(self.num_generations):
+            fitnesses = pmap(evaluate, pop)
+            for part, fitness in zip(pop, fitnesses):
+                part.fitness = fit*fitness
+                if not part.best or part.best_fitness < part.fitness:
+                    part.best = part.position
+                    part.best_fitness = part.fitness
+                if not best or best.fitness < part.fitness:
+                    best = part.clone()
+            for part in pop:
+                self.updateParticle(part, best, self.phi1, self.phi2)
+
+        return dict([(k, v)
+                        for k, v in zip(self.bounds.keys(), best.position)]), None
