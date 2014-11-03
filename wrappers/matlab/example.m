@@ -50,7 +50,9 @@ if cma_available
     [cma_solution, cma_details] = optunity.optimize(cma_solver, f, 'parallelize', false);
 end
 
-
+csa_solver = optunity.make_solver('annealing', 'num_generations', 25, ...
+    'num_processes', 5, 'T_0', 10, 'Tacc_0', 10, 'x', [-5, 5], 'y', [-5, 5]);
+[csa_solution, csa_details] = optunity.optimize(csa_solver, f, 'parallelize', false);
 %% draw a figure to illustrate the call log of all solvers
 if drawfig
     figure; hold on;
