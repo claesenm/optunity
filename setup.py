@@ -11,7 +11,6 @@ setup(
     license='LICENSE.txt',
     description='Optimization routines for hyperparameter tuning.',
     long_description=open('README.rst').read(),
-    test_suite = "optunity.tests.test_all",
     classifiers=[
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
