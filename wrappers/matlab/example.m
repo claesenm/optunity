@@ -50,9 +50,10 @@ if cma_available
     [cma_solution, cma_details] = optunity.optimize(cma_solver, f, 'parallelize', false);
 end
 
-csa_solver = optunity.make_solver('annealing', 'num_generations', 25, ...
-    'num_processes', 5, 'T_0', 10, 'Tacc_0', 10, 'x', [-5, 5], 'y', [-5, 5]);
+csa_solver = optunity.make_solver('annealing', 'num_generations', 30, ...
+    'num_processes', 5, 'T_0', 1, 'Tacc_0', 1, 'x', [-5, 5], 'y', [-5, 5]);
 [csa_solution, csa_details] = optunity.optimize(csa_solver, f, 'parallelize', false);
+
 %% draw a figure to illustrate the call log of all solvers
 if drawfig
     figure; hold on;
@@ -61,12 +62,11 @@ if drawfig
     if nm_available
         plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'm', 'LineWidth', 3);
     end
-    if pso_available
-        plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'bo', 'LineWidth', 2);
-    end    
+    plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'bo', 'LineWidth', 2);
     if cma_available
         plot(cma_details.call_log.args.x, cma_details.call_log.args.y, 'go', 'LineWidth', 2);
     end    
+    plot(csa_details.call_log.args.x, csa_details.call_log.args.y, 'yo', 'LineWidth', 2);
     [X,Y] = meshgrid(-5:0.1:5);
     Z = arrayfun(@(idx) f(struct('x',X(idx),'y',Y(idx))), 1:numel(X));
     Z = reshape(Z, size(X,1), size(X,1));
@@ -89,6 +89,7 @@ if drawfig
     if cma_available
         legends{end+1} = ['CMA-ES (',num2str(cma_details.stats.num_evals),' evals)'];
     end
+    legends{end+1} = ['CSA (',num2str(csa_details.stats.num_evals),' evals)'];
     legend(legends, -1);
     
     num_evals = [grid_details.stats.num_evals, rnd_details.stats.num_evals];
@@ -109,6 +110,9 @@ if drawfig
        optima(end+1) = cma_details.optimum;
        ticks{end+1} = 'CMA-ES';
     end
+    num_evals(end+1) = csa_details.stats.num_evals;
+    optima(end+1) = csa_details.optimum;
+    ticks{end+1} = 'CSA';
     
     figure; hold on;
     

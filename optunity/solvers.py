@@ -40,6 +40,7 @@ Main classes in this module:
 * :class:`NelderMead`
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
+  :class:`CSA`
 
 .. warning::
     :class:`NelderMead` is only available if SciPy_ is available.
@@ -143,7 +144,7 @@ class Solver(SolverBase):
             - an optional solver report, can be None
 
         """
-        return optimize(f, True, pmap=pmap)
+        return self.optimize(f, True, pmap=pmap)
 
     def minimize(self, f, pmap=map):
         """Minimizes ``f``.
@@ -157,7 +158,7 @@ class Solver(SolverBase):
             - an optional solver report, can be None
 
         """
-        return optimize(f, False, pmap=pmap)
+        return self.optimize(f, False, pmap=pmap)
 
 
 # http://stackoverflow.com/a/13743316
@@ -920,11 +921,9 @@ class ParticleSwarm(Solver):
         return dict([(k, v)
                         for k, v in zip(self.bounds.keys(), best.position)]), None
 
-
-
-#@register_solver('annealing',
-#                 'coupled simulated annealing',
-#                 ['TODO'])
+@register_solver('annealing',
+                 'coupled simulated annealing',
+                 ['TODO'])
 class CSA(Solver):
     """
     TODO
@@ -1044,8 +1043,7 @@ class CSA(Solver):
             return self._Tacc_0
 
     def exp(self, cost, multiplier, k):
-        print(str(cost * multiplier / self.Tacc(k)))
-        return math.exp(cost * multiplier / self.Tacc(k))
+        return math.exp(-cost * multiplier / self.Tacc(k))
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
@@ -1108,6 +1106,7 @@ class CSA(Solver):
             gamma = reduce(op.add, [self.exp(proc.cost, mult, k)
                                     for proc in processes])
 
+            print('gamma: ' + str(gamma))
             for process, ycost in zip(processes, costs):
                 process.ycost = ycost
                 if comp(process.ycost, process.cost):
@@ -1115,6 +1114,7 @@ class CSA(Solver):
                 else:
                     expcost = self.exp(ycost, mult, k)
                     accept_probability = expcost / (expcost + gamma)
+                print('cost: ' + str(process.cost) + ' ycost: ' + str(process.ycost) + ' prob: ' + str(accept_probability))
                 process.accept(accept_probability)
 
         logs = itertools.chain(*[p.log for p in processes])

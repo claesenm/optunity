@@ -58,7 +58,7 @@ except ImportError:
     numpy_available = False
 
 
-__all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
+__all__ = ['select', 'random_permutation', 'cross_validated',
            'generate_folds', 'strata_by_labels']
 
 
@@ -125,6 +125,18 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
     .. warning::
         Instances in strata are not necessarily spread out over all folds. Some
         folds may already be full due to clusters. This effect should be negligible.
+
+    >>> folds = generate_folds(num_rows=6, num_folds=2, clusters=[[1, 2]], strata=[[3,4]])
+    >>> len(folds)
+    2
+    >>> i1 = [idx for idx, fold in enumerate(folds) if 1 in fold]
+    >>> i2 = [idx for idx, fold in enumerate(folds) if 2 in fold]
+    >>> i1 == i2
+    True
+    >>> i3 = [idx for idx, fold in enumerate(folds) if 3 in fold]
+    >>> i4 = [idx for idx, fold in enumerate(folds) if 4 in fold]
+    >>> i3 == i4
+    False
 
     """
 
