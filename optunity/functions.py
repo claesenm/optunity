@@ -347,7 +347,7 @@ def static_key_order(keys):
 
     >>> @static_key_order(['foo', 'bar'])
     ... def f(bar, foo): return bar + 2 * foo
-    >>> f([3,5])
+    >>> f(3, 5)
     11
 
     """
