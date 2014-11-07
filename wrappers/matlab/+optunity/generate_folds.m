@@ -30,7 +30,7 @@ json_reply = optunity.comm.readpipe(py2m);
 reply = optunity.comm.json_decode(json_reply);
 
 if isfield(reply, 'error_msg')
-   error(['Error retrieving manual: ',reply.error_msg]);
+   error(['Error generating folds: ',reply.error_msg]);
 end
 
 % Optunity returns 0-based indices, turn into 1-based

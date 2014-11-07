@@ -14,7 +14,7 @@ optunity.comm.json_encode(blah)
 % DEBUG_OPTUNITY=true;
 strata = {[1,2,3], [6,7,8,9]};
 folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
-folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', {[1,2,3]});
+folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', [1,2,3]);
 
 %% optimize using grid-search
 grid_solver = optunity.make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
