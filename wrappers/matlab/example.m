@@ -10,8 +10,8 @@ blah = struct('strata', {{[1,2,3]}}, 'clusters', {{[1,2,3],[4,5,6]}})
 optunity.comm.json_encode(blah)
 
 %% cross-validation example
-global DEBUG_OPTUNITY
-DEBUG_OPTUNITY=true;
+% global DEBUG_OPTUNITY
+% DEBUG_OPTUNITY=true;
 strata = {[1,2,3], [6,7,8,9]};
 folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
 folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', {[1,2,3]});
