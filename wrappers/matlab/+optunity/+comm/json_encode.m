@@ -11,10 +11,22 @@ if isstruct(struct)
 elseif ischar(struct)
     json = ['"',struct,'"'];
     
-elseif numel(struct) > 1
-    strings = arrayfun(@(x) optunity.comm.json_encode(x), struct,'UniformOutput',false);
-    json = ['[', strjoin(strings,', '),']'];
+elseif iscell(struct) && isempty(struct)
+    json = '[]';
     
+elseif iscell(struct) && numel(struct) == 1 % dealing with a 1-element cell
+    string = optunity.comm.json_encode(struct{1});    
+    json = ['[',string,']'];
+   
+elseif numel(struct) > 1
+    if iscell(struct)
+        strings = cellfun(@(x) optunity.comm.json_encode(x), struct,'UniformOutput',false);
+        json = ['[', strjoin(strings, ', '), ']'];
+    else
+        strings = arrayfun(@(x) optunity.comm.json_encode(x), struct,'UniformOutput',false);
+        json = ['[', strjoin(strings,', '),']'];
+    end
+   
 elseif isnumeric(struct)
     json = num2str(struct);
     

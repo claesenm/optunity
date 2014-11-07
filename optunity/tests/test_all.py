@@ -2,10 +2,10 @@
 
 import unittest
 import doctest
-import optunity.cross_validation
-import optunity.functions
 
-modules = ['cross_validation', 'functions', 'solvers', 'communication']
+modules = ['cross_validation', 'functions', 'solvers', 'communication',
+           'solvers.GridSearch', 'solvers.RandomSearch', 'solvers.ParticleSwarm',
+           'solvers.CMAES', 'solvers.CSA', 'solvers.NelderMead']
 
 def load_tests(loader, tests, ignore):
     for mod in modules:

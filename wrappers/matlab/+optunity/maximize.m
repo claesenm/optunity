@@ -3,6 +3,7 @@ function [solution, details, solver] = maximize(f, num_evals, varargin)
 %
 % This function accepts the following arguments:
 % - f: the objective function to be maximized
+% - num_evals: the number of permitted objective function evaluations
 % - varargin: a list of optional key:value pairs
 %   - solver_name: name of the solver to use (default '')
 %   - parallelize: (boolean) whether or not to parallelize evaluations

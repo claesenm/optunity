@@ -57,8 +57,7 @@ import collections
 # optunity imports
 from . import functions as fun
 from . import solvers
-from . import solver_registry
-from . import parallel as par
+from solvers import solver_registry
 from .util import DocumentedNamedTuple as DocTup
 
 

@@ -18,8 +18,10 @@ cross_validation
 
 Available subpackages
 ---------------------
-test
+tests
     regression test suite
+solvers
+    solver implementations and auxillary functions
 
 Utilities
 ---------
