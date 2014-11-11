@@ -6,15 +6,11 @@ offx = rand();
 offy = rand();
 f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
 
-blah = struct('strata', {{[1,2,3]}}, 'clusters', {{[1,2,3],[4,5,6]}})
-optunity.comm.json_encode(blah)
-
 %% cross-validation example
 % global DEBUG_OPTUNITY
 % DEBUG_OPTUNITY=true;
 strata = {[1,2,3], [6,7,8,9]};
 folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
-folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', [1,2,3]);
 
 %% optimize using grid-search
 grid_solver = optunity.make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);

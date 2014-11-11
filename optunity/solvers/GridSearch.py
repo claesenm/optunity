@@ -34,6 +34,7 @@ import operator as op
 import itertools
 import math
 
+from ..functions import static_key_order
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, shrink_bounds
 
@@ -119,7 +120,7 @@ class GridSearch(Solver):
         density = math.floor(math.log(num_evals)/math.log(num_pars))
         grid = dict([(k, GridSearch.assign_grid_points(b[0], b[1], density))
                      for k, b in bounds.items()])
-        return GridSearch(**grid)
+        return grid
 
     @property
     def parameter_tuples(self):
@@ -130,6 +131,7 @@ class GridSearch(Solver):
     def optimize(self, f, maximize=True, pmap=map):
 
         best_pars = None
+        f = static_key_order(self.parameter_tuples.keys())(f)
 
         if maximize:
             comp = lambda score, best: score > best

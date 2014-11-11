@@ -30,12 +30,12 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import random
 import operator as op
+import random
 
-from .. import functions as fun
+from ..functions import static_key_order
 from .solver_registry import register_solver
-from .util import Solver, _copydoc, uniform_in_bounds
+from .util import Solver, _copydoc, shrink_bounds, uniform_in_bounds
 
 @register_solver('random search',
                  'random parameter tuples sampled uniformly within box constraints',
@@ -71,7 +71,20 @@ class RandomSearch(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
-        d = dict(kwargs)
+        """Creates a GridSearch solver that uses ``num_evals`` evaluations
+        within given bounds (lb, ub). The bounds are first tightened, resulting in
+        new bounds covering 99% of the area.
+
+        >>> s = RandomSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> [round(x, 3) for x in s.bounds['x']]
+        [0.005, 0.995]
+        >>> [round(x, 3) for x in s.bounds['y']]
+        [-0.995, -0.005]
+        >>> [round(x, 3) for x in s.bounds['z']]
+        [-0.99, 0.99]
+
+        """
+        d = shrink_bounds(kwargs)
         d['num_evals'] = num_evals
         return d
 
@@ -99,12 +112,12 @@ class RandomSearch(Solver):
     def optimize(self, f, maximize=True, pmap=map):
 
         def generate_rand_args(len=1):
+#            return [uniform_in_bounds(self.bounds)]
             return [[random.uniform(bounds[0], bounds[1]) for _ in range(len)]
                     for _, bounds in sorted(self.bounds.items())]
 
         best_pars = None
-        sortedkeys = sorted(self.bounds.keys())
-        f = fun.static_key_order(sortedkeys)(f)
+        f = static_key_order(self.bounds.keys())(f)
 
         if maximize:
             comp = lambda score, best: score > best
@@ -120,4 +133,4 @@ class RandomSearch(Solver):
             comp = min
         best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
         best_pars = op.itemgetter(best_idx)(zip(*tuples))
-        return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
+        return dict([(k, v) for k, v in zip(self.bounds.keys(), best_pars)]), None

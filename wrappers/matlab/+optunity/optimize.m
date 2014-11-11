@@ -57,9 +57,9 @@ pipe_send(msg);
 %% iteratively send function evaluation results until solved
 reply = struct();
 while true
-    reply = pipe_receive();
+    reply = pipe_receive()
     
-    if isfield(reply, 'solution') || isfield(reply, 'error_msg')
+    if isfield(reply, 'solution') || isfield(reply, 'error_msg');
         break;
     end
     
