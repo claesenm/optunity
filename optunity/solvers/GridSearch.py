@@ -138,7 +138,7 @@ class GridSearch(Solver):
         else:
             comp = lambda score, best: score < best
 
-        tuples = list(zip(*itertools.product(*zip(*self.parameter_tuples.items())[1])))
+        tuples = list(zip(*itertools.product(*list(zip(*self.parameter_tuples.items()))[1])))
         scores = pmap(f, *tuples)
 
         if maximize:
@@ -146,5 +146,5 @@ class GridSearch(Solver):
         else:
             comp = min
         best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
-        best_pars = op.itemgetter(best_idx)(zip(*tuples))
+        best_pars = op.itemgetter(best_idx)(list(zip(*tuples)))
         return dict([(k, v) for k, v in zip(self.parameter_tuples.keys(), best_pars)]), None

@@ -58,8 +58,10 @@ class RandomSearch(Solver):
         Bounds are a 2-element list: [lower_bound, upper_bound].
 
         >>> s = RandomSearch(x=[0, 1], y=[-1, 2], num_evals=50)
-        >>> s.bounds
-        {'y': [-1, 2], 'x': [0, 1]}
+        >>> s.bounds['x']
+        [0, 1]
+        >>> s.bounds['y']
+        [-1, 2]
         >>> s.num_evals
         50
 
