@@ -43,7 +43,7 @@ from .util import Solver, _copydoc, uniform_in_bounds
 #                 ['TODO'])
 class CSA(Solver):
     """
-    TODO
+    TODO.
 
     Based on ftp://ftp.esat.kuleuven.be/pub/SISTA/sdesouza/papers/CSA2009accepted.pdf
     """
