@@ -374,7 +374,6 @@ if __name__ == '__main__':
 
     @cross_validated(x, num_folds=3, num_iter=2, clusters=clusters)
     def f1(woops, x_train, x_test):
-        '''floopsie docstring'''
         print(x_train)
         return 0
 
@@ -392,7 +391,6 @@ if __name__ == '__main__':
 
     @cross_validated(list(range(20)), num_folds=10, num_iter=2, strata=[[1,2,3],[6,7,8,9]])
     def f1(woops, x_train, x_test):
-        '''floopsie docstring'''
         print(x_train)
         return 0
 

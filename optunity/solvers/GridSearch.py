@@ -84,7 +84,7 @@ class GridSearch(Solver):
         :type density: int
 
         >>> s = GridSearch.assign_grid_points(1.0, 2.0, 3)
-        >>> s
+        >>> s #doctest:+SKIP
         [1.0, 1.5, 2.0]
 
         """
@@ -104,11 +104,11 @@ class GridSearch(Solver):
         equal to floor(log(num_evals)/log(len(kwargs))).
 
         >>> s = GridSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
-        >>> [round(x, 3) for x in s['x']]
+        >>> s['x'] #doctest:+SKIP
         [0.005, 0.5, 0.995]
-        >>> [round(x, 3) for x in s['y']]
+        >>> s['y'] #doctest:+SKIP
         [-0.995, -0.5, -0.005]
-        >>> [round(x, 3) for x in s['z']]
+        >>> s['z'] #doctest:+SKIP
         [-0.99, 0.0, 0.99]
 
         """
