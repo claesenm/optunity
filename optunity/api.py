@@ -86,9 +86,9 @@ def manual(solver_name=None):
 
     Raises ``KeyError`` if ``solver_name`` is not registered."""
     if solver_name:
-        man = solver_registry.get(solver_name).desc_full
+        man = solver_registry.get(solver_name.lower()).desc_full
     else:
-        man = solver_registry._manual_lines()
+        man = solver_registry.manual()
     print('\n'.join(man))
 
 
@@ -125,7 +125,7 @@ time
 
 def suggest_solver(num_evals=50, solver_name=None, **kwargs):
     if solver_name:
-        solvercls = solver_registry.get(solver_name)
+        solvercls = solver_registry.get(solver_name.lower())
     else:
         solver_name = 'particle swarm'
         solvercls = solvers.ParticleSwarm
@@ -165,7 +165,7 @@ def maximize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
 
     f = _wrap_hard_box_constraints(f, kwargs, sys.float_info.min)
 
-    suggestion = suggest_solver(num_evals, solver_name, **kwargs)
+    suggestion = suggest_solver(num_evals, solver_name.lower(), **kwargs)
     solver = make_solver(**suggestion)
     solution, details = optimize(solver, f, maximize=True, max_evals=num_evals,
                                  pmap=pmap)
@@ -196,7 +196,7 @@ def minimize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
 
     func =  _wrap_hard_box_constraints(f, kwargs, sys.float_info.max)
 
-    suggestion = suggest_solver(num_evals, solver_name, **kwargs)
+    suggestion = suggest_solver(num_evals, solver_name.lower(), **kwargs)
     solver = make_solver(**suggestion)
     solution, details = optimize(solver, func, maximize=False, max_evals=num_evals,
                                  pmap=pmap)

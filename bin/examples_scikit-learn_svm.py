@@ -33,6 +33,22 @@ def svm_acc(x_train, y_train, x_test, y_test, C, gamma):
     y_pred = model.predict(x_test)
     return optunity.score_functions.accuracy(y_test, y_pred)
 
+def grid_search(gammas, Cs):
+    best_acc = 0.0
+    best_gamma = None
+    best_C = None
+    for C in Cs:
+        for gamma in gammas:
+            acc = svm_acc(C=C, gamma=gamma)
+            if acc > best_acc:
+                best_acc = acc
+                best_gamma = gamma
+                best_C = C
+    return best_acc, best_gamma, best_C
+
+grid_acc, grid_gamma, grid_c = grid_search([0.001, 0.01, 0.1, 1, 10],
+                                           [0.001, 0.01, 0.1, 1, 10])
+
 optimal_pars, details, _ = optunity.maximize(svm_acc, num_evals=100, C=[0, 20], gamma=[0, 2])
 optimal_model = sklearn.svm.SVC(**optimal_pars).fit(train_data, train_labels)
 
