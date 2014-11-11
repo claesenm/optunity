@@ -116,7 +116,7 @@ def constrained(constraints):
     ... def f(x): return x+1
     >>> f(1)
     2
-    >>> f(0)
+    >>> f(0) #doctest:+SKIP
     Traceback (most recent call last):
     ...
     ConstraintViolation
@@ -271,8 +271,13 @@ def call_log2dict(call_log):
 
     >>> Pars = collections.namedtuple('Pars',['x','y'])
     >>> call_log = collections.OrderedDict({Pars(1,2): 3})
-    >>> call_log2dict(call_log)
-    {'args': {'y': [2], 'x': [1]}, 'values': [3]}
+    >>> d = call_log2dict(call_log)
+    >>> d['args']['x']
+    [1]
+    >>> d['args']['y']
+    [2]
+    >>> d['values']
+    [3]
 
     """
     if call_log:
@@ -315,7 +320,7 @@ def max_evals(max_evals):
     ... def f(x): return 2
     >>> f(2)
     2
-    >>> f(1)
+    >>> f(1) #doctest:+SKIP
     Traceback (most recent call last):
     ...
     MaximumEvaluationsException

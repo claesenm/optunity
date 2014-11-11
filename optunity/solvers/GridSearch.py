@@ -56,8 +56,10 @@ class GridSearch(Solver):
 
     >>> s = GridSearch(x=[1,2,3], y=[-1,0,1])
     >>> best_pars, _ = s.optimize(lambda x, y: x*y)
-    >>> best_pars
-    {'y': 1, 'x': 3}
+    >>> best_pars['x']
+    3
+    >>> best_pars['y']
+    1
 
     """
 
@@ -65,8 +67,10 @@ class GridSearch(Solver):
         """Initializes the solver with a tuple indicating parameter values.
 
         >>> s = GridSearch(x=[1,2], y=[3,4])
-        >>> s.parameter_tuples
-        {'y': [3, 4], 'x': [1, 2]}
+        >>> s.parameter_tuples['x']
+        [1, 2]
+        >>> s.parameter_tuples['y']
+        [3, 4]
 
         """
         self._parameter_tuples = kwargs

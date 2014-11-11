@@ -165,7 +165,7 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
         assigned.update(it.chain(*clusters))
 
     if assigned:
-        strata.append(filter(lambda x: x not in assigned, instances))
+        strata.append(list(filter(lambda x: x not in assigned, instances)))
     else:
         strata.append(list(instances))
 
@@ -181,8 +181,8 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
             # when we assign given cluster to them
             cluster = clusters[cluster_idx]
             cluster_size = len(cluster)
-            eligible = filter(lambda x: len(folds[x]) + cluster_size <= sizes[x],
-                              fill_queue)
+            eligible = list(filter(lambda x: len(folds[x]) + cluster_size <= sizes[x],
+                                   fill_queue))
 
             if not eligible:
                 raise ValueError('Unable to assign all clusters to folds.')
@@ -200,21 +200,22 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
 
     # assign strata
     for stratum in strata:
-        stratum = random_permutation(filter(lambda x: x in instances, stratum))
-        while stratum:
-            eligible = filter(lambda x: len(folds[x]) < sizes[x], fill_queue)
-            eligible = random_permutation(eligible)
+        permuted_stratum = random_permutation(list(filter(lambda x: x in
+                                                          instances, stratum[:])))
+        while permuted_stratum:
+            eligible = list(filter(lambda x: len(folds[x]) < sizes[x], fill_queue))
 
             if not eligible:
                 raise ValueError('Unable to assign all instances to folds.')
 
-            for instance_idx, fold_idx in zip(stratum[:], eligible):
+            eligible = random_permutation(eligible)
+            for instance_idx, fold_idx in zip(permuted_stratum[:], eligible):
                 folds[fold_idx].append(instance_idx)
                 if len(folds[fold_idx]) >= sizes[fold_idx]:
                     fill_queue.remove(fold_idx)
                 instances.remove(instance_idx)
 
-            stratum = stratum[len(eligible):]
+            permuted_stratum = permuted_stratum[len(eligible):]
 
     return folds
 
