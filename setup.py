@@ -5,7 +5,7 @@ setup(
     version = '0.2.0',
     author = 'Marc Claesen',
     author_email = 'marc.claesen@esat.kuleuven.be',
-    packages = ['optunity', 'optunity.tests', 'optunity.solver_implementations'],
+    packages = ['optunity', 'optunity.tests', 'optunity.solvers'],
     scripts = [],
     url = 'http://www.optunity.net',
     license = 'LICENSE.txt',
