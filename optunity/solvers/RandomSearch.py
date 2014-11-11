@@ -76,12 +76,14 @@ class RandomSearch(Solver):
         new bounds covering 99% of the area.
 
         >>> s = RandomSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
-        >>> [round(x, 3) for x in s.bounds['x']]
+        >>> [round(x, 3) for x in s['x']]
         [0.005, 0.995]
-        >>> [round(x, 3) for x in s.bounds['y']]
+        >>> [round(x, 3) for x in s['y']]
         [-0.995, -0.005]
-        >>> [round(x, 3) for x in s.bounds['z']]
+        >>> [round(x, 3) for x in s['z']]
         [-0.99, 0.99]
+        >>> s['num_evals']
+        30
 
         """
         d = shrink_bounds(kwargs)

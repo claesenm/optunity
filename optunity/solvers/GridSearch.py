@@ -104,11 +104,11 @@ class GridSearch(Solver):
         equal to floor(log(num_evals)/log(len(kwargs))).
 
         >>> s = GridSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
-        >>> [round(x, 3) for x in s.parameter_tuples['x']]
+        >>> [round(x, 3) for x in s['x']]
         [0.005, 0.5, 0.995]
-        >>> [round(x, 3) for x in s.parameter_tuples['y']]
+        >>> [round(x, 3) for x in s['y']]
         [-0.995, -0.5, -0.005]
-        >>> [round(x, 3) for x in s.parameter_tuples['z']]
+        >>> [round(x, 3) for x in s['z']]
         [-0.99, 0.0, 0.99]
 
         """

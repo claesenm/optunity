@@ -112,7 +112,7 @@ def _copydoc(fromfunc, sep="\n"):
 def shrink_bounds(bounds, coverage=0.99):
     """Shrinks the bounds. The new bounds will cover the fraction ``coverage``.
 
-    >>> shrink_bounds([0, 1], coverage=0.99)
+    >>> [round(x, 3) for x in shrink_bounds([0, 1], coverage=0.99)]
     [0.005, 0.995]
 
     """
