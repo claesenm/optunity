@@ -5,7 +5,7 @@ import doctest
 
 modules = ['cross_validation', 'functions', 'solvers', 'communication',
            'solvers.GridSearch', 'solvers.RandomSearch', 'solvers.ParticleSwarm',
-           'solvers.CMAES', 'solvers.CSA', 'solvers.NelderMead']
+           'solvers.CMAES', 'solvers.NelderMead']
 
 def load_tests(loader, tests, ignore):
     for mod in modules:
