@@ -1,2 +1,2 @@
-tests: optunity/tests/test_all.py
+tests: 
 	nosetests --with-doctest -v
