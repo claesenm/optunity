@@ -109,3 +109,17 @@ def _copydoc(fromfunc, sep="\n"):
         return func
     return _decorator
 
+def shrink_bounds(bounds, coverage=0.99):
+    """Shrinks the bounds. The new bounds will cover the fraction ``coverage``.
+
+    >>> shrink_bounds([0, 1], coverage=0.99)
+    [0.005, 0.995]
+
+    """
+    def shrink(lb, ub, coverage):
+        new_range = float(ub-lb)*coverage/2
+        middle = float(ub+lb)/2
+        return [middle-new_range, middle+new_range]
+
+    return dict([(k, shrink(v[0], v[1], coverage))
+                 for k, v in bounds.items()])

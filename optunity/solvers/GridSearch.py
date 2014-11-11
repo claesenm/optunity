@@ -32,10 +32,10 @@
 
 import operator as op
 import itertools
+import math
 
-from .. import functions as fun
 from .solver_registry import register_solver
-from .util import Solver, _copydoc
+from .util import Solver, _copydoc, shrink_bounds
 
 @register_solver('grid search',
                  'finds optimal parameter values on a predefined grid',
@@ -71,8 +71,55 @@ class GridSearch(Solver):
         self._parameter_tuples = kwargs
 
     @staticmethod
+    def assign_grid_points(lb, ub, density):
+        """Assigns equally spaced grid points with given density in [ub, lb].
+        The bounds are always used. ``density`` must be at least 2.
+
+        :param lb: lower bound of resulting grid
+        :param ub: upper bound of resulting grid
+        :param density: number of points to use
+        :type lb: float
+        :type ub: float
+        :type density: int
+
+        >>> s = GridSearch.assign_grid_points(1.0, 2.0, 3)
+        >>> s
+        [1.0, 1.5, 2.0]
+
+        """
+        density = int(density)
+        assert(density >= 2)
+        step = float(ub-lb)/(density-1)
+        return [lb+i*step for i in range(density)]
+
+    @staticmethod
     def suggest_from_box(num_evals, **kwargs):
-        return kwargs
+        """Creates a GridSearch solver that uses less than num_evals evaluations
+        within given bounds (lb, ub). The bounds are first tightened, resulting in
+        new bounds covering 99% of the area.
+
+        The resulting solver will use an equally spaced grid with the same number
+        of points in every dimension. The amount of points that is used is
+        equal to floor(log(num_evals)/log(len(kwargs))).
+
+        >>> s = GridSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> [round(x, 3) for x in s.parameter_tuples['x']]
+        [0.005, 0.5, 0.995]
+        >>> [round(x, 3) for x in s.parameter_tuples['y']]
+        [-0.995, -0.5, -0.005]
+        >>> [round(x, 3) for x in s.parameter_tuples['z']]
+        [-0.99, 0.0, 0.99]
+
+        """
+        bounds = shrink_bounds(kwargs)
+        num_pars = len(bounds)
+
+        # number of grid points in each dimension
+        # so we get density^num_par grid points in total
+        density = math.floor(math.log(num_evals)/math.log(num_pars))
+        grid = dict([(k, GridSearch.assign_grid_points(b[0], b[1], density))
+                     for k, b in bounds.items()])
+        return GridSearch(**grid)
 
     @property
     def parameter_tuples(self):
@@ -83,15 +130,13 @@ class GridSearch(Solver):
     def optimize(self, f, maximize=True, pmap=map):
 
         best_pars = None
-        sortedkeys = sorted(self.parameter_tuples.keys())
-        f = fun.static_key_order(sortedkeys)(f)
 
         if maximize:
             comp = lambda score, best: score > best
         else:
             comp = lambda score, best: score < best
 
-        tuples = list(zip(*itertools.product(*zip(*sorted(self.parameter_tuples.items()))[1])))
+        tuples = list(zip(*itertools.product(*zip(*self.parameter_tuples.items())[1])))
         scores = pmap(f, *tuples)
 
         if maximize:
@@ -100,4 +145,4 @@ class GridSearch(Solver):
             comp = min
         best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
         best_pars = op.itemgetter(best_idx)(zip(*tuples))
-        return dict([(k, v) for k, v in zip(sortedkeys, best_pars)]), None
+        return dict([(k, v) for k, v in zip(self.parameter_tuples.keys(), best_pars)]), None
