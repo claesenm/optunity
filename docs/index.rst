@@ -1,4 +1,4 @@
-.. image:: optunity_logo.png
+.. image:: /optunity_logo.png
     :alt: Optunity
 
 .. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
