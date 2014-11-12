@@ -46,7 +46,4 @@ The main contributors to Optunity are:
 
 * Jaak Simm: R wrapper.
 
-* Dusan Popovic: MATLAB examples
-
-
-.
+* Dusan Popovic: MATLAB examples.
