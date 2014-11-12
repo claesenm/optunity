@@ -594,7 +594,7 @@ def main():
             comm.send(result_json)
             exit(0)
 
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError, AttributeError) as e:
         msg = {'error_msg': str(e)}
         comm.send(comm.json_encode(msg))
         exit(1)

@@ -36,6 +36,7 @@ Optunity is free software, using a BSD-style license.
 .. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
     :target: https://travis-ci.org/claesenm/optunity
 
+
 User Guide
 ==============
 
