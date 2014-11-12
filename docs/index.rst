@@ -6,6 +6,8 @@
     :target: https://travis-ci.org/claesenm/optunity
     :align: right
 
+==========
+
 Optunity is a library containing various optimizers for hyperparameter tuning.
 Hyperparameter tuning is a recurrent problem in many machine learning tasks,
 both supervised and unsupervised.This package provides several distinct approaches 
@@ -36,10 +38,6 @@ integration in other machine learning environments. Optunity will soon become
 available in :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
 
 Optunity is free software, using a BSD-style license.
-
-.. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
-    :target: https://travis-ci.org/claesenm/optunity
-
 
 User Guide
 ==============
