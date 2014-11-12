@@ -57,7 +57,7 @@ import collections
 # optunity imports
 from . import functions as fun
 from . import solvers
-from solvers import solver_registry
+from .solvers import solver_registry
 from .util import DocumentedNamedTuple as DocTup
 
 
@@ -360,8 +360,8 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
         constr_fun = jt[constr_name]
         for field, bounds in pars.items():
             constraints.append(functools.partial(constr_fun,
-                                                 field,
-                                                 bounds))
+                                                 field=field,
+                                                 bounds=bounds))
 
     # wrap function
     if default is None:
