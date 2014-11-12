@@ -6,3 +6,4 @@ __pycache__/
 *.py[co]
 *.m~
 .R*
+*.class

@@ -498,99 +498,106 @@ def main():
         if len(sys.argv) > 2:
             host = sys.argv[2]
         else:
-            host = ''
+            host = 'localhost'
         comm.open_socket(port, host)
 
     startup_json = comm.receive()
-    startup_msg = comm.json_decode(startup_json)
 
-    if 'manual' in startup_msg:
-        solver_name = startup_msg['manual']
-        manual_request(solver_name)
+    try:
+        startup_msg = comm.json_decode(startup_json)
 
-    elif 'generate_folds' in startup_msg:
-        import optunity.cross_validation as cv
-        cv_opts = startup_msg['generate_folds']
-        fold_request(cv_opts)
+        if 'manual' in startup_msg:
+            solver_name = startup_msg['manual']
+            manual_request(solver_name)
 
-    elif 'make_solver' in startup_msg:
-        solver_config = startup_msg['make_solver']
-        replacements = comm._find_replacements(_illegal_keys, solver_config)
-        solver_config = comm._replace_keys(solver_config, replacements)
-        make_solver(solver_config)
+        elif 'generate_folds' in startup_msg:
+            import optunity.cross_validation as cv
+            cv_opts = startup_msg['generate_folds']
+            fold_request(cv_opts)
 
-    elif 'maximize' in startup_msg or 'minimize' in startup_msg:
-        if startup_msg.get('maximize', False):
-            kwargs = startup_msg['maximize']
-            solve_fun = optunity.maximize
-        else:
-            kwargs = startup_msg['minimize']
-            solve_fun = optunity.minimize
+        elif 'make_solver' in startup_msg:
+            solver_config = startup_msg['make_solver']
+            replacements = comm._find_replacements(_illegal_keys, solver_config)
+            solver_config = comm._replace_keys(solver_config, replacements)
+            make_solver(solver_config)
 
-        max_or_min(solve_fun, kwargs,
-                   startup_msg.get('constraints', {}),
-                   startup_msg.get('default', None),
-                   startup_msg.get('call_log', None))
+        elif 'maximize' in startup_msg or 'minimize' in startup_msg:
+            if startup_msg.get('maximize', False):
+                kwargs = startup_msg['maximize']
+                solve_fun = optunity.maximize
+            else:
+                kwargs = startup_msg['minimize']
+                solve_fun = optunity.minimize
 
-    elif 'optimize' in startup_msg:
-        max_evals = startup_msg['optimize'].get('max_evals', 0)
-        maximize = startup_msg['optimize'].get('maximize', True)
+            max_or_min(solve_fun, kwargs,
+                    startup_msg.get('constraints', {}),
+                    startup_msg.get('default', None),
+                    startup_msg.get('call_log', None))
 
-        # sanity check
-        if not 'solver' in startup_msg:
-            msg = {'error_msg': 'No solver specified in startup message.'}
-            comm.send(comm.json_encode(msg))
-            print(startup_msg, file=sys.stderr)
-            exit(1)
+        elif 'optimize' in startup_msg:
+            max_evals = startup_msg['optimize'].get('max_evals', 0)
+            maximize = startup_msg['optimize'].get('maximize', True)
 
-        optimize(startup_msg['solver'],
-                 startup_msg.get('constraints', {}),
-                 startup_msg.get('default', None),
-                 startup_msg.get('call_log', None),
-                 maximize, max_evals)
+            # sanity check
+            if not 'solver' in startup_msg:
+                msg = {'error_msg': 'No solver specified in startup message.'}
+                comm.send(comm.json_encode(msg))
+                print(startup_msg, file=sys.stderr)
+                exit(1)
 
-    else:  # solving a given problem
-        mgr = comm.EvalManager()
-        func = optunity.wrap_constraints(comm.make_piped_function(mgr),
-                                         startup_msg.get('default', None),
-                                         **startup_msg.get('constraints', {})
-                                         )
+            optimize(startup_msg['solver'],
+                    startup_msg.get('constraints', {}),
+                    startup_msg.get('default', None),
+                    startup_msg.get('call_log', None),
+                    maximize, max_evals)
 
-        if startup_msg.get('call_log', False):
-            func = optunity.wrap_call_log(func, startup_msg['call_log'])
-        else:
-            func = functions.logged(func)
+        else:  # solving a given problem
+            mgr = comm.EvalManager()
+            func = optunity.wrap_constraints(comm.make_piped_function(mgr),
+                                            startup_msg.get('default', None),
+                                            **startup_msg.get('constraints', {})
+                                            )
 
-        maximize = startup_msg.get('maximize', True)
+            if startup_msg.get('call_log', False):
+                func = optunity.wrap_call_log(func, startup_msg['call_log'])
+            else:
+                func = functions.logged(func)
 
-        # instantiate solver
-        try:
-            solver = optunity.make_solver(startup_msg['solver'],
-                                          **startup_msg['config'])
-        except (ValueError, KeyError):
-            msg = {'error_msg': 'Unable to instantiate solver.'}
-            comm.send(comm.json_encode(msg))
-            print(startup_msg, file=sys.stderr)
-            exit(1)
-        except EOFError:
-            msg = {'error_msg': 'Broken pipe.'}
-            comm.send(comm.json_encode(msg))
-            exit(1)
+            maximize = startup_msg.get('maximize', True)
 
-        # solve and send result
-        try:
-            solution, rslt = optunity.optimize(solver, func, maximize,
-                                               pmap=mgr.pmap)
-        except EOFError:
-            msg = {'error_msg': 'Broken pipe.'}
-            comm.send(comm.json_encode(msg))
-            exit(1)
+            # instantiate solver
+            try:
+                solver = optunity.make_solver(startup_msg['solver'],
+                                            **startup_msg['config'])
+            except (ValueError, KeyError):
+                msg = {'error_msg': 'Unable to instantiate solver.'}
+                comm.send(comm.json_encode(msg))
+                print(startup_msg, file=sys.stderr)
+                exit(1)
+            except EOFError:
+                msg = {'error_msg': 'Broken pipe.'}
+                comm.send(comm.json_encode(msg))
+                exit(1)
 
-        result = rslt._asdict()
-        result['solution'] = solution
-        result_json = comm.json_encode(result)
-        comm.send(result_json)
-        exit(0)
+            # solve and send result
+            try:
+                solution, rslt = optunity.optimize(solver, func, maximize,
+                                                pmap=mgr.pmap)
+            except EOFError:
+                msg = {'error_msg': 'Broken pipe.'}
+                comm.send(comm.json_encode(msg))
+                exit(1)
+
+            result = rslt._asdict()
+            result['solution'] = solution
+            result_json = comm.json_encode(result)
+            comm.send(result_json)
+            exit(0)
+
+    except (ValueError, TypeError) as e:
+        msg = {'error_msg': str(e)}
+        comm.send(comm.json_encode(msg))
+        exit(1)
 
 
 if __name__ == '__main__':

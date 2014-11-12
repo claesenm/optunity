@@ -6,7 +6,7 @@ classdef Solver
    % Solver objects have a maximize(f, varargin) function, offering
    % equivalent functionality to optunity.maximize(solver, f, varargin).
    % Please refer to the documentation of optunity.maximize() for details.
-   properties
+   properties (SetAccess = immutable)
       name = '';
       config = struct();
    end % properties

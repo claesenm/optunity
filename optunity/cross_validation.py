@@ -51,14 +51,23 @@ import collections
 import operator as op
 import array
 
+try:
+    import numpy
+    numpy_available = True
+except ImportError:
+    numpy_available = False
 
-__all__ = ['select', 'random_permutation', 'map_clusters', 'cross_validated',
+
+__all__ = ['select', 'random_permutation', 'cross_validated',
            'generate_folds', 'strata_by_labels']
 
 
 def select(collection, indices):
     """Selects the subset specified by indices from collection."""
-    return [collection[i] for i in indices]
+    if numpy_available and type(collection) is numpy.ndarray:
+        return collection[indices, :]
+    else:
+        return [collection[i] for i in indices]
 
 
 # https://docs.python.org/2/library/itertools.html#itertools.permutations
@@ -117,6 +126,18 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
         Instances in strata are not necessarily spread out over all folds. Some
         folds may already be full due to clusters. This effect should be negligible.
 
+    >>> folds = generate_folds(num_rows=6, num_folds=2, clusters=[[1, 2]], strata=[[3,4]])
+    >>> len(folds)
+    2
+    >>> i1 = [idx for idx, fold in enumerate(folds) if 1 in fold]
+    >>> i2 = [idx for idx, fold in enumerate(folds) if 2 in fold]
+    >>> i1 == i2
+    True
+    >>> i3 = [idx for idx, fold in enumerate(folds) if 3 in fold]
+    >>> i4 = [idx for idx, fold in enumerate(folds) if 4 in fold]
+    >>> i3 == i4
+    False
+
     """
 
     # sizes per fold and initialization of folds
@@ -144,7 +165,7 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
         assigned.update(it.chain(*clusters))
 
     if assigned:
-        strata.append(filter(lambda x: x not in assigned, instances))
+        strata.append(list(filter(lambda x: x not in assigned, instances)))
     else:
         strata.append(list(instances))
 
@@ -160,8 +181,8 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
             # when we assign given cluster to them
             cluster = clusters[cluster_idx]
             cluster_size = len(cluster)
-            eligible = filter(lambda x: len(folds[x]) + cluster_size <= sizes[x],
-                              fill_queue)
+            eligible = list(filter(lambda x: len(folds[x]) + cluster_size <= sizes[x],
+                                   fill_queue))
 
             if not eligible:
                 raise ValueError('Unable to assign all clusters to folds.')
@@ -179,21 +200,22 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
 
     # assign strata
     for stratum in strata:
-        stratum = random_permutation(filter(lambda x: x in instances, stratum))
-        while stratum:
-            eligible = filter(lambda x: len(folds[x]) < sizes[x], fill_queue)
-            eligible = random_permutation(eligible)
+        permuted_stratum = random_permutation(list(filter(lambda x: x in
+                                                          instances, stratum[:])))
+        while permuted_stratum:
+            eligible = list(filter(lambda x: len(folds[x]) < sizes[x], fill_queue))
 
             if not eligible:
                 raise ValueError('Unable to assign all instances to folds.')
 
-            for instance_idx, fold_idx in zip(stratum[:], eligible):
+            eligible = random_permutation(eligible)
+            for instance_idx, fold_idx in zip(permuted_stratum[:], eligible):
                 folds[fold_idx].append(instance_idx)
                 if len(folds[fold_idx]) >= sizes[fold_idx]:
                     fill_queue.remove(fold_idx)
                 instances.remove(instance_idx)
 
-            stratum = stratum[len(eligible):]
+            permuted_stratum = permuted_stratum[len(eligible):]
 
     return folds
 
@@ -353,7 +375,6 @@ if __name__ == '__main__':
 
     @cross_validated(x, num_folds=3, num_iter=2, clusters=clusters)
     def f1(woops, x_train, x_test):
-        '''floopsie docstring'''
         print(x_train)
         return 0
 
@@ -371,7 +392,6 @@ if __name__ == '__main__':
 
     @cross_validated(list(range(20)), num_folds=10, num_iter=2, strata=[[1,2,3],[6,7,8,9]])
     def f1(woops, x_train, x_test):
-        '''floopsie docstring'''
         print(x_train)
         return 0
 

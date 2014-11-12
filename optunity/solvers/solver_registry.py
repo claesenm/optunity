@@ -49,7 +49,7 @@ __registered_solvers = {}
 
 def __register(cls):
     global __registered_solvers
-    __registered_solvers[cls.name] = cls
+    __registered_solvers[cls.name.lower()] = cls
 
 
 def get(solver_name):

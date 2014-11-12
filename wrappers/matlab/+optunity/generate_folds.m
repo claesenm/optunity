@@ -6,21 +6,21 @@ function folds = generate_folds( n, varargin )
 defaults = struct('num_instances', n, ...
     'num_folds', 10, ...
     'num_iter', 1, ...
-    'strata', NaN, ...
-    'clusters', NaN);
+    'strata', [], ...
+    'clusters', []);
 options = optunity.process_varargin(defaults, varargin);
 
-if ~iscell(options.strata)
+if isempty(options.strata)
     options = rmfield(options, 'strata');
 end
-if ~iscell(options.clusters)
+if isempty(options.clusters)
     options = rmfield(options, 'clusters');
 end
 
-assert(options.num_instances > options.num_folds, ...
+assert(options.num_instances >= options.num_folds, ...
     'Number of instances less than number of folds!');
 
-[m2py, py2m, stderr, subprocess, cleaner] = optunity.comm.launch();
+[m2py, py2m, ~, ~, cleaner] = optunity.comm.launch();
 
 init = struct('generate_folds', options);
 json_request = optunity.comm.json_encode(init);
@@ -30,7 +30,7 @@ json_reply = optunity.comm.readpipe(py2m);
 reply = optunity.comm.json_decode(json_reply);
 
 if isfield(reply, 'error_msg')
-   error(['Error retrieving manual: ',reply.error_msg]);
+   error(['Error generating folds: ',reply.error_msg]);
 end
 
 % Optunity returns 0-based indices, turn into 1-based

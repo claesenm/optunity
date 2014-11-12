@@ -111,7 +111,7 @@ def receive():
     return line
 
 
-def open_socket(port, host=''):
+def open_socket(port, host='localhost'):
     """Opens a socket to host:port and reconfigures internal channels."""
     global __channel_in
     global __channel_out

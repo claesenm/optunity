@@ -1,6 +1,6 @@
 function [ in, out, p, socket ] = popen( cmd, env )
 %POPEN Spawns a subprocess p via Java API and enables bidirectional
-%communication with its stdin, stdout and stderr.
+%communication via sockets.
 
 %% create server socket
 serverSocket = java.net.ServerSocket(0);
@@ -31,9 +31,5 @@ end
 socket = serverSocket.accept();
 in = java.io.PrintWriter(socket.getOutputStream(), true);
 out = java.io.BufferedReader(java.io.InputStreamReader(socket.getInputStream()));
-
-% stderr = java.io.BufferedReader(java.io.InputStreamReader(p.getErrorStream()));
-% stdout = java.io.BufferedReader(java.io.InputStreamReader(p.getInputStream()));
-% stdin = java.io.PrintWriter(p.getOutputStream());
 
 end
