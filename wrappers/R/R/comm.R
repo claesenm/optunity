@@ -43,9 +43,10 @@ launch <- function(){
   system(paste('rm -f',py2r_name_rand, sep=' '))
   system(paste('mkfifo',py2r_name_rand, sep=" "))
   optunitydir <- find.package("optunity")
-  cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s' 2>/dev/null",
+  cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s' %s",
                  optunitydir, 
-                 py2r_name_rand)
+                 py2r_name_rand,
+                 ifelse(debug(), "", "2>/dev/null") )
   r2py <- pipe(cmd, 'w')
   py2r <- fifo(py2r_name_rand,'r', blocking=TRUE)
   conn <- list(py2r = py2r, r2py = r2py, py2r_name=py2r_name_rand)
