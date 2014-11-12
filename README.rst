@@ -1,7 +1,12 @@
 .. image:: http://www.optunity.net/optunity_logo.png
+    :alt: Optunity
+    :align: left
 
 .. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
     :target: https://travis-ci.org/claesenm/optunity
+    :align: right
+
+=========
 
 Optunity is a library containing various optimizers for hyperparameter tuning.
 Hyperparameter tuning is a recurrent problem in many machine learning tasks,
