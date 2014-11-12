@@ -1,6 +1,10 @@
 
 py2r_name = "/tmp/py2r_pipe"
 
+debug <- function() {
+  getOption("optunity-debug", default=FALSE)
+}
+
 readpipe <- function(pipe){
   reply <- readLines(pipe, n=1)
   if (length(reply)==0) stop('Optunity error: broken pipe.')
@@ -8,14 +12,21 @@ readpipe <- function(pipe){
 }
 
 send <- function(r2py, data){
+  if (debug()) {
+    print(paste("[Optunity] to python:", toJSON(data) ))
+  }
   cat(toJSON(data), '\n', file=r2py)
   flush(r2py)
 }
 
 receive <- function(py2r){
-  reply <- fromJSON(readpipe(py2r))
+  message <- readpipe(py2r)
+  reply <- fromJSON(message)
   if ("error_msg" %in% names(reply)){
     stop(paste("Optunity error: ", reply$error_msg))
+  }
+  if (debug()) {
+    print(paste("[Optunity] from python:", message))
   }
   return (reply)
 }
@@ -32,9 +43,10 @@ launch <- function(){
   system(paste('rm -f',py2r_name_rand, sep=' '))
   system(paste('mkfifo',py2r_name_rand, sep=" "))
   optunitydir <- find.package("optunity")
-  cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s' 2>/dev/null",
+  cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s' %s",
                  optunitydir, 
-                 py2r_name_rand)
+                 py2r_name_rand,
+                 ifelse(debug(), "", "2>/dev/null") )
   r2py <- pipe(cmd, 'w')
   py2r <- fifo(py2r_name_rand,'r', blocking=TRUE)
   conn <- list(py2r = py2r, r2py = r2py, py2r_name=py2r_name_rand)
