@@ -7,8 +7,8 @@ offy = rand();
 f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
 
 %% cross-validation example
-% global DEBUG_OPTUNITY
-% DEBUG_OPTUNITY=true;
+global DEBUG_OPTUNITY
+DEBUG_OPTUNITY=true;
 strata = {[1,2,3], [6,7,8,9]};
 folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
 
