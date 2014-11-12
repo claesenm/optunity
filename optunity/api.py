@@ -337,8 +337,7 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     kwargs = locals()
     del kwargs['f']
     del kwargs['default']
-    content = kwargs.items()
-    for k, v in content:
+    for k, v in kwargs.items().copy():
         if v is None:
             del kwargs[k]
 
