@@ -62,6 +62,12 @@ For a proper installation, run the following:
 
     python optunity/setup.py install
 
+or, if you have pip:
+
+.. code-block:: bash
+
+    pip install optunity
+
 Installation may require superuser priviliges.
 
 -------------
