@@ -1,4 +1,4 @@
-.. image:: http://www.optunity.net/optunity_logo.png
+.. image:: logo/logo.png
     :alt: Optunity
     :align: left
 
