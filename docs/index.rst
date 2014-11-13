@@ -43,9 +43,8 @@ User Guide
 
 **Examples of Optunity usage**
 
-Tuning an SVM with RBF kernel using Optunity and scikit-learn:
+Tuning an SVM with RBF kernel using Optunity and scikit-learn:::
 
-.. code-block:: python
     import optunity
     import sklearn.svm
 
@@ -58,12 +57,7 @@ Tuning an SVM with RBF kernel using Optunity and scikit-learn:
     optimal_pars, _, _ = optunity.maximize(svm acc, num_evals=200, C=[0, 10], gamma=[0, 1])
     optimal_model = sklearn.svm.SVC(**optimal_pars).fit(data, labels)
 
-For more examples, please consult our examples page.
-
-* :doc:`Optimizing a simple function </user/examples/parabola2d>`
-* :doc:`Tuning SVM hyperparameters </user/examples/svm>`
-
-For more examples, please see our :doc:`examples page </user/examples/index>`.
+For more examples, please see our :doc:`examples page </examples/index>`.
 
 -------------
 
