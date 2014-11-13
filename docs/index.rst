@@ -43,12 +43,12 @@ User Guide
 
 **Examples of Optunity usage**
 
-Tuning an SVM with RBF kernel using Optunity and scikit-learn:
+As a simple example of Optunity's features, the code below demonstrates how to tune an SVM with RBF kernel using Optunity and scikit-learn. 
+This involves optimizing the hyperparameters ``gamma`` and ``C``:
 
 .. literalinclude:: /examples/python/scikit_svm.py
     :language: python
-    :emphasize-lines: 4,11
-    :linenos:
+    :emphasize-lines: 5,12
 
 For more examples, please see our :doc:`examples page </examples/index>`.
 

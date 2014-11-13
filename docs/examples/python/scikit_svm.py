@@ -1,7 +1,7 @@
 import optunity
 import sklearn.svm
 
-# score function: cross-validated accuracy
+# score function: twice iterated 10-fold cross-validated accuracy
 @optunity.cross_validated(x=data, y=labels, num_folds=10, num_iter=2)
 def svm_acc(x_train, y_train, x_test, y_test, C, gamma):
     model = sklearn.svm.SVC(C=C, gamma=gamma).fit(x_train, y_train)
