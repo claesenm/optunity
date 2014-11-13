@@ -45,7 +45,7 @@ User Guide
 
 Tuning an SVM with RBF kernel using Optunity and scikit-learn:
 
-.. literalinclude:: /examples/scikit_svm.py
+.. literalinclude:: /examples/python/scikit_svm.py
     :language: python
     :emphasize-lines: 4,11
     :linenos:
