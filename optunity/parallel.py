@@ -32,14 +32,11 @@
 
 import itertools
 import functools
-import multiprocessing
 import threading
 import copy
 import collections
 
-
 __all__ = ['pmap', 'Future']
-
 
 def _fun(f, q_in, q_out):
     while True:
@@ -55,85 +52,90 @@ def _fun(f, q_in, q_out):
             keys = k._fields
         q_out.put((i, value, d, keys))
 
+try:
+    import multiprocessing
 
-# http://stackoverflow.com/a/16071616
-def pmap(f, *args):
-    """Parallel map using multiprocessing.
+    # http://stackoverflow.com/a/16071616
+    def pmap(f, *args):
+        """Parallel map using multiprocessing.
 
-    :param f: the callable
-    :param args: arguments to f, as iterables
-    :returns: a list containing the results
+        :param f: the callable
+        :param args: arguments to f, as iterables
+        :returns: a list containing the results
 
-    """
-    nprocs = multiprocessing.cpu_count()
-    q_in = multiprocessing.Queue(1)
-    q_out = multiprocessing.Queue()
+        """
+        nprocs = multiprocessing.cpu_count()
+        q_in = multiprocessing.Queue(1)
+        q_out = multiprocessing.Queue()
 
-    proc = [multiprocessing.Process(target=_fun, args=(f, q_in, q_out))
-            for _ in range(nprocs)]
-    for p in proc:
-        p.daemon = True
-        p.start()
+        proc = [multiprocessing.Process(target=_fun, args=(f, q_in, q_out))
+                for _ in range(nprocs)]
+        for p in proc:
+            p.daemon = True
+            p.start()
 
-    sent = [q_in.put((i, x)) for i, x in enumerate(zip(*args))]
-    [q_in.put((None, None)) for _ in range(nprocs)]
-    res = [q_out.get() for _ in range(len(sent))]
-    [p.join() for p in proc]
+        sent = [q_in.put((i, x)) for i, x in enumerate(zip(*args))]
+        [q_in.put((None, None)) for _ in range(nprocs)]
+        res = [q_out.get() for _ in range(len(sent))]
+        [p.join() for p in proc]
 
-    # FIXME: strong coupling between pmap and functions.logged
-    if hasattr(f, 'call_log'):
-        keys = res[0][3]
-        if not f.keys:
-            f.keys.extend(keys)
-        if f.argtuple is None:
-            f.argtuple = collections.namedtuple('args', keys)
-        for _, _, d, _ in sorted(res):
-            k, v = d
-            f.call_log[f.argtuple(*k)] = v
+        # FIXME: strong coupling between pmap and functions.logged
+        if hasattr(f, 'call_log'):
+            keys = res[0][3]
+            if not f.keys:
+                f.keys.extend(keys)
+            if f.argtuple is None:
+                f.argtuple = collections.namedtuple('args', keys)
+            for _, _, d, _ in sorted(res):
+                k, v = d
+                f.call_log[f.argtuple(*k)] = v
 
-    return [x for i, x, _, _ in sorted(res)]
+        return [x for i, x, _, _ in sorted(res)]
 
 
-# http://code.activestate.com/recipes/84317-easy-threading-with-futures/
-class Future:
-    def __init__(self,func,*param):
-        # Constructor
-        self.__done=0
-        self.__result=None
-        self.__status='working'
+    # http://code.activestate.com/recipes/84317-easy-threading-with-futures/
+    class Future:
+        def __init__(self,func,*param):
+            # Constructor
+            self.__done=0
+            self.__result=None
+            self.__status='working'
 
-        self.__S=threading.Semaphore(0)
+            self.__S=threading.Semaphore(0)
 
-        # Run the actual function in a separate thread
-        self.__T=threading.Thread(target=self.Wrapper, args=(func, param))
-        self.__T.setName("FutureThread")
-        self.__T.daemon=True
-        self.__T.start()
+            # Run the actual function in a separate thread
+            self.__T=threading.Thread(target=self.Wrapper, args=(func, param))
+            self.__T.setName("FutureThread")
+            self.__T.daemon=True
+            self.__T.start()
 
-    def __repr__(self):
-        return '<Future at '+hex(id(self))+':'+self.__status+'>'
+        def __repr__(self):
+            return '<Future at '+hex(id(self))+':'+self.__status+'>'
 
-    def __call__(self):
-        try:
-            self.__S.acquire()
-            # We deepcopy __result to prevent accidental tampering with it.
-            a=copy.deepcopy(self.__result)
-        finally:
+        def __call__(self):
+            try:
+                self.__S.acquire()
+                # We deepcopy __result to prevent accidental tampering with it.
+                a=copy.deepcopy(self.__result)
+            finally:
+                self.__S.release()
+            return a
+
+        def join(self):
+            self.__T.join()
+
+        def Wrapper(self, func, param):
+            # Run the actual function, and let us housekeep around it
+    #        try:
+            self.__result=func(*param)
+    #        except:
+    #            self.__result="Exception raised within Future"
+            self.__status=str(self.__result)
             self.__S.release()
-        return a
 
-    def join(self):
-        self.__T.join()
-
-    def Wrapper(self, func, param):
-        # Run the actual function, and let us housekeep around it
-#        try:
-        self.__result=func(*param)
-#        except:
-#            self.__result="Exception raised within Future"
-        self.__status=str(self.__result)
-        self.__S.release()
-
+except ImportError:
+    pmap = map
+    Future = None
 
 if __name__ == '__main__':
     pass
