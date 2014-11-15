@@ -30,11 +30,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import itertools
-import functools
 import threading
 import copy
-import collections
 
 __all__ = ['pmap', 'Future']
 
@@ -44,13 +41,9 @@ def _fun(f, q_in, q_out):
         if i is None:
             break
         value = f(*x)
-        d = None
-        keys = None
         if hasattr(f, 'call_log'):
-            k, v = f.call_log.items()[-1]
-            d = (tuple(k), v)
-            keys = k._fields
-        q_out.put((i, value, d, keys))
+            k = f.call_log.keys()[-1]
+        q_out.put((i, value, k))
 
 try:
     import multiprocessing
@@ -81,16 +74,10 @@ try:
 
         # FIXME: strong coupling between pmap and functions.logged
         if hasattr(f, 'call_log'):
-            keys = res[0][3]
-            if not f.keys:
-                f.keys.extend(keys)
-            if f.argtuple is None:
-                f.argtuple = collections.namedtuple('args', keys)
-            for _, _, d, _ in sorted(res):
-                k, v = d
-                f.call_log[f.argtuple(*k)] = v
+            for _, value, k in sorted(res):
+                f.call_log[k] = value
 
-        return [x for i, x, _, _ in sorted(res)]
+        return [x for i, x, _ in sorted(res)]
 
 
     # http://code.activestate.com/recipes/84317-easy-threading-with-futures/

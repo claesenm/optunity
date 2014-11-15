@@ -37,8 +37,6 @@ Main features in this module:
 * :func:`constrained`
 * :func:`logged`
 * :func:`max_evals`
-* :func:`dict2call_log`
-* :func:`call_log2dict`
 
 .. moduleauthor:: Marc Claesen
 """
@@ -47,7 +45,7 @@ import itertools
 import collections
 import functools
 import threading
-
+import operator as op
 
 def constr_ub_o(field, bounds, *args, **kwargs):
     """Models ``args.field < bounds``."""
@@ -160,6 +158,177 @@ def violations_defaulted(default):
     return wrapper
 
 
+class Args(object):
+    """Class to model arguments to a function evaluation.
+    Objects of this class are hashable and can be used as dict keys.
+
+    Arguments and keyword arguments are stored in a frozenset.
+    """
+
+    def __init__(self, *args, **kwargs):
+        d = kwargs.copy()
+        d.update(dict([('pos_' + str(i), item)
+                       for i, item in enumerate(args)]))
+        self._parameters = frozenset(sorted(d.items()))
+
+    @property
+    def parameters(self):
+        """Returns the internal representation."""
+        return self._parameters
+
+    def __hash__(self):
+        return hash(self.parameters)
+
+    def __eq__(self, other):
+        return (self.parameters) == (other.parameters)
+
+    def __iter__(self):
+        for x in self.parameters:
+            yield x
+
+    def __str__(self):
+        return "{" + ", ".join(['\'' + str(k) + '\'' + ': ' + str(v)
+                                for k, v in sorted(self.parameters)]) + "}"
+
+    def keys(self):
+        """Returns a list of argument names."""
+        return map(op.itemgetter(0), self.parameters)
+
+    def values(self):
+        """Returns a list of argument values."""
+        return map(op.itemgetter(1), self.parameters)
+
+
+class CallLog(object):
+    """Thread-safe call log.
+
+    The call log is an ordered dictionary containing all previous function calls.
+    Its keys are dictionaries representing the arguments and its values are the
+    function values. As dictionaries can't be used as keys in dictionaries,
+    a custom internal representation is used.
+    """
+
+    def __init__(self):
+        """Initialize an empty CallLog."""
+        self._data =collections.OrderedDict()
+        self._lock = threading.Lock()
+
+    @property
+    def lock(self):
+        return self._lock
+
+    @property
+    def data(self):
+        """Access internal data after obtaining lock."""
+        with self.lock:
+            return self._data
+
+    def delete(self, *args, **kwargs):
+        del self.data[Args(*args, **kwargs)]
+
+    def get(self, *args, **kwargs):
+        """Returns the result of given evaluation or None if not previously done."""
+        return self.data.get(Args(*args, **kwargs), None)
+
+    def __setitem__(self, key, value):
+        """Sets key=value in internal dictionary.
+
+        :param key: key in the internal dictionary
+        :type key: Args
+        :param value: value in the internal dictionary
+        :type value: float
+        """
+        assert(type(key) is Args)
+        self.data[key] = value
+
+    def __getitem__(self, key):
+        """Returns the value corresponding to key. Can throw KeyError.
+
+        :param key: arguments to retrieve function value for
+        :type key: Args
+        """
+        assert(type(key) is Args)
+        return self.data[key]
+
+    def insert(self, value, *args, **kwargs):
+        self.data[Args(*args, **kwargs)] = value
+
+    def __iter__(self):
+        for k, v in self.data:
+            yield (dict([(key, val) for key, val in k]), v)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __nonzero__(self):
+        return bool(self.data)
+
+    def __str__(self):
+        return "\n".join([str(k) + ' --> ' + str(v)
+                          for k, v in self.data.items()])
+
+    def keys(self):
+        return self.data.keys()
+
+    def values(self):
+        return self.data.values()
+
+    def items(self):
+        return self.data.items()
+
+    def update(self, other):
+        assert(type(other) is CallLog)
+        self.data.update(other.data)
+
+    @staticmethod
+    def from_dict(d):
+        """Converts given dict to a valid call log used by logged functions.
+
+        Given dictionary must have the following structure:
+        ``{'args': {'argname': []}, 'values': []}``
+
+        >>> log = CallLog.from_dict({'args': {'x': [1, 2]}, 'values': [2, 3]})
+        >>> print(log)
+        {'x': 1} --> 2
+        {'x': 2} --> 3
+
+        """
+        log = CallLog()
+        keys = d['args'].keys()
+        for k, v in zip(zip(*d['args'].values()), d['values']):
+            args = dict([(key, val) for key, val in zip(keys, k)])
+            log.insert(v, **args)
+        return log
+
+    def to_dict(self):
+        """Returns given call_log into a dictionary.
+
+        The result is a dict with the following structure:
+        ``{'args': {'argname': []}, 'values': []}``
+
+        >>> call_log = CallLog()
+        >>> call_log.insert(3, x=1, y=2)
+        >>> d = call_log.to_dict()
+        >>> d['args']['x']
+        [1]
+        >>> d['args']['y']
+        [2]
+        >>> d['values']
+        [3]
+
+        """
+        if self.data:
+            args = dict([(k, []) for k in map(op.itemgetter(0), self.keys()[0])])
+            values = []
+            for k, v in self.data.items():
+                for key, value in k:
+                    args[key].append(value)
+                values.append(v)
+            return {'args': args, 'values': values}
+        else:
+            return {'args': {}, 'values': []}
+
+
 def logged(f):
     """Decorator that logs unique calls to ``f``.
 
@@ -167,39 +336,38 @@ def logged(f):
     Decorating a function that is already being logged has
     no effect.
 
-    The call log is an ``OrderedDict`` with a ``namedtuple`` as key.
-    The namedtuple has fields based on ``*args`` and ``**kwargs``,
-    for ``*args`` the tuple has fields ``pos_<i>``.
+    The call log is an instance of CallLog.
 
     >>> @logged
     ... def f(x): return x+1
     >>> a, b, c = f(1), f(1), f(2)
-    >>> f.call_log
-    OrderedDict([(args(pos_0=1), 2), (args(pos_0=2), 3)])
+    >>> print(f.call_log)
+    {'pos_0': 1} --> 2
+    {'pos_0': 2} --> 3
 
     logged as inner decorator:
 
     >>> @logged
     ... @constrained([lambda x: x > 1])
     ... def f2(x): return x+1
-    >>> f2.call_log
-    OrderedDict()
+    >>> len(f2.call_log)
+    0
     >>> f2(2)
     3
-    >>> f2.call_log
-    OrderedDict([(args(pos_0=2), 3)])
+    >>> print(f2.call_log)
+    {'pos_0': 2} --> 3
 
     logged as outer decorator:
 
     >>> @constrained([lambda x: x > 1])
     ... @logged
     ... def f3(x): return x+1
-    >>> f3.call_log
-    OrderedDict()
+    >>> len(f3.call_log)
+    0
     >>> f3(2)
     3
-    >>> f3.call_log
-    OrderedDict([(args(pos_0=2), 3)])
+    >>> print(f3.call_log)
+    {'pos_0': 2} --> 3
 
     logging twice does not remove original call_log
 
@@ -207,87 +375,27 @@ def logged(f):
     ... def f(x): return 1
     >>> f(1)
     1
-    >>> f.call_log
-    OrderedDict([(args(pos_0=1), 1)])
+    >>> print(f.call_log)
+    {'pos_0': 1} --> 1
     >>> @logged
     ... @functools.wraps(f)
     ... def f2(x): return f(x)
-    >>> f2.call_log
-    OrderedDict([(args(pos_0=1), 1)])
+    >>> print(f2.call_log)
+    {'pos_0': 1} --> 1
 
     """
     if hasattr(f, 'call_log'):
         return f
 
-    lock = threading.Lock()
-
     @functools.wraps(f)
     def wrapped_f(*args, **kwargs):
-        d = kwargs.copy()
-        d.update(dict([('pos_' + str(i), item)
-                       for i, item in enumerate(args)]))
-        if not wrapped_f.keys:
-            with lock:
-                wrapped_f.keys.extend(d.keys())
-                wrapped_f.argtuple = collections.namedtuple('args', wrapped_f.keys)
-        if wrapped_f.argtuple is None:
-            wrapped_f.argtuple = collections.namedtuple('args', wrapped_f.keys)
-        t = wrapped_f.argtuple(**d)
-        with lock:
-            value = wrapped_f.call_log.get(t, False)
-        if value is False:
+        value = wrapped_f.call_log.get(*args, **kwargs)
+        if value is None:
             value = f(*args, **kwargs)
-            with lock:
-                wrapped_f.call_log[t] = value
+            wrapped_f.call_log.insert(value, *args, **kwargs)
         return value
-    wrapped_f.call_log = collections.OrderedDict()
-    wrapped_f.keys = []
-    wrapped_f.argtuple = None  # FIXME: clean up
+    wrapped_f.call_log = CallLog()
     return wrapped_f
-
-
-def dict2call_log(calldict):
-    """Converts given dict to a valid call log used by logged functions.
-
-    Given dictionary must have the following structure:
-    ``{'args': {'argname': []}, 'values': []}``
-
-    >>> dict2call_log({'args': {'x': [1, 2]}, 'values': [2, 3]})
-    OrderedDict([(Pars(x=1), 2), (Pars(x=2), 3)])
-
-    """
-    Pars = collections.namedtuple('Pars', calldict['args'].keys())
-    return collections.OrderedDict((Pars(*args), val) for args, val in
-                                   zip(zip(*calldict['args'].values()),
-                                       calldict['values']))
-
-
-def call_log2dict(call_log):
-    """Returns given call_log into a dictionary.
-
-    The call_log is an ``OrderedDict((namedtuple, value))``.
-    The result is a dict with the following structure:
-    ``{'args': {'argname': []}, 'values': []}``
-
-    >>> Pars = collections.namedtuple('Pars',['x','y'])
-    >>> call_log = collections.OrderedDict({Pars(1,2): 3})
-    >>> d = call_log2dict(call_log)
-    >>> d['args']['x']
-    [1]
-    >>> d['args']['y']
-    [2]
-    >>> d['values']
-    [3]
-
-    """
-    if call_log:
-        args = dict([(k, [getattr(arg, k) for arg in call_log.keys()])
-                     for k in list(call_log.keys())[0]._fields])
-            # note: wrap keys() in list to bypass view in Python 3
-        return {'args': args, 'values': list(call_log.values())}
-        # again: wrap in list() or JSON serializing fails in Python 3
-    else:
-        return {'args': {}, 'values': []}
 
 
 def negated(f):

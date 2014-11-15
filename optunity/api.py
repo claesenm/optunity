@@ -239,16 +239,13 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
     time = timeit.default_timer() - time
 
     # FIXME: logged function's argtuple type remains None
-    t = collections.namedtuple('args', f.keys)
-#    optimum = f(**solution)
-    optimum = f.call_log[t(**solution)]
-#    optimum = f.call_log[solution]
+    optimum = f.call_log.get(**solution)
     num_evals += len(f.call_log)
 
     # use namedtuple to enforce uniformity in case of changes
     stats = optimize_stats(num_evals, time)
 
-    call_dict = fun.call_log2dict(f.call_log)
+    call_dict = f.call_log.to_dict()
     return solution, optimize_results(optimum, stats._asdict(),
                                       call_dict, report)
 
@@ -289,7 +286,7 @@ def wrap_call_log(f, call_dict):
 
     """
     f = fun.logged(f)
-    call_log = fun.dict2call_log(call_dict)
+    call_log = fun.CallLog.from_dict(call_dict)
     if f.call_log:
         f.call_log.update(call_log)
     else:
