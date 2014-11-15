@@ -318,7 +318,7 @@ class CallLog(object):
 
         """
         if self.data:
-            args = dict([(k, []) for k in map(op.itemgetter(0), self.keys()[0])])
+            args = dict([(k, []) for k in list(map(op.itemgetter(0), self.keys())[0])])
             values = []
             for k, v in self.data.items():
                 for key, value in k:
