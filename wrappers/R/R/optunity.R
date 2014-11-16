@@ -4,9 +4,9 @@ manual <- function(solver_name=''){
     on.exit(close_pipes(cons))
 
     msg <- list(manual = solver_name)
-    send(cons$r2py, msg)
+    send(cons$socket, msg)
 
-    content <- receive(cons$py2r)
+    content <- receive(cons$socket)
     cat(content$manual, sep="\n")
     return (content$solver_names)
 }
@@ -19,9 +19,9 @@ make_solver <- function(solver_name, ...){
   cfg <- c(list(), solver_name = solver_name, ...)
   
   msg <- list(make_solver = cfg)
-  send(cons$r2py, msg)
+  send(cons$socket, msg)
   
-  reply <- receive(cons$py2r)
+  reply <- receive(cons$socket)
   return(TRUE)
 }
 
@@ -41,9 +41,9 @@ generate_folds <- function(num_instances, num_folds=5,
   if (length(clusters) > 0) cfg$clusters <- clusters
   
   msg <- list(generate_folds = cfg)
-  send(cons$r2py, msg)
+  send(cons$socket, msg)
   
-  reply <- receive(cons$py2r)
+  reply <- receive(cons$socket)
   
   folds <- array(0, dim=c(num_instances, num_iter))
   for (iter in 1:num_iter){
@@ -169,9 +169,9 @@ optimize2 <- function(f,
     if (!is.null(constraints)) msg$constraints <- constraints
     if (!is.null(default)) msg$default <- default
 
-    send(cons$r2py, msg)
+    send(cons$socket, msg)
     repeat{
-        reply <- receive(cons$py2r)
+        reply <- receive(cons$socket)
         if ("solution" %in% names(reply)) break
 
         if (is.null(names(reply))) {
@@ -188,11 +188,11 @@ optimize2 <- function(f,
             ))
           }
           ## returning results of vector evaluation
-          send(cons$r2py, list(values=values))
+          send(cons$socket, list(values=values))
         } else {
           ## single evaluation
           value <- do.call(f, reply)
-          send(cons$r2py, list(value=value))
+          send(cons$socket, list(value=value))
         }
         
     }

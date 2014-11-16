@@ -32,29 +32,23 @@ receive <- function(py2r){
 }
 
 launch <- function(){
-  # http://stackoverflow.com/a/5561188/2148672
-  for (i in 1:10) {
-    rnd <- sprintf("%x", sample.int(n = 10000000L, size=1))
-    py2r_name_rand <- sprintf("%s-%s", py2r_name, rnd)
-    if ( ! file.exists(py2r_name_rand))
-      break
-  }
-  
-  system(paste('rm -f',py2r_name_rand, sep=' '))
-  system(paste('mkfifo',py2r_name_rand, sep=" "))
   optunitydir <- dirname( system.file("optunity", package="optunity") )
-  cmd <- sprintf("cd '%s'; python -m optunity.standalone > '%s' %s",
-                 optunitydir, 
-                 py2r_name_rand,
-                 ifelse(debug(), "", "2>/dev/null") )
-  r2py <- pipe(cmd, 'w')
-  py2r <- fifo(py2r_name_rand,'r', blocking=TRUE)
-  conn <- list(py2r = py2r, r2py = r2py, py2r_name=py2r_name_rand)
+  cmd <- sprintf("cd '%s'; python -m optunity.standalone server %s", optunitydir, ifelse(debug(), "", "2>/dev/null"))
+
+  opipe <- pipe(cmd, open="r+")
+  portstr <- readLines(opipe, n = 1)
+  port    <- strtoi( gsub("^\\s+|\\s+$", "", portstr) )
+
+  if (is.na(port) || port == 0) {
+    stop("Optunity error: could not launch python process.")
+  }
+
+  socket <- socketConnection(port = port, blocking = TRUE)
+  conn   <- list(socket = socket, port = port, opipe = opipe)
   return (conn)
 }
 
 close_pipes <- function(cons){
-  close(cons$py2r)
-  close(cons$r2py)
-  system(paste('rm -f ',cons$py2r_name,sep=''))
+  close(cons$socket)
+  close(cons$opipe)
 }

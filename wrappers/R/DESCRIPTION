@@ -1,5 +1,5 @@
 Package: optunity
-Version: 0.5
+Version: 0.6
 Title: Optimizing methods for hyperparameter tuning
 Description: Optunity is a library containing various optimizers for hyperparameter tuning, like Particle Swarms, Genetic Algorithm, Nelder-Mead.
 Authors@R: c(person("Jaak", "Simm", role = c("aut", "cre"), email = "jaak.simm@gmail.com"), person("Marc", "Claesen", role = c("aut") ), person("Dusan", "Popovic", role = c("aut") ))
