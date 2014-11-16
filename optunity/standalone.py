@@ -47,10 +47,8 @@ are keys in the JSON root message.
 
 This standalone subprocess can communicate through stdin/stdout or sockets. To use sockets:
 
-- **standalone as client**: specify the port as first commandline argument and host as second (omitting host will imply
-`localhost`).
-- **standalone as server**: launch with 'server' as first command line argument. The port number that is being listened on will
-be printed on stdout.
+- **standalone as client**: specify the port as first commandline argument and host as second (omitting host will imply `localhost`).
+- **standalone as server**: launch with 'server' as first command line argument. The port number that is being listened on will be printed on stdout.
 
 Requesting manuals
 -------------------
