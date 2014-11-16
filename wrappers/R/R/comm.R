@@ -43,7 +43,7 @@ launch <- function(){
   system(paste('rm -f',py2r_name_rand, sep=' '))
   system(paste('mkfifo',py2r_name_rand, sep=" "))
   optunitydir <- dirname( system.file("optunity", package="optunity") )
-  cmd <- sprintf("cd '%s'; python -m optunity.piped > '%s' %s",
+  cmd <- sprintf("cd '%s'; python -m optunity.standalone > '%s' %s",
                  optunitydir, 
                  py2r_name_rand,
                  ifelse(debug(), "", "2>/dev/null") )
