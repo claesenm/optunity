@@ -19,6 +19,7 @@ Module contents
     **Other submodules**
 
     .. toctree::
+        :maxdepth: 1
 
         optunity.api
         optunity.communication
