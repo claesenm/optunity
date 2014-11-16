@@ -22,9 +22,9 @@ Module contents
 
         optunity.api
         optunity.communication
-        optunity.piped
         optunity.solver_registry
         optunity.util
+        optunity.standalone
 
 
 .. automodule:: optunity
