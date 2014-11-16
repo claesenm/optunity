@@ -56,6 +56,9 @@ try:
         :param args: arguments to f, as iterables
         :returns: a list containing the results
 
+        .. warning::
+            Python's multiprocessing library is incompatible with Jython.
+
         """
         nprocs = multiprocessing.cpu_count()
         q_in = multiprocessing.Queue(1)

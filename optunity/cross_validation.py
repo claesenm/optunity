@@ -122,10 +122,6 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
         information leaks.
     :returns: a list of folds, each fold is a list of instance indices
 
-    .. warning::
-        Instances in strata are not necessarily spread out over all folds. Some
-        folds may already be full due to clusters. This effect should be negligible.
-
     >>> folds = generate_folds(num_rows=6, num_folds=2, clusters=[[1, 2]], strata=[[3,4]])
     >>> len(folds)
     2
@@ -137,6 +133,10 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
     >>> i4 = [idx for idx, fold in enumerate(folds) if 4 in fold]
     >>> i3 == i4
     False
+
+    .. warning::
+        Instances in strata are not necessarily spread out over all folds. Some
+        folds may already be full due to clusters. This effect should be negligible.
 
     """
 
