@@ -1,7 +1,7 @@
-optunity.piped
+optunity.standalone
 =====================
 
-.. automodule:: optunity.piped
+.. automodule:: optunity.standalone
     :members:
     :undoc-members:
     :show-inheritance:
