@@ -15,8 +15,8 @@ and a plethora of score functions.
 
 .. sidebar:: **Getting started**
 
-    * :doc:`Overview <user/index>`
     * :doc:`Installation <user/installation>`
+    * :doc:`User guide <user/index>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
     **Obtaining Optunity**

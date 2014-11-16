@@ -48,14 +48,14 @@ try:
     serv_sock.bind(('', 0))
 except socket.err as msg:
     print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
-    sys.exit()    
+    sys.exit()
 
 serv_sock.listen(0)
 port = serv_sock.getsockname()[1]
 
 # launch piped
 print('Launching piped subprocess (port ' + str(port) + ').')
-piped = subprocess.Popen(['python', '-m', 'optunity.piped', str(port)])
+piped = subprocess.Popen(['python', '-m', 'optunity.standalone', str(port)])
 
 p = piped.poll()
 print('Poll result: ' + str(p))
