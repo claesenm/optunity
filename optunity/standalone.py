@@ -45,9 +45,12 @@ other environments. It communicates with the external environment using JSON mes
 We will discuss the use cases as if they are ordinary function calls. Parameter names
 are keys in the JSON root message.
 
-This standalone subprocess can communicate through stdin/stdout or sockets. To use sockets,
-specify the port as first commandline argument and host as second (omitting host will imply
+This standalone subprocess can communicate through stdin/stdout or sockets. To use sockets:
+
+- **standalone as client**: specify the port as first commandline argument and host as second (omitting host will imply
 `localhost`).
+- **standalone as server**: launch with 'server' as first command line argument. The port number that is being listened on will
+be printed on stdout.
 
 Requesting manuals
 -------------------
@@ -490,16 +493,22 @@ def main():
 
     # open a socket if port [+ host] specified in commandline args
     if len(sys.argv) > 1:
-        try:
-            port = int(sys.argv[1])
-        except ValueError as e:
-            print('Invalid socket port: ' + str(e))
-            sys.exit(1)
-        if len(sys.argv) > 2:
-            host = sys.argv[2]
+        if sys.argv[1] == 'server':
+            port, server_socket = comm.open_server_socket()
+            print(port)
+            comm.accept_server_connection(server_socket)
+
         else:
-            host = 'localhost'
-        comm.open_socket(port, host)
+            try:
+                port = int(sys.argv[1])
+            except ValueError as e:
+                print('Invalid socket port: ' + str(e))
+                sys.exit(1)
+            if len(sys.argv) > 2:
+                host = sys.argv[2]
+            else:
+                host = 'localhost'
+            comm.open_socket(port, host)
 
     startup_json = comm.receive()
 

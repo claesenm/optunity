@@ -33,7 +33,7 @@ if isempty(optunity_env)
 end
 
 % cmd = [path_to_bin, 'run_optunity_piped.py'];
-cmd = 'python -m optunity.piped';
+cmd = 'python -m optunity.standalone';
 [m2py, py2m, handle, socket] = optunity.comm.popen( cmd, optunity_env );
 
 % provide RAII-style automatic cleanup when cleaner goes out of scope

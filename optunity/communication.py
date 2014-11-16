@@ -126,6 +126,30 @@ def open_socket(port, host='localhost'):
         sys.exit(1)
 
 
+def open_server_socket():
+    serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        serv_sock.bind(('', 0))
+    except socket.err as msg:
+        print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        sys.exit()
+    serv_sock.listen(0)
+    port = serv_sock.getsockname()[1]
+    return port, serv_sock
+
+
+def accept_server_connection(server_socket):
+    global __channel_in
+    global __channel_out
+    try:
+        sock, _ = server_socket.accept()
+        __channel_in = sock.makefile('r')
+        __channel_out = sock.makefile('w')
+    except (socket.error, OverflowError, ValueError) as e:
+        print('Error making socket: ' + str(e), file=sys.stderr)
+        sys.exit(1)
+
+
 class EvalManager(object):
 
     def __init__(self, max_vectorized=100, replacements={}):
