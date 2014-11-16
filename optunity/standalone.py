@@ -494,6 +494,8 @@ def main():
         if sys.argv[1] == 'server':
             port, server_socket = comm.open_server_socket()
             print(port)
+            ## flush is needed for R pipe():
+            sys.stdout.flush()
             comm.accept_server_connection(server_socket)
 
         else:
