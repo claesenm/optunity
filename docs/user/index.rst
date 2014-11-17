@@ -91,35 +91,37 @@ Terminology
 To avoid confusion, here is some basic terminology we will use consistently 
 throughout the documentation:
 
-hyperparameters
-    User-specified parameters for a given machine learning approach.
-    These will serve as optimization variables in our context.
+.. glossary::
 
-    Example: kernel parameters.
+    hyperparameters
+        User-specified parameters for a given machine learning approach.
+        These will serve as optimization variables in our context.
 
-score
-    Some measure which quantifies the quality of a certain modeling approach (model type + hyperparameters).
+        Example: kernel parameters.
 
-    Example: cross-validated accuracy of a classifier.
+    score
+        Some measure which quantifies the quality of a certain modeling approach (model type + hyperparameters).
 
-objective function
-    The function that must be optimized. The arguments to this function are hyperparameters
-    and the result is some score measure of a model constructed using these hyperparameters.
-    Optunity can minimize and maximize, depending on the requirements.
+        Example: cross-validated accuracy of a classifier.
 
-    Example: accuracy of an SVM classifier as a function of kernel and regularization parameters.
+    objective function
+        The function that must be optimized. The arguments to this function are hyperparameters
+        and the result is some score measure of a model constructed using these hyperparameters.
+        Optunity can minimize and maximize, depending on the requirements.
 
-box constraints
-    Every hyperparameter of the tuning problem must be within a prespecified interval. 
-    The optimal solution will be within the hyperrectangle (box) specified by the ranges.
+        Example: accuracy of an SVM classifier as a function of kernel and regularization parameters.
 
-solver
-    A strategy to optimize hyperparameters, such as *grid search*.
+    box constraints
+        Every hyperparameter of the tuning problem must be within a prespecified interval. 
+        The optimal solution will be within the hyperrectangle (box) specified by the ranges.
 
-train-predict-score (TPS) chain
-    A sequence of code which trains a model, uses it to predict an independent test set and 
-    then computes some score measure based on the predictions. TPS chains must be specified 
-    by the user as they depend entirely on the method that is being tuned and the evaluation criteria.
+    solver
+        A strategy to optimize hyperparameters, such as *grid search*.
+
+    train-predict-score (TPS) chain
+        A sequence of code which trains a model, uses it to predict an independent test set and 
+        then computes some score measure based on the predictions. TPS chains must be specified 
+        by the user as they depend entirely on the method that is being tuned and the evaluation criteria.
 
 .. toctree::
     :maxdepth: 2
