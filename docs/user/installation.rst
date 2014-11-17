@@ -68,7 +68,7 @@ Installing Optunity for MATLAB
 To install Optunity for MATLAB, you must add `<optunity>/wrappers/matlab/` and its subdirectories to your MATLAB path.
 You can set the path in `Preferences -> Path` or using the following commands::
 
-    addpath(genpath('/path/to/optunity/'));
+    addpath(genpath('/path/to/optunity/wrappers/matlab/'));
     savepath
 
 
