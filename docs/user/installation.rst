@@ -2,12 +2,6 @@
 Installing Optunity
 ====================
 
-.. toctree::
-    :hidden:
-
-    /wrappers/matlab/installation
-    /wrappers/R/installation
-
 The source can be obtained from git at http://git.optunity.net (recommended), releases can be obtained from
 http://releases.optunity.net. Optunity is compatible with Python 2.7 and 3.x. Note that you must have Python installed
 before Optunity can be used (all Linux distributions have this, but Windows requires explicit installation).
