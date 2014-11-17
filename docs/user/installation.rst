@@ -6,6 +6,10 @@ The source can be obtained from git at http://git.optunity.net (recommended), re
 http://releases.optunity.net. Optunity is compatible with Python 2.7 and 3.x. Note that you must have Python installed
 before Optunity can be used (all Linux distributions have this, but Windows requires explicit installation).
 
+Obtaining the latest version of Optunity using git can be done as follows::
+
+    git clone https://github.com/claesenm/optunity.git
+
 Installation instructions per environment:
 
 -   :ref:`install-python`
@@ -61,7 +65,12 @@ After these steps, you should be able to import ``optunity`` module::
 Installing Optunity for MATLAB
 -------------------------------
 
-Installing Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` to your path.
+Installing Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` and its subdirectories to your MATLAB path.
+You can set the path in `Preferences -> Path` or using the following commands::
+
+    addpath(genpath('/path/to/optunity/'));
+    savepath
+
 
 .. _install-r:
 
