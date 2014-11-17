@@ -14,10 +14,10 @@ before Optunity can be used (all Linux distributions have this, but Windows requ
 
 Installation instructions per environment:
 
--   :ref:`PythonInstallation`
--   :ref:`MATLABInstallation`
--   :ref:`RInstallation`
--   :ref:`JavaInstallation`
+-   :ref:`install-python`
+-   :ref:`install-matlab`
+-   :ref:`install-r`
+-   :ref:`install-java`
 
 .. note::
 
@@ -30,9 +30,9 @@ Installation instructions per environment:
     .. _NumPy:
         http://www.numpy.org
 
-.. _PythonInstallation:
+.. _install-python:
 
-Setting up Optunity for Python
+Installing Optunity for Python
 -------------------------------
 
 If you want to use Optunity in another environment, this is not required. 
@@ -62,21 +62,21 @@ After these steps, you should be able to import ``optunity`` module::
 
     python -c 'import optunity'
 
-.. _MATLABInstallation:
+.. _install-matlab:
 
 Setting up Optunity for MATLAB
 -------------------------------
 
 Setting up Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` to your path.
 
-.. _RInstallation:
+.. _install-r:
 
 Setting up Optunity for R
 --------------------------
 
 TODO
 
-.. _JavaInstallation:
+.. _install-java:
 
 Setting up Optunity for Java
 -----------------------------
