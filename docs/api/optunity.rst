@@ -40,3 +40,4 @@ Subpackages
 .. toctree::
 
     optunity.test
+    optunity.solvers

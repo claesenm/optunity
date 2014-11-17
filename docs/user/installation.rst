@@ -8,17 +8,35 @@ Installing Optunity
     /wrappers/matlab/installation
     /wrappers/R/installation
 
-Optunity can be installed as a typical Python package.
+The source can be obtained from git at http://git.optunity.net (recommended), releases can be obtained from
+http://releases.optunity.net.
+
+Optunity can be installed as a typical Python package, for example:
+
+-   Add Optunity's root directory (the one you cloned/extracted) to your ``PYTHONPATH`` environment variable.
+    Note that this will only affect your current shell. To make it permanent, add this line to your .bashrc (Linux)
+    or adjust the PYTHONPATH variable manually (Windows). 
+    
+    Extending ``PYTHONPATH`` in Linux (not permanent)::
+
+        export PYTHONPATH=$PYTHONPATH:/path/to/optunity/
+
+    Extending ``PYTHONPATH`` in Windows (not permanent)::
+        
+        set PYTHONPATH=%PYTHONPATH%;/path/to/optunity
+
+-   Install using Optunity' setup script::
+
+        python setup.py install [--home=/desired/installation/directory/]
+
+-   Install using pip::
+
+        pip install optunity [-t /desired/installation/directory/]
 
 .. note::
 
-    Optunity has soft dependencies on NumPy_ and SciPy_ 
-    (for the :doc:`CMA-ES </user/solvers/CMA_ES>` and 
-    :doc:`Nelder-Mead </user/solvers/nelder-mead>` solvers, respectively).
-    If these dependencies are not met, the associated solvers are unavailable.
-    Optunity additionally ships with DEAP, a library for evolutionary algorithms [DEAP2012]_,
-    which is used to implement the :doc:`/user/solvers/particle_swarm` 
-    and the :doc:`/user/solvers/CMA_ES`.
+    Optunity has soft dependencies on NumPy_ and [DEAP2012]_ for the :doc:`CMA-ES </user/solvers/CMA_ES>` solver.
+    If these dependencies are not met, the CMA-ES solver will be unavailable.
 
     .. [DEAP2012] Fortin, Félix-Antoine, et al. "DEAP: Evolutionary algorithms made easy."
         Journal of Machine Learning Research 13.1 (2012): 2171-2175.
@@ -26,11 +44,13 @@ Optunity can be installed as a typical Python package.
     .. _NumPy:
         http://www.numpy.org
 
-    .. _SciPy:
-        http://www.scipy.org
+Setting up Optunity for MATLAB
+===============================
 
-Setting up Optunity for other environments
-===========================================
+Setting up Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` to your path.
+
+Setting up Optunity for R
+==========================
 
 If you want to use Optunity in a non-Python environment, please refer to the environment-specific installation instructions.
 
