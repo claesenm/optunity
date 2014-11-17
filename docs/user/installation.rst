@@ -64,21 +64,21 @@ After these steps, you should be able to import ``optunity`` module::
 
 .. _install-matlab:
 
-Setting up Optunity for MATLAB
+Installing Optunity for MATLAB
 -------------------------------
 
-Setting up Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` to your path.
+Installing Optunity for MATLAB is trivial. It only requires you to add `<optunity>/wrappers/matlab/` to your path.
 
 .. _install-r:
 
-Setting up Optunity for R
+Installing Optunity for R
 --------------------------
 
 TODO
 
 .. _install-java:
 
-Setting up Optunity for Java
+Installing Optunity for Java
 -----------------------------
 
 Optunity is available for Java through Jython (v2.7+). To use Optunity via Jython the Python package must be installed first (see above).
