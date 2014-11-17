@@ -9,8 +9,14 @@ Installing Optunity
     /wrappers/R/installation
 
 The source can be obtained from git at http://git.optunity.net (recommended), releases can be obtained from
-http://releases.optunity.net.
+http://releases.optunity.net. Optunity is compatible with Python 2.7 and 3.x. Note that you must have Python installed
+before Optunity can be used (all Linux distributions have this, but Windows requires explicit installation).
 
+
+Setting up Optunity for Python
+===============================
+
+If you want to use Optunity in another environment, this is not required. 
 Optunity can be installed as a typical Python package, for example:
 
 -   Add Optunity's root directory (the one you cloned/extracted) to your ``PYTHONPATH`` environment variable.
@@ -33,6 +39,11 @@ Optunity can be installed as a typical Python package, for example:
 
         pip install optunity [-t /desired/installation/directory/]
 
+After these steps, you should be able to import ``optunity`` module::
+
+    python -c 'import optunity'
+
+
 .. note::
 
     Optunity has soft dependencies on NumPy_ and [DEAP2012]_ for the :doc:`CMA-ES </user/solvers/CMA_ES>` solver.
@@ -52,7 +63,9 @@ Setting up Optunity for MATLAB is trivial. It only requires you to add `<optunit
 Setting up Optunity for R
 ==========================
 
-If you want to use Optunity in a non-Python environment, please refer to the environment-specific installation instructions.
+TODO
 
-- :doc:`MATLAB installation <../wrappers/matlab/installation>`
-- :doc:`R installation <../wrappers/R/installation>`
+Setting up Optunity for Java
+=============================
+
+Optunity is available for Java through Jython (v2.7+). To use Optunity via Jython the Python package must be installed first (see above).
