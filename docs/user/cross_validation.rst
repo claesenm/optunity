@@ -9,7 +9,7 @@ are optional and can be replaced by comparable routines from other packages or s
 .. _cross-validation: http://en.wikipedia.org/wiki/Cross-validation_(statistics)
 
 The fold generation procedure in Optunity allows for iterated cross-validation and is aware of both strata (data instances that must be spread across folds) 
-and clusters (sets of instances that must assigned to a single fold). Please refer to func:`optunity.cross_validated` for implementation and API details.
+and clusters (sets of instances that must assigned to a single fold). Please refer to :func:`optunity.cross_validated` for implementation and API details.
 
 We will build examples step by step. The basic setup is a ``train`` and ``predict``
 function along with some ``data`` to construct folds over:

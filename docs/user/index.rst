@@ -1,37 +1,29 @@
 ===================
-User Guide
+User Overview
 ===================
-
-This page contains a high-level overview of Optunity. 
-The main module provides the basic user functionality. For more advanced
-use, please refer to the submodules. Everything discussed on this page is available
-in all Optunity wrappers, though specialized submodule features might not be. 
-
-If you want to learn by example, please consult our :doc:`/examples/index`, 
-which use various features of Optunity to cover a wide variety of tuning tasks. 
-In case of confusion, we provide a list of basic `Terminology`_.
-
-Introduction
--------------
 
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function that provides a score for 
 some tuple of hyperparameters. Specifying the objective function must be done by
 the user. The software offers a diverse set of solvers to optimize the objective
-function. A solver determines an optimal tuple of hyperparameters.
+function. A solver determines a good set of hyperparameters.
 
 .. sidebar:: **Jump to**
 
-    * :doc:`Solver docs </user/solvers>`
-    * :doc:`Cross-validation </user/cross_validation>`
-    * :doc:`Score functions </user/score_functions>`
-    * :doc:`Constraints </user/costraints>`
+    * :doc:`</user/solvers>`
+    * :doc:`</user/cross_validation>`
+    * :doc:`</user/score_functions>`
+    * :doc:`</user/costraints>`
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
 API documentation. If you are using a different environment, you can still get the
 general idea on the Python pages. To dive into code details straight away, please
 consult the :doc:`/api/optunity`.
+
+If you want to learn by example, please consult our :doc:`/examples/index`, 
+which use various features of Optunity to cover a wide variety of tuning tasks. 
+In case of confusion, we provide a list of basic `Terminology`_.
 
 In the rest of this section we will discuss the main API functions. We will start with
 very simple functions that offer basic functionality which should meet the needs of most
