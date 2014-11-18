@@ -2,7 +2,7 @@
 Cross-validation
 ===================
 
-Optunity offers a simply interface to k-fold cross-validation_. This is a statistical approach to measure a model's generalization performance. 
+Optunity offers a simple interface to k-fold cross-validation_. This is a statistical approach to measure a model's generalization performance. 
 In the context of hyperparameter search, cross-validation is used to estimate the performance of a hyperparameter tuple. The cross-validation routines we offer
 are optional and can be replaced by comparable routines from other packages or some other method to estimate generalization performance.
 
@@ -41,12 +41,12 @@ with the following signature: ``f(x_train, y_train, x_test, y_test, hyperpar_1, 
 -   `hyperparameter names`: the hyperparameters that must be optimized
 
 The `cross_validated` decorator takes care of generating folds, partitioning the data, iterating over folds and aggregating partial results. After decoration,
-the arguments `x_train`, `y_train`, `x_test`, `y_test` will be bound (e.g. the decorated function does not take these as arguments). The decorated function will
+the arguments `x_train`, `y_train`, `x_test` and `y_test` will be bound (e.g. the decorated function does not take these as arguments). The decorated function will
 have hyperparameters as (keyword) arguments and returns a cross-validation result.
 
 A simple code example::
 
-    :language: python
+    .. highlight:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def cved(x_train, y_train, x_test, y_test):
@@ -60,7 +60,7 @@ If you want to compare different aspects of the learning approach (learning algo
 it is a good idea to use the same cross-validation folds. This is very easy in Optunity by using the `cross_validated` decorator without syntactic sugar. 
 Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:: 
 
-    :language: python
+    .. highlight:: python
 
     import sklearn.svm as svm
 
