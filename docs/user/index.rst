@@ -10,8 +10,8 @@ function. A solver determines a good set of hyperparameters.
 
 .. sidebar:: **Jump to**
 
-    * :doc:`</user/solvers>`
-    * :doc:`</user/cross_validation>`
+    * :doc:`/user/solvers`
+    * :doc:`/user/cross_validation`
     * :doc:`</user/score_functions>`
     * :doc:`</user/costraints>`
 
