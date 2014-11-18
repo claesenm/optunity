@@ -20,16 +20,6 @@ some tuple of hyperparameters. Specifying the objective function must be done by
 the user. The software offers a diverse set of solvers to optimize the objective
 function. A solver determines an optimal tuple of hyperparameters.
 
-In a more mathematical sense, tuning is about maximizing the following objective function:
-
-.. math:: \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = arg\,min_{\lambda} \mathcal{F}(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L}),
-    :label: objective-function-math
-
-where:
-
--   :math:``
-
-
 .. sidebar:: **Jump to**
 
     * :doc:`Solver docs </user/solvers>`

@@ -62,11 +62,10 @@ Reusing folds
 --------------
 
 If you want to compare different aspects of the learning approach (learning algorithms, score function, ...), 
-it is a good idea to use the same cross-validation folds. This is very easy in Optunity by using the `cross_validated` decorator without syntactic sugar. 
+it is a good idea to use the same cross-validation folds. This is very easy by using the `cross_validated` decorator without syntactic sugar. 
 Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:
 
 .. code-block:: python
-
     import sklearn.svm as svm
 
     def svm rbf(x_train, y_train, x_test, y_test, C, gamma):
@@ -86,7 +85,6 @@ Lets say we want to compare an SVM with RBF kernel and polynomial kernel with th
 
 In this example, the function `svm_rbf_cv` takes keyword arguments `C` and `gamma` while `svm_poly_cv` takes `C` and `d`. Both perform cross-validation
 on the same data, using the same folds.
-
 
 Nested cross-validation
 --------------------------
