@@ -46,6 +46,8 @@ have hyperparameters as (keyword) arguments and returns a cross-validation resul
 
 A simple code example::
 
+    :language: python
+
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def cved(x_train, y_train, x_test, y_test):
         train(x_train, y_train)
@@ -57,6 +59,8 @@ A simple code example::
 If you want to compare different aspects of the learning approach (learning algorithms, score function, ...), 
 it is a good idea to use the same cross-validation folds. This is very easy in Optunity by using the `cross_validated` decorator without syntactic sugar. 
 Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:: 
+
+    :language: python
 
     import sklearn.svm as svm
 
