@@ -71,6 +71,11 @@ You can set the path in `Preferences -> Path` or using the following commands::
     addpath(genpath('/path/to/optunity/wrappers/matlab/'));
     savepath
 
+.. warning::
+
+    The MATLAB wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
+    `<optunity>/wrappers/matlab` subdirectory it will not work.
+
 
 .. _install-r:
 
