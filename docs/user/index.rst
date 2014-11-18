@@ -2,14 +2,6 @@
 User Overview
 ===================
 
-.. toctree::
-    :hidden:
-
-    /user/solvers
-    /user/cross_validation
-    /user/score_functions
-    /user/constraints
-
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function that provides a score for 
 some tuple of hyperparameters. Specifying the objective function must be done by
@@ -38,8 +30,9 @@ very simple functions that offer basic functionality which should meet the needs
 use cases. Subsequently we will introduce the expert interface functions which have more
 bells and whistles that can be configured.
 
-A variety of solvers is available, but they are not discussed on this page. 
-For more details about our solvers, please visit :doc:`/user/solvers`. 
+A variety of solvers is available, discussed in more detail :doc:`here </user/solvers>`.
+Optunity additionally provide :doc:`k-fold cross-validation </user/cross_validation>` and
+a variety of :doc:`score functions </user/score_functions>`.
 
 Simple interface
 ----------------
@@ -67,6 +60,7 @@ please refer to the expert functions listed below or to submodules.
 - :func:`optunity.cross_validated`: decorator to perform k-fold cross-validation
     Wrap a function with cross-validation functionality. The way cross-validation
     is performed is highly configurable, including support for strata and clusters.
+    More details are available :doc:`here </user/cross_validation>`.
 
 Expert interface
 -----------------
@@ -86,6 +80,16 @@ evaluations via this interface (turned off by default due to problems in IPython
     is done through sequential function evaluations but this can be parallelized
     by specifying an appropriate ``pmap`` argument (cfr. :func:`optunity.parallel.pmap`).
 
+More details about our solvers can be found :doc:`here </user/solvers>`. To learn about adding constraints
+to the objective function, please consult :doc:`this page </user/constraints`.
+
+.. toctree::
+    :hidden:
+
+    /user/solvers
+    /user/cross_validation
+    /user/score_functions
+    /user/constraints
 
 Terminology
 ------------
