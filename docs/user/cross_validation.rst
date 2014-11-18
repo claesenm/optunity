@@ -44,9 +44,9 @@ The `cross_validated` decorator takes care of generating folds, partitioning the
 the arguments `x_train`, `y_train`, `x_test` and `y_test` will be bound (e.g. the decorated function does not take these as arguments). The decorated function will
 have hyperparameters as (keyword) arguments and returns a cross-validation result.
 
-A simple code example::
+A simple code example:
 
-    .. highlight:: python
+.. code_block:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def cved(x_train, y_train, x_test, y_test):
@@ -56,11 +56,14 @@ A simple code example::
 
     cved()
 
+Reusing folds
+--------------
+
 If you want to compare different aspects of the learning approach (learning algorithms, score function, ...), 
 it is a good idea to use the same cross-validation folds. This is very easy in Optunity by using the `cross_validated` decorator without syntactic sugar. 
-Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:: 
+Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:
 
-    .. highlight:: python
+.. code_block:: python
 
     import sklearn.svm as svm
 
@@ -95,9 +98,9 @@ A good summary is provided here_.
 Nested cv consists of two cross-validation procedures wrapped around eachother. The inner cv is
 used for model selection, the outer cv estimates generalization performance.
 
+This can be done in a straightforward manner using Optunity:
 
-
-This can be done in a straightforward manner using Optunity::
+.. code_block:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def nested_cv(x_train, y_train, x_test, y_test):
