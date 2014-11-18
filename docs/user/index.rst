@@ -2,6 +2,14 @@
 User Overview
 ===================
 
+.. toctree::
+    :hidden:
+
+    /user/solvers
+    /user/cross_validation
+    /user/score_functions
+    /user/constraints
+
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function that provides a score for 
 some tuple of hyperparameters. Specifying the objective function must be done by
@@ -12,8 +20,8 @@ function. A solver determines a good set of hyperparameters.
 
     * :doc:`/user/solvers`
     * :doc:`/user/cross_validation`
-    * :doc:`</user/score_functions>`
-    * :doc:`</user/costraints>`
+    * :doc:`/user/score_functions`
+    * :doc:`/user/constraints`
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
