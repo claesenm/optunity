@@ -25,7 +25,7 @@ In a more mathematical sense, tuning is about maximizing the following objective
 .. math::
     :label: objective-function
 
-    \lambda^* = \argmin_{\lambda} \mathcal{L}\big(\mathcal{A}(\train\ |\ \lambda)\ |\ \test\big) = \argmin_{\lambda} \obj(\lambda\ |\ \mathcal{A},\ \train, \test,\ \mathcal{L})
+    \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = \argmin_{\lambda} \obj(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L})
 
 
 .. sidebar:: **Jump to**
