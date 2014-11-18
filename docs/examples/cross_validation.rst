@@ -26,7 +26,6 @@ function along with some ``data`` to construct folds over::
         for instance in x:
             print(filler + str(instance))
 
-
     data = list(range(9))
     labels = [0] * 9
 

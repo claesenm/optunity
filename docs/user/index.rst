@@ -22,9 +22,13 @@ function. A solver determines an optimal tuple of hyperparameters.
 
 In a more mathematical sense, tuning is about maximizing the following objective function:
 
-.. math::
+.. math:: \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = arg\,min_{\lambda} \mathcal{F}(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L}),
+    :label: objective-function-math
 
-    \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = arg\,min_{\lambda} \mathcal{F}(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L})
+where:
+
+-   :math:``
+
 
 .. sidebar:: **Jump to**
 
