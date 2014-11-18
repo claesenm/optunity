@@ -127,6 +127,7 @@ throughout the documentation:
 
 .. toctree::
     :maxdepth: 2
+    :hidden:
 
     /user/installation
     /user/solvers
