@@ -266,7 +266,7 @@ Optimizes func with given solver.
 :type maximize: bool
 :param max_evals: maximum number of permitted function evaluations
 :type max_evals: int
-:param pmap: the map() function to use, to vectorize use :func:`optunity.parallel.pmap`
+:param pmap: the map() function to use, to vectorize use :func:`optunity.pmap`
 :type pmap: function
 
 Returns the solution and a ``namedtuple`` with further details.

@@ -57,6 +57,9 @@ try:
         :returns: a list containing the results
 
         .. warning::
+            This function will not work in IPython: https://github.com/claesenm/optunity/issues/8.
+
+        .. warning::
             Python's multiprocessing library is incompatible with Jython.
 
         """
