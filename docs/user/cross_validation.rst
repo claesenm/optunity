@@ -12,7 +12,9 @@ The fold generation procedure in Optunity allows for iterated cross-validation a
 and clusters (sets of instances that must assigned to a single fold). Please refer to func:`optunity.cross_validated` for implementation and API details.
 
 We will build examples step by step. The basic setup is a ``train`` and ``predict``
-function along with some ``data`` to construct folds over::
+function along with some ``data`` to construct folds over:
+
+.. code-block:: python
 
     from __future__ import print_function
     import optunity as opt
@@ -46,7 +48,7 @@ have hyperparameters as (keyword) arguments and returns a cross-validation resul
 
 A simple code example:
 
-.. code_block:: python
+.. code-block:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def cved(x_train, y_train, x_test, y_test):
@@ -63,7 +65,7 @@ If you want to compare different aspects of the learning approach (learning algo
 it is a good idea to use the same cross-validation folds. This is very easy in Optunity by using the `cross_validated` decorator without syntactic sugar. 
 Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:
 
-.. code_block:: python
+.. code-block:: python
 
     import sklearn.svm as svm
 
@@ -100,7 +102,7 @@ used for model selection, the outer cv estimates generalization performance.
 
 This can be done in a straightforward manner using Optunity:
 
-.. code_block:: python
+.. code-block:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def nested_cv(x_train, y_train, x_test, y_test):
@@ -128,7 +130,9 @@ For notational simplicity we assume a problem without labels here.
 Below we illustrate a more complete example of nested cv, which includes hyperparameter
 optimization with :func:`optunity.maximize`. Assume we have access to the following functions
 ``svm=svm_train(x, y, c, g)`` and ``predictions=svm_predict(svm, x)``. Where ``c`` and ``g``
-are hyperparameters to be optimized for accuracy::
+are hyperparameters to be optimized for accuracy:
+
+.. code-block:: python
 
     @opt.cross_validated(x=data, y=labels, num_folds=3)
     def nested_cv(x_train, y_train, x_test, y_test):
