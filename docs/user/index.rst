@@ -24,8 +24,7 @@ In a more mathematical sense, tuning is about maximizing the following objective
 
 .. math::
 
-    \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = arg\,min_{\lambda} \mathcal{F}(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L}) :label: objective-function
-
+    \lambda^* = arg\,min_{\lambda} \mathcal{L}\big(\mathcal{A}(\mathbf{X}^{(tr)}\ |\ \lambda)\ |\ \mathbf{X}^{(te)}\big) = arg\,min_{\lambda} \mathcal{F}(\lambda\ |\ \mathcal{A},\ \mathbf{X}^{(tr)}, \mathbf{X}^{(tr)},\ \mathcal{L})
 
 .. sidebar:: **Jump to**
 
