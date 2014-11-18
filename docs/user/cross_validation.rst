@@ -68,12 +68,12 @@ Lets say we want to compare an SVM with RBF kernel and polynomial kernel with th
 .. code-block:: python
     import sklearn.svm as svm
 
-    def svm rbf(x_train, y_train, x_test, y_test, C, gamma):
+    def svm_rbf(x_train, y_train, x_test, y_test, C, gamma):
         model = svm.SVC(kernel='rbf', C=C, gamma=gamma).fit(x_train, y_train)
         y_pred = model.predict(x_test)
         return opt.score_functions.accuracy(y_test, y_pred)
 
-    def svm poly(x_train, y_train, x_test, y_test, C, d):
+    def svm_poly(x_train, y_train, x_test, y_test, C, d):
         model = svm.SVC(kernel=’poly’, C=C, degree=d).fit(x_train, y_train)
         y_pred = model.predict(x_test)
         return opt.score_functions.accuracy(y_test, y_pred)
