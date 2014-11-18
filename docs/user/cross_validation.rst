@@ -66,6 +66,7 @@ it is a good idea to use the same cross-validation folds. This is very easy by u
 Lets say we want to compare an SVM with RBF kernel and polynomial kernel with the same cross-validation configuration:
 
 .. code-block:: python
+
     import sklearn.svm as svm
 
     def svm_rbf(x_train, y_train, x_test, y_test, C, gamma):

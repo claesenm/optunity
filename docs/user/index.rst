@@ -24,6 +24,8 @@ function. A solver determines an optimal tuple of hyperparameters.
 
     * :doc:`Solver docs </user/solvers>`
     * :doc:`Cross-validation </user/cross_validation>`
+    * :doc:`Score functions </user/score_functions>`
+    * :doc:`Constraints </user/costraints>`
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
@@ -129,4 +131,6 @@ throughout the documentation:
     /user/installation
     /user/solvers
     /user/cross_validation
+    /user/score_functions
+    /user/constraints
     /user/decorators
