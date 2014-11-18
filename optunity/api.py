@@ -206,6 +206,16 @@ def minimize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
 def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
     """Optimizes func with given solver.
 
+    :param solver: the solver to be used, for instance a result from :func:`optunity.make_solver`
+    :param func: the objective function
+    :type func: callable
+    :param maximize: maximize or minimize?
+    :type maximize: bool
+    :param max_evals: maximum number of permitted function evaluations
+    :type max_evals: int
+    :param pmap: the map() function to use, to vectorize use :func:`optunity.parallel.pmap`
+    :type pmap: function
+
     Returns the solution and a namedtuple with further details.
     Please refer to docs of optunity.maximize_results
     and optunity.maximize_stats.

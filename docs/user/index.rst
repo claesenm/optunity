@@ -31,8 +31,8 @@ use cases. Subsequently we will introduce the expert interface functions which h
 bells and whistles that can be configured.
 
 A variety of solvers is available, discussed in more detail :doc:`here </user/solvers>`.
-Optunity additionally provide :doc:`k-fold cross-validation </user/cross_validation>` and
-a variety of :doc:`score functions </user/score_functions>`.
+Optunity additionally provides :doc:`k-fold cross-validation </user/cross_validation>` and
+several :doc:`score functions </user/score_functions>`.
 
 Simple interface
 ----------------
