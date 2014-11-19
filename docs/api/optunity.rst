@@ -22,6 +22,7 @@ Optunity API
 
     .. toctree::
         :maxdepth: 1
+
         optunity.standalone
         optunity.communication
 
