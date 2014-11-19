@@ -86,7 +86,7 @@ Make sure you have necessary R packages installed (rjson), clone the git reposit
 
     cd optunity/wrappers
     R CMD build R/
-    R CMD INSTALL optunity_*.tar.gz
+    R CMD INSTALL optunity_<version number>.tar.gz
 
 .. _install-java:
 

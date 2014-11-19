@@ -128,5 +128,4 @@ Indices and tables
     /user/index
     /examples/index
     /wrappers/index
-    /dev/index
     /api/optunity
