@@ -8,7 +8,7 @@ Optunity API
 
 .. sidebar:: optunity submodules
 
-    **Key content**
+    **Key features**
 
     .. toctree::
         :maxdepth: 1
@@ -16,14 +16,12 @@ Optunity API
         optunity.solvers
         optunity.cross_validation
         optunity.score_functions
+        optunity.functions
 
-    **Other content**
+    **Standalone process**
 
     .. toctree::
         :maxdepth: 1
-
-        optunity.functions
-        optunity.util
         optunity.standalone
         optunity.communication
 
