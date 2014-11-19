@@ -119,7 +119,7 @@ class ParticleSwarm(Solver):
 
         .. include:: /global.rst
 
-        |warning-unconstrained|
+        .. warning:: |warning-unconstrained|
 
         .. warning:: This solver is not explicitly constrained. The box constraints that are given
             are used to initialise the swarm, but particles may leave the specified region during iterations.
