@@ -1,5 +1,5 @@
-optunity.communication module
-=============================
+Communication 
+===============
 
 .. automodule:: optunity.communication
     :members:

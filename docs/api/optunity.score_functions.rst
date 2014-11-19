@@ -1,4 +1,4 @@
-optunity.score_functions module
+Score functions
 ===============================
 
 .. automodule:: optunity.score_functions

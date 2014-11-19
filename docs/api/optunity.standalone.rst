@@ -1,4 +1,4 @@
-optunity.standalone module
+Standalone implementation
 ==========================
 
 .. automodule:: optunity.standalone
