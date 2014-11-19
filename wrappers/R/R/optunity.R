@@ -79,7 +79,8 @@ grid_search <- function(f, ..., maximize  = TRUE) {
 nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "nelder-mead", "x":2}}
   args <- list(...)
-  if ( length(args) == 0) stop("Please provide initial value for f, like nelder_mead(f, var1=1, var2=3).")
+  if (length(args) == 0) stop("Please provide initial value for f, like nelder_mead(f, var1=1, var2=3).")
+  if (any(sapply(args, length) != 1)) stop("Please provide initial value(s) for f, as scalars, like nelder_mead(f, var1=1, var2=3).")
   check_args(f, args, "initial values", "2.5")
   args$max_iter = as.integer(num_evals / 2) - 1
   return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
