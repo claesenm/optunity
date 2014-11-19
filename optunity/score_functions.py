@@ -47,13 +47,15 @@ def contingency_tables(ys, decision_values, positive=True):
     :returns: a list of contingency tables `(TP, FP, TN, FN)` and the corresponding thresholds.
     Contingency tables are built based on decision :math:`decision\_value \geq threshold`.
 
+    The first contingency table corresponds with a (potentially unseen) threshold that yields all negatives.
+
     >>> y = [0, 0, 0, 0, 1, 1, 1, 1]
     >>> d = [2, 2, 1, 1, 1, 2, 3, 3]
     >>> tables, thresholds = contingency_tables(y, d, 1)
     >>> print(tables)
-    [(2, 0, 4, 2), (3, 2, 2, 1), (4, 4, 0, 0)]
+    [(0, 0, 4, 4), (2, 0, 4, 2), (3, 2, 2, 1), (4, 4, 0, 0)]
     >>> print(thresholds)
-    [3, 2, 1]
+    [None, 3, 2, 1]
 
     """
     y = map(lambda x: x == positive, ys)
@@ -62,10 +64,13 @@ def contingency_tables(ys, decision_values, positive=True):
     ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
                            key=op.itemgetter(1)))
 
-    tables = []
-    thresholds = []
-    current_idx = 0
     num_instances = len(ind)
+    total_num_pos = sum(y)
+
+    thresholds = [None]
+    tables = [(0, 0, num_instances - total_num_pos, total_num_pos)]
+
+    current_idx = 0
     while current_idx < num_instances:
         # determine number of identical decision values
         num_ties = 1
@@ -73,7 +78,6 @@ def contingency_tables(ys, decision_values, positive=True):
             num_ties += 1
 
         if current_idx == 0:
-            total_num_pos = sum(y)
             previous_table = (0, 0, num_instances - total_num_pos, total_num_pos)
 
         # find number of new true positives at this threshold
@@ -93,6 +97,48 @@ def contingency_tables(ys, decision_values, positive=True):
         current_idx += num_ties
 
     return tables, thresholds
+
+
+def compute_curve(ys, decision_values, xfun, yfun, positive=True):
+    """Computes a curve based on contingency tables at different decision values.
+
+    :param ys: true labels
+    :type ys: iterable
+    :param decision_values: decision values
+    :type decision_values: iterable
+    :param positive: positive label
+    :param xfun: function to compute x values, based on contingency tables
+    :type xfun: callable
+    :param yfun: function to compute y values, based on contingency tables
+    :type yfun: callable
+
+    :returns: the resulting curve, as a list of (x, y)-tuples
+
+    """
+    curve = []
+    tables, _ = contingency_tables(ys, decision_values, positive)
+    curve = map(lambda t: (xfun(t), yfun(t)), tables)
+    return curve
+
+
+def auc(curve):
+    """Computes the area under the specified curve.
+
+    :param curve: a curve, specified as a list of (x, y) tuples
+
+    .. seealso:: :func:`optunity.score_functions.compute_curve`
+
+    """
+    area = 0.0
+    for i in range(len(curve) - 1):
+        x1, y1 = curve[i]
+        x2, _ = curve[i + 1]
+        if y1 is None:
+            y1 = 0.0
+        area += float(y1) * float(x2 - x1)
+
+    return area
+
 
 def contingency_table(ys, yhats, positive=True):
     """Computes a contingency table for given predictions.
@@ -129,11 +175,27 @@ def contingency_table(ys, yhats, positive=True):
                 FP += 1
     return TP, FP, TN, FN
 
-def _precision(TP, FP):
-    return float(TP) / (TP + FP)
+def _precision(table):
+    TP = table[0]
+    FP = table[1]
+    try:
+        return float(TP) / (TP + FP)
+    except ZeroDivisionError:
+        return None
 
-def _recall(TP, FN):
-    return float(TP) / (TP + FN)
+def _recall(table):
+    TP = table[0]
+    FN = table[3]
+    try:
+        return float(TP) / (TP + FN)
+    except ZeroDivisionError:
+        return None
+
+def _fpr(table):
+    FP = table[1]
+    TN = table[2]
+    return float(FP) / (FP + TN)
+
 
 def mse(y, yhat):
     """Returns the mean squared error between y and yhat.
@@ -292,3 +354,39 @@ def error_rate(y, yhat):
 
     """
     return 1.0 - accuracy(y, yhat)
+
+def rocauc(ys, yhat, positive=True):
+    """Computes the area under the receiver operating characteristic curve (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    >>> ys = [0,0,1,1]
+    >>> yhat = [0, 0, 1, 1]
+    >>> rocauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    1.0
+
+    """
+    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
+    return auc(curve)
+
+def prauc(ys, yhat, positive=True):
+    """Computes the area under the precision-recall curve (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    >>> ys = [0,0,1,1]
+    >>> yhat = [0, 0, 1, 1]
+    >>> prauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    1.0
+
+    """
+    curve = compute_curve(ys, yhat, _recall, _precision, positive)
+
+    # precision is undefined when no positives are predicted
+    # we approximate by using the precision at the lowest recall
+    curve[0] = (0.0, curve[1][1])
+    return auc(curve)
