@@ -6,3 +6,8 @@ optunity.solvers
     :undoc-members:
     :show-inheritance:
     :special-members: __init__
+
+.. toctree::
+    :glob:
+    
+    /user/solvers/*
