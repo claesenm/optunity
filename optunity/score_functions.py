@@ -175,7 +175,8 @@ def fbeta(y, yhat, beta, positive=True):
     :type beta: float
     :param positive: the positive label
 
-    :returns: :math:`(1+\beta^2)\frac{precision\cdot recall}{precision+recall}`
+    :returns:
+        .. math:: (1+\beta^2)\frac{precision\cdot recall}{precision+recall}
 
     """
     bsq = beta ** 2
@@ -208,3 +209,15 @@ def recall(y, yhat, positive=True):
     TP, _, _, FN = contingency_table(y, yhat, positive)
     return _recall(TP, FN)
 
+def npv(y, yhat, positive=True):
+    """Returns the negative predictive value (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    :returns: number of true negative predictions / number of negative predictions
+
+    """
+    _, _, TN, FN = contingency_table(y, yhat, positive)
+    return float(TN) / (TN + FN)
