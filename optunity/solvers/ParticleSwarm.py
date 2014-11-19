@@ -116,6 +116,11 @@ class ParticleSwarm(Solver):
         >>> solver.num_generations
         5
 
+        .. warning:: this solver is not explicitly constrained. The box constraints that are given
+            are used for initialization, but the solver may leave the specified box during iterations.
+            If this is unacceptable, constrain the domain of the objective function prior to using this
+            solver (cfr. :doc:`/user/constraints`).
+
         """
 
         assert all([len(v) == 2 and v[0] <= v[1]
