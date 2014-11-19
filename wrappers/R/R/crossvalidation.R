@@ -118,6 +118,7 @@ cv.run <- function(setup, f, ...) {
 }
 
 cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
   if (length(args) == 0)
     stop("Please provide grid for f, like cv.grid_search(setup, f, param1=c(1, 3, 5)).")
@@ -126,6 +127,19 @@ cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   fcv <- function(...) cv.run(setup, f, ...)$score.mean
   
   res <- grid_search(fcv, ..., maximize = maximize)
+  return(res)
+}
+
+cv.random_search <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
+  args <- list(...)
+  if (length(args) == 0)
+    stop("Please provide paramter intervals for f, like cv.random_search(setup, f, param1=c(0, 20)).")
+  check_cv_args(f, args)
+  
+  fcv <- function(...) cv.run(setup, f, ...)$score.mean
+  
+  res <- random_search(fcv, ..., maximize = maximize, num_evals = num_evals)
   return(res)
 }
 
