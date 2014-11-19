@@ -8,8 +8,7 @@ For non-parameterized score/loss functions, we use the following calling convent
 
 -   `y` (iterable): the true labels/function values
 -   `yhat` (iterable): the predicted labels/function values
-
-We assume `y` and `yhat` are of the same length (though we do not assert this).
+-   we assume `y` and `yhat` are of the same length (though we do not assert this).
 
 For parameterized score/loss functions, we provide factories that return callables with the same signature as above.
 
@@ -18,21 +17,24 @@ The following functions are available in :mod:`optunity.score_functions`:
 Score functions
 ---------------
 
-Score functions are typically maximized (e.g. :doc:`optunity.maximize`).
+Score functions are typically maximized (e.g. :func:`optunity.maximize`).
 
 Classification
 ^^^^^^^^^^^^^^
 
--   accuracy
--   area under the ROC curve
--   area under the PR curve
--   log loss
--   Brier score
--   :math:`F_\beta`
--   PU score
--   precision/positive predictive value
--   recall/sensitivity
--   specificity/negative predictive value
++----------------------+--------------------------------------------------------+----------------+
+| Score                | Associated Optunity function                           | Parameterized? |
++======================+========================================================+================+
+| accuracy             | :func:`accuracy <optunity.score_functions.accuracy>`   | no  |
+| area under ROC curve | :func:`auroc <optunity.score_functions.auroc>`         | no  |
+| area under PR curve  | :func:`aupr <optunity.score_functions.aupr>`           | no  |
+| Brier score          | :func:`brier <optunity.score_functions.brief>`         | no  |
+| :math:`F_\beta`      | :func:`fbeta <optunity.score_functions.fbeta>`         | yes |
+| log loss             | :func:`logloss <optunity.score_functions.logloss>`     | no  |
+| precision/PPV        | :func:`precision <optunity.score_functions.precision>` | no  |
+| recall/sensitivity   | :func:`recall <optunity.score_functions.recall>`       | no  |
+| specificity/NPV      | :func:`npv <optunity.score_functions.npv>`             | no  |
++----------------------+--------------------------------------------------------+----------------+
 
 Regression
 ^^^^^^^^^^^
@@ -42,7 +44,7 @@ Regression
 Loss functions
 ---------------
 
-Loss functions are typically minimized (e.g. :doc:`optunity.minimize`).
+Loss functions are typically minimized (e.g. :func:`optunity.minimize`).
 
 Classification
 ^^^^^^^^^^^^^^^
