@@ -167,7 +167,7 @@ def pu_score(y, yhat):
     return tp * tp / (num_pos * num_pos * p_pred_pos)
 
 def fbeta(y, yhat, beta, positive=True):
-    """Returns the :math:`F_\beta`-score.
+    """Returns the :math:`F_\\beta`-score.
 
     :param y: true function values
     :param yhat: predicted function values
@@ -176,7 +176,7 @@ def fbeta(y, yhat, beta, positive=True):
     :param positive: the positive label
 
     :returns:
-        .. math:: (1+\beta^2)\frac{precision\cdot recall}{precision+recall}
+        .. math:: (1 + \\beta^2)\\frac{precision\\cdot recall}{precision+recall}
 
     """
     bsq = beta ** 2
