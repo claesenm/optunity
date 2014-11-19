@@ -122,7 +122,7 @@ Indices and tables
 
 .. toctree::
     :maxdepth: 2
-    :includehidden:
+    :hidden:
 
     /user/installation
     /user/index
