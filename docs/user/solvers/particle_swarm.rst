@@ -26,7 +26,7 @@ PSO is an iterative algorithm::
         -   :math:`\vec{p}_g` is the swarm's optimum,
         -   :math:`\vec{\phi}_1` and :math:`\vec{\phi}_2` are vectors of uniformly sampled values in :math:`(0, \phi_1)` and :math:`(0, \phi_2)`, respectively.
 
-PSO has 4 parameters that can be configured (see :doc:`/api/optunity.solvers.ParticleSwarm`):
+PSO has 4 parameters that can be configured (see :py:class:`optunity.solvers.ParticleSwarm`):
 
 -   `num_particles`: the number of particles to use
 -   `num_generations`: the number of generations (iterations)
