@@ -118,7 +118,7 @@ def compute_curve(ys, decision_values, xfun, yfun, positive=True):
     """
     curve = []
     tables, _ = contingency_tables(ys, decision_values, positive)
-    curve = map(lambda t: (xfun(t), yfun(t)), tables)
+    curve = list(map(lambda t: (xfun(t), yfun(t)), tables))
     return curve
 
 
@@ -230,7 +230,7 @@ def accuracy(y, yhat):
     :param yhat: predicted function values
 
     """
-    return float(len(filter(lambda x: x[0] == x[1],
+    return float(sum(map(lambda x: x[0] == x[1],
                             zip(y, yhat)))) / len(y)
 
 
