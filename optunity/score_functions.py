@@ -33,6 +33,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import math
+import operator as op
 
 def contingency_table(ys, yhats, positive=True):
     """Computes a contingency table for given predictions.
@@ -111,6 +112,9 @@ def logloss(y, yhat):
     yhat must be a vector of probabilities, e.g. elements in [0, 1]
 
     Lower is better.
+
+    .. note:: This loss function should only be used for probabilistic models.
+
     """
     loss = sum([math.log(pred) for _, pred in
                 filter(lambda i: i[0], zip(y, yhat))])
@@ -119,7 +123,7 @@ def logloss(y, yhat):
     return -loss
 
 
-def brier(y, yhat):
+def brier(y, yhat, positive=True):
     """Returns the Brier score between y and yhat.
 
     :param y: true function values
@@ -127,11 +131,14 @@ def brier(y, yhat):
     :returns:
         .. math:: \\frac{1}{n} \sum_{i=1}^n \\big[(\hat{y}-y)^2\\big]
 
-    y must be a boolean vector, e.g. elements in {True, False}
     yhat must be a vector of probabilities, e.g. elements in [0, 1]
 
     Lower is better.
+
+    .. note:: This loss function should only be used for probabilistic models.
+
     """
+    y = map(lambda x: x == positive, y)
     return sum([(yp - float(yt)) ** 2 for yt, yp in zip(y, yhat)]) / len(y)
 
 
@@ -162,15 +169,13 @@ def pu_score(y, yhat):
 def fbeta(y, yhat, beta, positive=True):
     """Returns the :math:`F_\beta`-score.
 
+    :param y: true function values
+    :param yhat: predicted function values
     :param beta: the value for beta to be used
     :type beta: float
     :param positive: the positive label
 
-    >>> f = fbeta(1.0, True)
-    >>> y = [True, True, True, False, False]
-    >>> yhat = [True, True, False, False, True]
-    >>> fbeta(y, yhat) #d
-    0.88
+    :returns: :math:`(1+\beta^2)\frac{precision\cdot recall}{precision+recall}`
 
     """
     bsq = beta ** 2
@@ -178,12 +183,28 @@ def fbeta(y, yhat, beta, positive=True):
     return float(1 + bsq) * TP / ((1 + bsq) * TP + bsq * FN + FP)
 
 def precision(y, yhat, positive=True):
-    """Returns the precision (higher is better)."""
+    """Returns the precision (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    :returns: number of true positive predictions / number of positive predictions
+
+    """
     TP, FP, _, _ = contingency_table(y, yhat, positive)
     return _precision(TP, FP)
 
 def recall(y, yhat, positive=True):
-    """Returns the recall (higher is better)."""
+    """Returns the recall (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    :returns: number of true positive predictions / number of true positives
+
+    """
     TP, _, _, FN = contingency_table(y, yhat, positive)
     return _recall(TP, FN)
 
