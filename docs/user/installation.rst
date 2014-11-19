@@ -71,6 +71,10 @@ You can set the path in `Preferences -> Path` or using the following commands::
     addpath(genpath('/path/to/optunity/wrappers/matlab/'));
     savepath
 
+After these steps, you should be able to run the examples in `<optunity>/wrappers/matlab/optunity_example.m`::
+
+    optunity_example
+
 .. warning::
 
     The MATLAB wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
