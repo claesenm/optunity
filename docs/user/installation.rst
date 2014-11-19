@@ -82,7 +82,11 @@ You can set the path in `Preferences -> Path` or using the following commands::
 Installing Optunity for R
 --------------------------
 
-TODO
+Make sure you have necessary R packages installed (rjson), clone the git repository and then issue the following commands::
+
+    cd optunity/wrappers
+    R CMD build R/
+    R CMD INSTALL optunity_*.tar.gz
 
 .. _install-java:
 

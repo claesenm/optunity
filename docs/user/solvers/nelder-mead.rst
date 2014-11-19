@@ -3,7 +3,7 @@ Nelder-Mead simplex
 
 .. include:: /global.rst
 
-This solver is implemented in |api-nelder-mead|. It as available in |make_solver| as 'nelder-mead'.
+This solver is implemented in |api-nelder-mead|. It is available in |make_solver| as 'nelder-mead'.
 
 This is a heuristic, nonlinear optimization method based on the concept of a simplex, originally introduced by Nelder and Mead [NELDERMEAD]_.
 We implemented the version as described on Wikipedia_.
