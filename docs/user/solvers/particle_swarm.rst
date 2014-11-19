@@ -18,12 +18,15 @@ PSO is an iterative algorithm::
     .. figure:: pso_iteration.png
         :alt: PSO iterations
 
-        Particle swarm iterations. :math:`\vec{x}_i` is a particle's position, :math:`\vec{v}_i` its velocity,
-        :math:`\vec{p}_i` its historically best position and :math:`\vec{p}_g` is the swarm's optimum.
-        :math:`\vec{\phi}_1` and :math:`\vec{\phi}_2` are vectors of uniformly sampled values 
-        in :math:`(0, \phi_1)` and :math:`(0, \phi_2)`, respectively.
+        Particle swarm iterations:
 
-PSO has 4 parameters that can be configured:
+        -   :math:`\vec{x}_i` is a particle's position,
+        -   :math:`\vec{v}_i` its velocity,
+        -   :math:`\vec{p}_i` its historically best position,
+        -   :math:`\vec{p}_g` is the swarm's optimum,
+        -   :math:`\vec{\phi}_1` and :math:`\vec{\phi}_2` are vectors of uniformly sampled values in :math:`(0, \phi_1)` and :math:`(0, \phi_2)`, respectively.
+
+PSO has 4 parameters that can be configured (see :doc:`/api/optunity.solvers.ParticleSwarm`):
 
 -   `num_particles`: the number of particles to use
 -   `num_generations`: the number of generations (iterations)
