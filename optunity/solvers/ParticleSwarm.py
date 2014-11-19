@@ -30,7 +30,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import collections
 import math
 import operator as op
 import random
@@ -88,7 +87,7 @@ class ParticleSwarm(Solver):
 
     def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
         """
-        Initializes a PSO server.
+        Initializes a PSO solver.
 
         :param num_particles: number of particles to use
         :type num_particles: int
@@ -106,12 +105,22 @@ class ParticleSwarm(Solver):
         The number of function evaluations it will perform is `num_particles`*`num_generations`.
         The search space is rescaled to the unit hypercube before the solving process begins.
 
+
+        >>> solver = ParticleSwarm(num_particles=10, num_generations=5, x=[-1, 1], y=[0, 2])
+        >>> solver.bounds['x']
+        [-1, 1]
+        >>> solver.bounds['y']
+        [0, 2]
+        >>> solver.num_particles
+        10
+        >>> solver.num_generations
+        5
+
         """
 
         assert all([len(v) == 2 and v[0] <= v[1]
                     for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
         self._bounds = kwargs
-        self._ttype = collections.namedtuple('ttype', kwargs.keys())
         self._num_particles = num_particles
         self._num_generations = num_generations
 
