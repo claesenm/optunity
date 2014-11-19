@@ -2,6 +2,10 @@
 Optunity API
 ================
 
+.. toctree::
+    :hidden:
+
+
 .. sidebar:: optunity submodules
 
     **Key content**
@@ -51,11 +55,3 @@ Submodules
    optunity.score_functions
    optunity.standalone
    optunity.util
-
-Module contents
----------------
-
-.. automodule:: optunity
-    :members:
-    :undoc-members:
-    :show-inheritance:
