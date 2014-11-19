@@ -12,7 +12,7 @@ If you want to specify detailed settings for a solver, you can use the expert in
 The following solvers are available in Optunity:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :glob:
 
     /user/solvers/grid_search

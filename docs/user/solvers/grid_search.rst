@@ -11,11 +11,15 @@ the Cartesian product of these sets of values.
 Grid search can be used to tune a limited number of hyperparameters, as the size of the search grid (number of evaluations) increases exponentially in terms of the
 number of hyperparameters.
 
+When you use choose this solver in the functions |maximize| or |minimize|, an equal number of values is determined per hyperparameter (spread uniformly).
+The number of test values per hyperparameter is determined based on the number of permitted evaluations. 
+If you want to specify the grid points manually, this is possible via |make_solver| and |optimize|.
+
 Example
 --------
 
 Assume we have two hyperparameters `x` and `y`. For `x` we want to test the following values `[0, 1, 2, 3]` and for `y` we will try `[-10, -5, 0, 5, 10]`.
-The search grid would consist of all possible pairs (:math:`4\times5=20` in this case), e.g.:
+The search grid consists of all possible pairs (:math:`4\times5=20` in this case), e.g.:
 
 +---+-----+
 | x |  y  |
