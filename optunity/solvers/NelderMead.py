@@ -50,7 +50,9 @@ from .util import Solver, _copydoc
                  ])
 class NelderMead(Solver):
     """
-    Performs Nelder-Mead optimization to minimize f.
+    .. include:: /global.rst
+
+    Performs |nelder-mead| optimization to minimize f.
 
     >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
     >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP
@@ -67,6 +69,8 @@ class NelderMead(Solver):
         {'x': 1}
         >>> s.ftol #doctest:+SKIP
         2
+
+        .. warning:: |warning-unconstrained|
 
         """
 
