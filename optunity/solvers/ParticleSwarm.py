@@ -59,7 +59,7 @@ from .util import Solver, _copydoc, uniform_in_bounds
                   ])
 class ParticleSwarm(Solver):
     """
-    TODO
+    Please refer to :doc:`/user/solvers/particle_swarm` for details on this algorithm.
     """
 
     class Particle:
@@ -88,7 +88,7 @@ class ParticleSwarm(Solver):
 
     def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
         """
-        Initializes a PSO server
+        Initializes a PSO server.
 
         :param num_particles: number of particles to use
         :type num_particles: int
