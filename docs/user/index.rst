@@ -1,5 +1,5 @@
 ===================
-User Overview
+User Guide
 ===================
 
 .. include:: /global.rst
