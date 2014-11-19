@@ -44,7 +44,8 @@ def contingency_tables(ys, decision_values, positive=True):
     :type decision_values: iterable
     :param positive: the positive label
 
-    :returns: a list of contingency tables and the corresponding thresholds.
+    :returns: a list of contingency tables `(TP, FP, TN, FN)` and the corresponding thresholds.
+    Contingency tables are built based on :math:`positive = decision\_value \geq threshold`.
 
     >>> y = [0, 0, 0, 0, 1, 1, 1, 1]
     >>> d = 2, 2, 1, 1, 1, 2, 3, 3]
