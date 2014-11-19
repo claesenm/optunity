@@ -39,6 +39,10 @@ import functools
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, uniform_in_bounds
 
+"""
+.. include:: /global.rst
+"""
+
 @register_solver('particle swarm',
                  'particle swarm optimization',
                  ['Maximizes the function using particle swarm optimization.',
@@ -58,7 +62,7 @@ from .util import Solver, _copydoc, uniform_in_bounds
                   ])
 class ParticleSwarm(Solver):
     """
-    Please refer to :doc:`/user/solvers/particle_swarm` for details on this algorithm.
+    Please refer to |pso| for details on this algorithm.
     """
 
     class Particle:
