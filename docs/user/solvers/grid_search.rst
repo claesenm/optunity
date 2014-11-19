@@ -3,7 +3,8 @@ Grid Search
 
 .. include:: /global.rst
 
-This solver is implemented in |api-gridsearch|.
+This solver is implemented in |api-gridsearch|. It as available in |make_solver| as 'grid search'.
+
 
 Grid search is an undirected search method that consists of testing a predefined set of values per hyperparameter. A search grid is constructed that is 
 the Cartesian product of these sets of values.

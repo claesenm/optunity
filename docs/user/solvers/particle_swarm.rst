@@ -3,7 +3,8 @@ Particle Swarm Optimization
 
 .. include:: /global.rst
 
-This solver is implemented in |api-pso|.
+This solver is implemented in |api-pso|. It as available in |make_solver| as 'particle swarm'.
+
 
 Particle swarm optimization (PSO) is a heuristic optimization technique. It simulates a set of particles (candidate solutions)
 that are moving aroud in the search-space [PSO2010]_, [PSO2002]_. 

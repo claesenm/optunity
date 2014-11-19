@@ -3,7 +3,7 @@ Random Search
 
 .. include:: /global.rst
 
-This solver is implemented in |api-randomsearch|.
+This solver is implemented in |api-randomsearch|. It as available in |make_solver| as 'random search'.
 
 This strategy consists of testing a predefined number of randomly sampled hyperparameter tuples.
 Sampling is done uniform at random within specified box constraints.

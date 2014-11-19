@@ -1,10 +1,9 @@
-===============
-CMA-ES solver
-===============
+Covariance Matrix Adaptation Evolutionary Strategy
+=====================================================
 
 .. include:: /global.rst
 
-This solver is implemented in |api-cmaes|.
+This solver is implemented in |api-cmaes|. It as available in |make_solver| as 'cma-es'.
 
 Bibliographic references:
 
