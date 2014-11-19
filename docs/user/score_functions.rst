@@ -27,9 +27,9 @@ Classification
 +======================+=============================================+======+
 | accuracy             | :func:`~optunity.score_functions.accuracy`  | no   |
 +----------------------+---------------------------------------------+------+
-| area under ROC curve | :func:`~optunity.score_functions.auroc`     | no   |
+| area under ROC curve | :func:`~optunity.score_functions.auroc`     | yes  |
 +----------------------+---------------------------------------------+------+
-| area under PR curve  | :func:`~optunity.score_functions.aupr`      | no   |
+| area under PR curve  | :func:`~optunity.score_functions.aupr`      | yes  |
 +----------------------+---------------------------------------------+------+
 | Brier score          | :func:`~optunity.score_functions.brier`     | no   |
 +----------------------+---------------------------------------------+------+
@@ -42,6 +42,8 @@ Classification
 | recall/sensitivity   | :func:`~optunity.score_functions.recall`    | no   |
 +----------------------+---------------------------------------------+------+
 | specificity/NPV      | :func:`~optunity.score_functions.npv`       | no   |
++----------------------+---------------------------------------------+------+
+| PU score             | :func:`~optunity.score_functions.pu_score`  | no   |
 +----------------------+---------------------------------------------+------+
 
 Regression

@@ -34,6 +34,46 @@
 
 import math
 
+def contingency_table(ys, yhats, positive=True):
+    """Computes a contingency table for given predictions.
+
+    :param ys: true labels
+    :type ys: iterable
+    :param yhats: predicted labels
+    :type yhats: iterable
+    :param positive: the positive label
+
+    :return: TP, FP, TN, FN
+
+    >>> ys =    [True, True, True, True, True, False]
+    >>> yhats = [True, True, False, False, False, True]
+    >>> tab = contingency_table(ys, yhats, 1)
+    >>> print(tab)
+    (2, 1, 0, 3)
+
+    """
+    TP = 0
+    TN = 0
+    FP = 0
+    FN = 0
+    for y, yhat in zip(ys, yhats):
+        if y == positive:
+            if y == yhat:
+                TP += 1
+            else:
+                FN += 1
+        else:
+            if y == yhat:
+                TN += 1
+            else:
+                FP += 1
+    return TP, FP, TN, FN
+
+def _precision(TP, FP):
+    return float(TP) / (TP + FP)
+
+def _recall(TP, FN):
+    return float(TP) / (TP + FN)
 
 def mse(y, yhat):
     """Returns the mean squared error between y and yhat.
@@ -59,7 +99,7 @@ def accuracy(y, yhat):
                             zip(y, yhat)))) / len(y)
 
 
-def log_loss(y, yhat):
+def logloss(y, yhat):
     """Returns the log loss between labels and predictions.
 
     :param y: true function values
@@ -79,7 +119,7 @@ def log_loss(y, yhat):
     return -loss
 
 
-def brier_score(y, yhat):
+def brier(y, yhat):
     """Returns the Brier score between y and yhat.
 
     :param y: true function values
@@ -118,4 +158,32 @@ def pu_score(y, yhat):
         return 0.0
     tp = sum([all(x) for x in zip(y, yhat)])
     return tp * tp / (num_pos * num_pos * p_pred_pos)
+
+def fbeta(y, yhat, beta, positive=True):
+    """Returns the :math:`F_\beta`-score.
+
+    :param beta: the value for beta to be used
+    :type beta: float
+    :param positive: the positive label
+
+    >>> f = fbeta(1.0, True)
+    >>> y = [True, True, True, False, False]
+    >>> yhat = [True, True, False, False, True]
+    >>> fbeta(y, yhat) #d
+    0.88
+
+    """
+    bsq = beta ** 2
+    TP, FP, _, FN = contingency_table(y, yhat, positive)
+    return float(1 + bsq) * TP / ((1 + bsq) * TP + bsq * FN + FP)
+
+def precision(y, yhat, positive=True):
+    """Returns the precision (higher is better)."""
+    TP, FP, _, _ = contingency_table(y, yhat, positive)
+    return _precision(TP, FP)
+
+def recall(y, yhat, positive=True):
+    """Returns the recall (higher is better)."""
+    TP, _, _, FN = contingency_table(y, yhat, positive)
+    return _recall(TP, FN)
 
