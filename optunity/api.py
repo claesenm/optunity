@@ -53,6 +53,7 @@ import timeit
 import sys
 import operator
 import collections
+import inspect
 
 # optunity imports
 from . import functions as fun
@@ -88,7 +89,7 @@ def manual(solver_name=None):
     if solver_name:
         man = solver_registry.get(solver_name).desc_full
     else:
-        man = solver_registry._manual_lines()
+        man = solver_registry.manual()
     print('\n'.join(man))
 
 
@@ -291,6 +292,9 @@ def make_solver(solver_name, *args, **kwargs):
 
     """
     solvercls = solver_registry.get(solver_name)
+
+    solver_ctor_args =
+
     return solvercls(*args, **kwargs)
 
 

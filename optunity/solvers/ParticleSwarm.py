@@ -87,7 +87,7 @@ class ParticleSwarm(Solver):
             string += '}'
             return string
 
-    def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
+    def __init__(self, num_particles, num_generations, bounds, max_speed=None, phi1=2.0, phi2=2.0):
         """
         Initializes a PSO solver.
 
@@ -107,7 +107,7 @@ class ParticleSwarm(Solver):
         The number of function evaluations it will perform is `num_particles`*`num_generations`.
         The search space is rescaled to the unit hypercube before the solving process begins.
 
-        >>> solver = ParticleSwarm(num_particles=10, num_generations=5, x=[-1, 1], y=[0, 2])
+        >>> solver = ParticleSwarm(num_particles=10, num_generations=5, bounds={'x': [-1, 1], 'y': [0, 2]})
         >>> solver.bounds['x']
         [-1, 1]
         >>> solver.bounds['y']
@@ -122,8 +122,8 @@ class ParticleSwarm(Solver):
         """
 
         assert all([len(v) == 2 and v[0] <= v[1]
-                    for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
-        self._bounds = kwargs
+                    for v in bounds.values()]), 'bounds.values() are not [lb, ub] pairs'
+        self._bounds = bounds
         self._num_particles = num_particles
         self._num_generations = num_generations
 
