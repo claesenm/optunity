@@ -32,9 +32,8 @@ follows: the objective function is non-convex, non-smooth and
 typically expensive to evaluate. Tuning examples include optimizing regularization 
 or kernel parameters.
 
-The Optunity library is implemented in Python and allows straightforward
-integration in other machine learning environments. Optunity will soon become
-available in :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
+The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
+Optunity is currently also supported in :doc:`R </wrappers/R/index>`, :doc:`MATLAB </wrappers/matlab/index>` and Java through Jython.
 
 Optunity is free software, using a BSD-style license.
 
