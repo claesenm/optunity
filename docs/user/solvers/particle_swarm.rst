@@ -32,6 +32,7 @@ PSO has 4 parameters that can be configured (see :py:class:`optunity.solvers.Par
 -   `num_generations`: the number of generations (iterations)
 -   `phi1`: the impact of each particle's historical best on its movement
 -   `phi2`: the impact of the swarm's optimum on the movement of each particle
+-   `maxspeed`: an upper bound for :math:`\vec{v}_i`
 
 The number of function evaluations that will be performed is `num_particles * num_generations`. A high number of particles
 focuses on global, undirected search (just like :doc:`/user/solvers/random_search`), whereas a high number of generations

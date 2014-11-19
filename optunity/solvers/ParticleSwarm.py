@@ -86,8 +86,27 @@ class ParticleSwarm(Solver):
             string += '}'
             return string
 
-    def __init__(self, num_particles, num_generations, max_speed=None, **kwargs):
-        """blah"""
+    def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
+        """
+        Initializes a PSO server
+
+        :param num_particles: number of particles to use
+        :type num_particles: int
+        :param num_generations: number of generations to use
+        :type num_generations: int
+        :param max_speed: maximum velocity of each particle
+        :type max_speed: float or None
+        :param phi1: parameter used in updating position based on local best
+        :type phi1: float
+        :param phi2: parameter used in updating position best on global best
+        :type phi2: float
+        :param kwargs: box constraints for each hyperparameter
+        :type kwargs: {'name': [lb, ub], ...}
+
+        The number of function evaluations it will perform is `num_particles`*`num_generations`.
+        The search space is rescaled to the unit hypercube before the solving process begins.
+
+        """
 
         assert all([len(v) == 2 and v[0] <= v[1]
                     for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
@@ -103,8 +122,8 @@ class ParticleSwarm(Solver):
                         for _, b in self.bounds.items()]
         self._smin = map(op.neg, self.smax)
 
-        self._phi1 = 2.0
-        self._phi2 = 2.0
+        self._phi1 = phi1
+        self._phi2 = phi2
 
     @property
     def phi1(self):
