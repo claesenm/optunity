@@ -1,9 +1,14 @@
-Covariance Matrix Adaptation Evolutionary Strategy
-=====================================================
+CMA-ES
+=======
 
 .. include:: /global.rst
 
-This solver is implemented in |api-cmaes|. It as available in |make_solver| as 'cma-es'.
+This solver is implemented in |api-cmaes|. It as available in |make_solver| as 'cma-es'.i
+
+CMA-ES stands for Covariance Matrix Adaptation Evolutionary Strategy. This is an evolutionary strategy for continuous function optimization. It can dynamically
+adapt its search resolution per hyperparameter, allowing for efficient searches on different scales.
+
+Optunity's implementation of this solver is done using the DEAP toolbox [DEAP2012]_. This, in turn, requires NumPy. Both dependencies must be met to use this solver.
 
 Bibliographic references:
 
