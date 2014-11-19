@@ -35,6 +35,64 @@
 import math
 import operator as op
 
+def contingency_tables(ys, decision_values, positive=True):
+    """Computes contingency tables for every unique decision value.
+
+    :param ys: true labels
+    :type ys: iterable
+    :param decision_values: decision values (higher = stronger positive)
+    :type decision_values: iterable
+    :param positive: the positive label
+
+    :returns: a list of contingency tables and the corresponding thresholds.
+
+    >>> y = [0, 0, 0, 0, 1, 1, 1, 1]
+    >>> d = 2, 2, 1, 1, 1, 2, 3, 3]
+    >>> tables, thresholds = contingency_tables(y, d, 1)
+    >>> print(tables)
+    [(2, 0, 4, 2), (3, 2, 2, 1), (4, 4, 0, 0)]
+    >>> print(thresholds)
+    [3, 2, 1]
+
+    """
+    y = map(lambda x: x == positive, ys)
+
+    # sort decision values
+    ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
+                           key=op.itemgetter(1)))
+
+    tables = []
+    thresholds = []
+    current_idx = 0
+    num_instances = len(ind)
+    while current_idx < num_instances:
+        # determine number of identical decision values
+        num_ties = 1
+        while current_idx + num_ties < num_instances and srt[current_idx + num_ties] == srt[current_idx]:
+            num_ties += 1
+
+        if current_idx == 0:
+            total_num_pos = sum(y)
+            previous_table = (0, 0, num_instances - total_num_pos, total_num_pos)
+
+        # find number of new true positives at this threshold
+        num_pos = 0
+        for i in range(current_idx, current_idx + num_ties):
+            num_pos += y[ind[i]]
+
+        # difference compared to previous contingency_table
+        diff = (num_pos, num_ties - num_pos, - num_ties + num_pos, -num_pos)
+
+        new_table = tuple(map(op.add, previous_table, diff))
+        tables.append(new_table[:])
+        thresholds.append(srt[current_idx])
+
+        # prepare for next iteration
+        previous_table = new_table
+        current_idx += num_ties
+
+    return tables, thresholds
+
 def contingency_table(ys, yhats, positive=True):
     """Computes a contingency table for given predictions.
 
@@ -172,11 +230,11 @@ def fbeta(y, yhat, beta, positive=True):
     :param y: true function values
     :param yhat: predicted function values
     :param beta: the value for beta to be used
-    :type beta: float
+    :type beta: float (positive)
     :param positive: the positive label
 
     :returns:
-        .. math:: (1 + \\beta^2)\\frac{precision\\cdot recall}{precision+recall}
+        .. math:: (1 + \\beta^2)\\frac{(\\beta^2\\cdot precision)\\cdot recall}{precision+recall}
 
     """
     bsq = beta ** 2
@@ -221,3 +279,12 @@ def npv(y, yhat, positive=True):
     """
     _, _, TN, FN = contingency_table(y, yhat, positive)
     return float(TN) / (TN + FN)
+
+def error_rate(y, yhat):
+    """Returns the error rate (lower is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+
+    """
+    return 1.0 - accuracy(y, yhat)
