@@ -1,4 +1,4 @@
-optunity.cross_validation module
+Cross-validation
 ================================
 
 .. automodule:: optunity.cross_validation

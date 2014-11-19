@@ -34,24 +34,25 @@ Optunity API
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
+..
+    Subpackages
+    -----------
 
-.. toctree::
+    .. toctree::
 
-    optunity.solvers
-    optunity.tests
+        optunity.solvers
+        optunity.tests
 
-Submodules
-----------
+    Submodules
+    ----------
 
-.. toctree::
+    .. toctree::
 
-   optunity.api
-   optunity.communication
-   optunity.cross_validation
-   optunity.functions
-   optunity.parallel
-   optunity.score_functions
-   optunity.standalone
-   optunity.util
+    optunity.api
+    optunity.communication
+    optunity.cross_validation
+    optunity.functions
+    optunity.parallel
+    optunity.score_functions
+    optunity.standalone
+    optunity.util

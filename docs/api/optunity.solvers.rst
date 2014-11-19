@@ -1,7 +1,7 @@
-optunity.solvers package
+Solvers
 ========================
 
-This package bundles all solvers and related logic available in Optunity.
+The `optunity.solvers` package bundles all solvers and related logic available in Optunity.
 
 The following solvers are available:
 
