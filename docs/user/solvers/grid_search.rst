@@ -9,9 +9,9 @@ Grid search is an undirected search method that consists of testing a predefined
 the Cartesian product of these sets of values.
 
 Grid search can be used to tune a limited number of hyperparameters, as the size of the search grid (number of evaluations) increases exponentially in terms of the
-number of hyperparameters.
+number of hyperparameters. We generally recommend the use of directed solvers over grid search, as they waste less time exploring uninteresting regions.
 
-When you use choose this solver in the functions |maximize| or |minimize|, an equal number of values is determined per hyperparameter (spread uniformly).
+When you use choose this solver in |maximize| or |minimize|, an equal number of values is determined per hyperparameter (spread uniformly).
 The number of test values per hyperparameter is determined based on the number of permitted evaluations. 
 If you want to specify the grid points manually, this is possible via |make_solver| and |optimize|.
 
