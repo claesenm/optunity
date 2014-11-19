@@ -105,7 +105,6 @@ class ParticleSwarm(Solver):
         The number of function evaluations it will perform is `num_particles`*`num_generations`.
         The search space is rescaled to the unit hypercube before the solving process begins.
 
-
         >>> solver = ParticleSwarm(num_particles=10, num_generations=5, x=[-1, 1], y=[0, 2])
         >>> solver.bounds['x']
         [-1, 1]
@@ -116,10 +115,10 @@ class ParticleSwarm(Solver):
         >>> solver.num_generations
         5
 
-        .. warning:: this solver is not explicitly constrained. The box constraints that are given
-            are used for initialization, but the solver may leave the specified box during iterations.
-            If this is unacceptable, constrain the domain of the objective function prior to using this
-            solver (cfr. :doc:`/user/constraints`).
+        .. warning:: This solver is not explicitly constrained. The box constraints that are given
+            are used to initialise the swarm, but particles may leave the specified region during iterations.
+            If this is unacceptable, you must manually constrain the domain of the objective function
+            prior to using this solver (cfr. :doc:`/user/constraints`).
 
         """
 
