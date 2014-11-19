@@ -19,6 +19,7 @@ and a plethora of score functions.
     * :doc:`User guide <user/index>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
+
     **Obtaining Optunity**
 
     * at PyPI_ (releases)
