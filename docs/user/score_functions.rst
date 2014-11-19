@@ -5,6 +5,7 @@ Score/loss functions are used to quantify the performance of a given model. Scor
 loss functions should be minimized (e.g. mean squared error, error rate, ...). Optunity provides common score/loss functions for your convenience.
 
 The following functions are available in :mod:`optunity.score_functions`:
+
 -   Score functions
 
     *   Classification
@@ -14,9 +15,15 @@ The following functions are available in :mod:`optunity.score_functions`:
         -   area under the PR curve
         -   log loss
         -   Brier score
-        -   F:math:`\alpha`
+        -   :math:`F_1`
+        -   PU score
+        -   precision/positive predictive value
+        -   recall/sensitivity
+        -   specificity/negative predictive value
 
     *   Regression
+
+        -   :math:`R^2`
 
 -   Loss functions
 
