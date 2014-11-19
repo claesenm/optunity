@@ -49,7 +49,7 @@ Regression
 +----------------------+---------------------------------------------+
 | Score                | Associated Optunity function                |
 +======================+=============================================+
-| :math:`R^2`          | :func:`~optunity.score_functions.r2`        |
+| R squared            | :func:`~optunity.score_functions.r_squared` |
 +----------------------+---------------------------------------------+
 
 Loss functions

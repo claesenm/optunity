@@ -426,3 +426,18 @@ def pr_auc(ys, yhat, positive=True):
     curve[0] = (0.0, curve[1][1])
     return auc(curve)
 
+def r_squared(y, yhat):
+    """Returns the R squared statistic, also known as coefficient of determination (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    :returns:
+        .. math:: R^2 = 1-\\frac{SS_{res}}{SS_{tot}} = 1-\\frac{(\sum_i y_i yhat_i)^2}{(y_i - mean(y))^2}
+
+    """
+    ymean = float(sum(y)) / len(y)
+    SStot = sum(map(lambda yi: (yi-ymean) ** 2, y))
+    SSres = sum(map(lambda yi, fi: (yi-fi) ** 2, y, yhat))
+    return 1.0 - SSres / SStot
