@@ -2,7 +2,7 @@
 User Overview
 ===================
 
-.. include ../global
+.. include:: /global.rst
 
 Optunity provides a variety of solvers for hyperparameter tuning problems.
 A tuning problem is specified by an objective function that provides a score for 
