@@ -58,11 +58,12 @@ def contingency_tables(ys, decision_values, positive=True):
     [None, 3, 2, 1]
 
     """
-    y = map(lambda x: x == positive, ys)
-
     # sort decision values
     ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
                            key=op.itemgetter(1)))
+
+    # resort y
+    y = map(lambda x: ys[x] == positive, ind)
 
     num_instances = len(ind)
     total_num_pos = sum(y)
@@ -83,7 +84,7 @@ def contingency_tables(ys, decision_values, positive=True):
         # find number of new true positives at this threshold
         num_pos = 0
         for i in range(current_idx, current_idx + num_ties):
-            num_pos += y[ind[i]]
+            num_pos += y[i]
 
         # difference compared to previous contingency_table
         diff = (num_pos, num_ties - num_pos, - num_ties + num_pos, -num_pos)
@@ -136,6 +137,18 @@ def auc(curve):
         if y1 is None:
             y1 = 0.0
         area += float(y1) * float(x2 - x1)
+
+    return area
+
+def convex_hull(curve):
+    """Computes the area under the convex hull of the specified curve."""
+    area = 0.0
+    for i in range(len(curve) - 1):
+        x1, y1 = curve[i]
+        x2, y2 = curve[i + 1]
+        if y1 is None:
+            y1 = 0.0
+        area += float(y1) * float(x2 - x1) + float(max(y1, y2) - min(y1, y2)) * float(x2 - x1) / 2
 
     return area
 
@@ -362,14 +375,33 @@ def rocauc(ys, yhat, positive=True):
     :param yhat: predicted function values
     :param positive: the positive label
 
-    >>> ys = [0,0,1,1]
-    >>> yhat = [0, 0, 1, 1]
     >>> rocauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
+
+    >>> rocauc([0,0,1,1], [0,1,1,2], 1)
+    0.75
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)
     return auc(curve)
+
+def rochull(ys, yhat, positive=True):
+    """Computes the area under the convex hull of the receiver operating characteristic curve (higher is better).
+
+    :param y: true function values
+    :param yhat: predicted function values
+    :param positive: the positive label
+
+    >>> rochull([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    1.0
+
+    >>> rochull([0,0,1,1], [0,1,1,2], 1)
+    0.875
+
+    """
+    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
+    return convex_hull(curve)
+
 
 def prauc(ys, yhat, positive=True):
     """Computes the area under the precision-recall curve (higher is better).
@@ -378,14 +410,18 @@ def prauc(ys, yhat, positive=True):
     :param yhat: predicted function values
     :param positive: the positive label
 
-    >>> ys = [0,0,1,1]
-    >>> yhat = [0, 0, 1, 1]
     >>> prauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
 
+    >>> prauc([0,0,1,1], [0,1,1,2], 1)
+    0.75
+
+    .. note:: Precision is undefined at recall = 0.
+        In this case, we set precision equal to the precision that was obtained at the lowest non-zero recall.
+
     """
     curve = compute_curve(ys, yhat, _recall, _precision, positive)
-
+    print(curve)
     # precision is undefined when no positives are predicted
     # we approximate by using the precision at the lowest recall
     curve[0] = (0.0, curve[1][1])
