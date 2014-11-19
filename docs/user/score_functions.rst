@@ -22,19 +22,19 @@ Score functions are typically maximized (e.g. :func:`optunity.maximize`).
 Classification
 ^^^^^^^^^^^^^^
 
-+----------------------+--------------------------------------------------------+----------------+
-| Score                | Associated Optunity function                           | Parameterized? |
-+======================+========================================================+================+
-| accuracy             | :func:`~optunity.score_functions.accuracy`             | no             |
-| area under ROC curve | :func:`auroc <optunity.score_functions.auroc>`         | no             |
-| area under PR curve  | :func:`aupr <optunity.score_functions.aupr>`           | no             |
-| Brier score          | :func:`brier <optunity.score_functions.brief>`         | no             |
-| :math:`F_\beta`      | :func:`fbeta <optunity.score_functions.fbeta>`         | yes            |
-| log loss             | :func:`logloss <optunity.score_functions.logloss>`     | no             |
-| precision/PPV        | :func:`precision <optunity.score_functions.precision>` | no             |
-| recall/sensitivity   | :func:`recall <optunity.score_functions.recall>`       | no             |
-| specificity/NPV      | :func:`npv <optunity.score_functions.npv>`             | no             |
-+----------------------+--------------------------------------------------------+----------------+
++----------------------+---------------------------------------------+-----+
+| Score                | Associated Optunity function                | par.|
++======================+=============================================+=====+
+| accuracy             | :func:`~optunity.score_functions.accuracy`  | no  |
+| area under ROC curve | :func:`~optunity.score_functions.auroc`     | no  |
+| area under PR curve  | :func:`~optunity.score_functions.aupr`      | no  |
+| Brier score          | :func:`~optunity.score_functions.brier`     | no  |
+| :math:`F_\beta`      | :func:`~optunity.score_functions.fbeta`     | yes |
+| log loss             | :func:`~optunity.score_functions.logloss`   | no  |
+| precision/PPV        | :func:`~optunity.score_functions.precision` | no  |
+| recall/sensitivity   | :func:`~optunity.score_functions.recall`    | no  |
+| specificity/NPV      | :func:`~optunity.score_functions.npv`       | no  |
++----------------------+-------------------------------------------- +-----+
 
 Regression
 ^^^^^^^^^^^
