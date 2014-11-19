@@ -1,7 +1,14 @@
 Installation from git
 --------------------
 
-Make sure you have necessary R packages installed (rjson) and then do
+Install necessary dependencies in R (if they are not yet installed)
+```R
+install.packages("rjson")
+install.packages("ROCR")
+install.packages("enrichvs")
+install.packages("plyr")
+```
+and then do (in shell)
 ```bash
 git clone https://github.com/claesenm/optunity
 cd optunity/wrappers
