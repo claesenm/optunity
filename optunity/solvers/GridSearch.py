@@ -51,6 +51,10 @@ from .util import Solver, _copydoc, shrink_bounds
                   ])
 class GridSearch(Solver):
     """
+    .. include:: /global.rst
+
+    Please refer to |gridsearch| for more information about this algorithm.
+
     Exhaustive search over the Cartesian product of parameter tuples.
     Returns x (the tuple which maximizes f) and its score f(x).
 

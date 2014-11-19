@@ -67,8 +67,11 @@ class CMA_ES(Solver):
 
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
 
-    .. warning:: This solver has dependencies on DEAP and NumPy
+    .. warning:: This solver has dependencies on DEAP_ and NumPy_
         and will be unavailable if these are not met.
+
+        .. _DEAP: https://code.google.com/p/deap/
+        .. _NumPy: http://www.numpy.org
 
     """
 
