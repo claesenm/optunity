@@ -1,5 +1,5 @@
-optunity.standalone
-=====================
+optunity.standalone module
+==========================
 
 .. automodule:: optunity.standalone
     :members:

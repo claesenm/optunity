@@ -1,4 +1,4 @@
-optunity.functions
+optunity.functions module
 =========================
 
 .. automodule:: optunity.functions

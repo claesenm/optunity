@@ -1,43 +1,32 @@
+optunity package
 ================
-Optunity API
-================
-
-Module contents
----------------
-
-.. sidebar:: optunity submodules
-
-    **Key submodules**
-
-    .. toctree::
-
-        optunity.solvers
-        optunity.cross_validation
-        optunity.score_functions
-        optunity.functions
-
-    **Other submodules**
-
-    .. toctree::
-        :maxdepth: 1
-
-        optunity.api
-        optunity.communication
-        optunity.solver_registry
-        optunity.util
-        optunity.standalone
-
-
-.. automodule:: optunity
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Subpackages
 -----------
 
 .. toctree::
 
-    optunity.test
     optunity.solvers
+    optunity.tests
+
+Submodules
+----------
+
+.. toctree::
+
+   optunity.api
+   optunity.communication
+   optunity.cross_validation
+   optunity.functions
+   optunity.parallel
+   optunity.score_functions
+   optunity.standalone
+   optunity.util
+
+Module contents
+---------------
+
+.. automodule:: optunity
+    :members:
+    :undoc-members:
+    :show-inheritance:

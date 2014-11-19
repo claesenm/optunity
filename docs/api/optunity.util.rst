@@ -1,4 +1,4 @@
-optunity.util
+optunity.util module
 ====================
 
 .. automodule:: optunity.util
