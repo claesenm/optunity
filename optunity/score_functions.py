@@ -133,10 +133,10 @@ def auc(curve):
     area = 0.0
     for i in range(len(curve) - 1):
         x1, y1 = curve[i]
-        x2, _ = curve[i + 1]
+        x2, y2 = curve[i + 1]
         if y1 is None:
             y1 = 0.0
-        area += float(y1) * float(x2 - x1)
+        area += float(min(y1, y2)) * float(x2 - x1)
 
     return area
 
@@ -368,34 +368,34 @@ def error_rate(y, yhat):
     """
     return 1.0 - accuracy(y, yhat)
 
-def rocauc(ys, yhat, positive=True):
+def roc_auc(ys, yhat, positive=True):
     """Computes the area under the receiver operating characteristic curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
 
-    >>> rocauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    >>> roc_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
 
-    >>> rocauc([0,0,1,1], [0,1,1,2], 1)
+    >>> roc_auc([0,0,1,1], [0,1,1,2], 1)
     0.75
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)
     return auc(curve)
 
-def rochull(ys, yhat, positive=True):
+def roc_hull(ys, yhat, positive=True):
     """Computes the area under the convex hull of the receiver operating characteristic curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
 
-    >>> rochull([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    >>> roc_hull([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
 
-    >>> rochull([0,0,1,1], [0,1,1,2], 1)
+    >>> roc_hull([0,0,1,1], [0,1,1,2], 1)
     0.875
 
     """
@@ -403,26 +403,26 @@ def rochull(ys, yhat, positive=True):
     return convex_hull(curve)
 
 
-def prauc(ys, yhat, positive=True):
+def pr_auc(ys, yhat, positive=True):
     """Computes the area under the precision-recall curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
 
-    >>> prauc([0, 0, 1, 1], [0, 0, 1, 1], 1)
+    >>> pr_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
 
-    >>> prauc([0,0,1,1], [0,1,1,2], 1)
-    0.75
+    >>> round(pr_auc([0,0,1,1], [0,1,1,2], 1), 2)
+    0.83
 
     .. note:: Precision is undefined at recall = 0.
         In this case, we set precision equal to the precision that was obtained at the lowest non-zero recall.
 
     """
     curve = compute_curve(ys, yhat, _recall, _precision, positive)
-    print(curve)
     # precision is undefined when no positives are predicted
     # we approximate by using the precision at the lowest recall
     curve[0] = (0.0, curve[1][1])
     return auc(curve)
+

@@ -26,11 +26,11 @@ Classification
 +======================+=============================================+
 | accuracy             | :func:`~optunity.score_functions.accuracy`  |
 +----------------------+---------------------------------------------+
-| area under ROC curve | :func:`~optunity.score_functions.rocauc`    |
+| area under ROC curve | :func:`~optunity.score_functions.roc_auc`   |
 +----------------------+---------------------------------------------+
-| area under PR curve  | :func:`~optunity.score_functions.prauc`     |
+| area under PR curve  | :func:`~optunity.score_functions.pr_auc`    |
 +----------------------+---------------------------------------------+
-| convex hull of ROC    | :func:`~optunity.score_functions.rochull`  |
+| convex hull of ROC   | :func:`~optunity.score_functions.roc_hull`  |
 +----------------------+---------------------------------------------+
 | :math:`F_\beta`      | :func:`~optunity.score_functions.fbeta`     |
 +----------------------+---------------------------------------------+
