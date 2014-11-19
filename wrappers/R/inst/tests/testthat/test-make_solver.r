@@ -47,11 +47,11 @@ test_that("particle swarm without arguments fails", {
 
 
 ############ cma-es ##############
-test_that("cma-es can be made", {
-  result = make_solver("cma-es", num_generations=5)
-  expect_equal( result, TRUE)
-})
+#test_that("cma-es can be made", {
+#  result = make_solver("cma-es", num_generations=5)
+#  expect_equal( result, TRUE)
+#})
 
-test_that("cma-es without arguments fails", {
-  expect_error( {make_solver("particle search")}, regex="Unable to instantiate")
-})
+#test_that("cma-es without arguments fails", {
+#  expect_error( {make_solver("particle search")}, regex="Unable to instantiate")
+#})

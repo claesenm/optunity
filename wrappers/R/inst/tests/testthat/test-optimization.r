@@ -53,9 +53,9 @@ test_that("particle_swarm gives error if bound is not numeric", {
   expect_error( {particle_swarm(f, x=c("5", "10"), y=c(4,6), regex="have to be numeric")} )
 })
 
-context("CMA-ES")
-
-test_that("cma_es works", {
-  solution <- cma_es(f, x=5, y=-5, num_generations=6 )
-  expect_equal( do.call(f, solution$solution), solution$optimum, tolerance=1e-5)
-})
+#context("CMA-ES")
+#
+#test_that("cma_es works", {
+#  solution <- cma_es(f, x=5, y=-5, num_generations=6 )
+#  expect_equal( do.call(f, solution$solution), solution$optimum, tolerance=1e-5)
+#})

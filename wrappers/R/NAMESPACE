@@ -12,11 +12,11 @@ export(random_search)
 export(grid_search)
 export(nelder_mead)
 export(particle_swarm)
-export(cma_es)
 
 export(cv.setup)
 export(cv.run)
 export(cv.grid_search)
+export(cv.random_search)
 
 export(mean.se)
 export(mean.ae)
