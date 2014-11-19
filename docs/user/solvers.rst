@@ -1,6 +1,8 @@
 Solver Overview
 ===================
 
+.. include:: /global.rst
+
 The following solvers are available in Optunity:
 
 .. toctree::
