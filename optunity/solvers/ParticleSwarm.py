@@ -203,11 +203,8 @@ class ParticleSwarm(Solver):
     def bounds(self):
         return self._bounds
 
-    @property
-    def ttype(self):
-        return self._ttype
-
     def generate(self):
+        """Generate a new Particle."""
         part = ParticleSwarm.Particle(position=array.array('d', uniform_in_bounds(self.bounds)),
                                       speed=array.array('d', map(random.uniform,
                                                                  self.smin, self.smax)),
@@ -215,6 +212,7 @@ class ParticleSwarm(Solver):
         return part
 
     def updateParticle(self, part, best, phi1, phi2):
+        """Update the particle."""
         u1 = (random.uniform(0, phi1) for _ in range(len(part.position)))
         u2 = (random.uniform(0, phi2) for _ in range(len(part.position)))
         v_u1 = map(op.mul, u1,
