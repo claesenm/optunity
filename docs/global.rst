@@ -5,6 +5,11 @@
 .. |api| replace:: :doc:`/api/optunity`
 .. |examples| replace:: :doc:`/examples/index`
 
+.. |maximize| replace:: :func:`optunity.maximize`
+.. |minimize| replace:: :func:`optunity.minimize`
+.. |make_solver| replace:: :func:`optunity.make_solver`
+.. |optimize| replace:: :func:`optunity.optimize`
+
 .. |pso| replace:: :doc:`/user/solvers/particle_swarm`
 .. |cmaes| replace:: :doc:`/user/solvers/CMA_ES`
 .. |gridsearch| replace:: :doc:`/user/solvers/grid_search`
