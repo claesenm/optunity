@@ -38,10 +38,8 @@ Optunity is currently also supported in :doc:`R </wrappers/R/index>`, :doc:`MATL
 
 Optunity is free software, using a BSD-style license.
 
-User Guide
-==============
-
-**Examples of Optunity usage**
+Example
+-----------
 
 As a simple example of Optunity's features, the code below demonstrates how to tune an SVM with RBF kernel using Optunity and scikit-learn. 
 This involves optimizing the hyperparameters ``gamma`` and ``C``:
@@ -52,9 +50,8 @@ This involves optimizing the hyperparameters ``gamma`` and ``C``:
 
 For more examples, please see our :doc:`examples page </examples/index>`.
 
--------------
-
-**Quick setup**
+Quick setup
+----------------
 
 Issue the following commands to get started on Linux:
 
@@ -84,13 +81,12 @@ or, if you have pip:
 Installation may require superuser priviliges.
 
 Developer Guide
-=================
+-----------------
 
-- :doc:`Developer guide <dev/index>`
 - :doc:`API reference <api/optunity>`
 
 Contributors
-============
+------------
 
 Optunity is developed at the STADIUS lab of the dept. of electrical engineering at 
 KU Leuven (ESAT). 
@@ -114,7 +110,7 @@ The main contributors to Optunity are:
     - code examples
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
