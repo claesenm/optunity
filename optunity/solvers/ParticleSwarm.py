@@ -144,6 +144,29 @@ class ParticleSwarm(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
+        """Create a configuration for a ParticleSwarm solver.
+
+        :param num_evals: number of permitted function evaluations
+        :type num_evals: int
+        :param kwargs: box constraints
+        :type kwargs: {'param': [lb, ub], ...}
+
+        >>> config = ParticleSwarm.suggest_from_box(200, x=[-1, 1], y=[0, 1])
+        >>> config['x']
+        [-1, 1]
+        >>> config['y']
+        [0, 1]
+        >>> config['num_particles'] > 0
+        True
+        >>> config['num_generations'] > 0
+        True
+        >>> solver = ParticleSwarm(**config)
+        >>> solver.bounds['x']
+        [-1, 1]
+        >>> solver.bounds['y']
+        [0, 1]
+
+        """
         d = dict(kwargs)
         if num_evals > 200:
             d['num_particles'] = 50
