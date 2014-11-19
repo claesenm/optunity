@@ -45,10 +45,10 @@ def contingency_tables(ys, decision_values, positive=True):
     :param positive: the positive label
 
     :returns: a list of contingency tables `(TP, FP, TN, FN)` and the corresponding thresholds.
-    Contingency tables are built based on :math:`positive = decision\_value \geq threshold`.
+    Contingency tables are built based on decision :math:`decision\_value \geq threshold`.
 
     >>> y = [0, 0, 0, 0, 1, 1, 1, 1]
-    >>> d = 2, 2, 1, 1, 1, 2, 3, 3]
+    >>> d = [2, 2, 1, 1, 1, 2, 3, 3]
     >>> tables, thresholds = contingency_tables(y, d, 1)
     >>> print(tables)
     [(2, 0, 4, 2), (3, 2, 2, 1), (4, 4, 0, 0)]
@@ -286,6 +286,9 @@ def error_rate(y, yhat):
 
     :param y: true function values
     :param yhat: predicted function values
+
+    >>> error_rate([0,0,1,1], [0,0,0,1])
+    0.25
 
     """
     return 1.0 - accuracy(y, yhat)
