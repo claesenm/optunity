@@ -18,31 +18,39 @@ The following functions are available in :mod:`optunity.score_functions`:
 Score functions
 ---------------
 
-*   Classification
+Score functions are typically maximized (e.g. :doc:`optunity.maximize`).
 
-    -   accuracy
-    -   area under the ROC curve
-    -   area under the PR curve
-    -   log loss
-    -   Brier score
-    -   :math:`F_\beta`
-    -   PU score
-    -   precision/positive predictive value
-    -   recall/sensitivity
-    -   specificity/negative predictive value
+Classification
+^^^^^^^^^^^^^^
 
-*   Regression
+-   accuracy
+-   area under the ROC curve
+-   area under the PR curve
+-   log loss
+-   Brier score
+-   :math:`F_\beta`
+-   PU score
+-   precision/positive predictive value
+-   recall/sensitivity
+-   specificity/negative predictive value
 
-    -   :math:`R^2`
+Regression
+^^^^^^^^^^^
+
+-   :math:`R^2`
 
 Loss functions
 ---------------
 
-*   Classification
+Loss functions are typically minimized (e.g. :doc:`optunity.minimize`).
 
-    -   error rate
+Classification
+^^^^^^^^^^^^^^^
 
-*   Regression
+-   error rate
 
-    -   mean squared error
+Regression
+^^^^^^^^^^^
+
+-   mean squared error
 
