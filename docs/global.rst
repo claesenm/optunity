@@ -16,3 +16,9 @@
 .. |api-gridsearch| replace:: :class:`optunity.solvers.GridSearch`
 .. |api-randomsearch| replace:: :class:`optunity.solvers.RandomSearch`
 .. |api-nelder-mead| replace:: :class:`optunity.solvers.NelderMead`
+
+.. |warning-unconstrained| replace:: 
+        .. warning:: This solver is not explicitly constrained. The box constraints that are given
+            are used to initialise the swarm, but particles may leave the specified region during iterations.
+            If this is unacceptable, you must manually constrain the domain of the objective function
+            prior to using this solver (cfr. :doc:`/user/constraints`).

@@ -117,6 +117,10 @@ class ParticleSwarm(Solver):
         >>> solver.num_generations
         5
 
+        .. include:: /global.rst
+
+        |warning-unconstrained|
+
         .. warning:: This solver is not explicitly constrained. The box constraints that are given
             are used to initialise the swarm, but particles may leave the specified region during iterations.
             If this is unacceptable, you must manually constrain the domain of the objective function
