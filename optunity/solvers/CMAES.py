@@ -61,15 +61,20 @@ except TypeError:
 
 class CMA_ES(Solver):
     """
-    Covariance Matrix Adaptation Evolutionary Strategy
+    .. include:: /global.rst
 
-    This solver implements the technique described in [HANSEN2001]_.
+    This solver implements |cmaes|.
+
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
 
     """
 
     def __init__(self, num_generations, sigma=1.0, Lambda=None, **kwargs):
-        """blah"""
+        """blah
+
+        .. warning:: |warning-unconstrained|
+
+        """
         if not _deap_available:
             raise ImportError('This solver requires DEAP but it is missing.')
         if not _numpy_available:

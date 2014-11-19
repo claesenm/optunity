@@ -2,6 +2,10 @@
 CMA-ES solver
 ===============
 
+.. include:: /global.rst
+
+This solver is implemented in |api-cmaes|.
+
 Bibliographic references:
 
 .. [HANSEN2001] Nikolaus Hansen and Andreas Ostermeier. *Completely
