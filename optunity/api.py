@@ -292,9 +292,6 @@ def make_solver(solver_name, *args, **kwargs):
 
     """
     solvercls = solver_registry.get(solver_name)
-
-    solver_ctor_args =
-
     return solvercls(*args, **kwargs)
 
 
