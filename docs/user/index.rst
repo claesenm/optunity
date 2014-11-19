@@ -12,18 +12,18 @@ function. A solver determines a good set of hyperparameters.
 
 .. sidebar:: **Jump to**
 
-    * :doc:`/user/solvers`
-    * :doc:`/user/cross_validation`
-    * :doc:`/user/score_functions`
-    * :doc:`/user/constraints`
+    * |solvers|
+    * |cross_validation|
+    * |score_functions|
+    * |constraints|
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
 API documentation. If you are using a different environment, you can still get the
 general idea on the Python pages. To dive into code details straight away, please
-consult the :doc:`/api/optunity`.
+consult the |api|.
 
-If you want to learn by example, please consult our :doc:`/examples/index`, 
+If you want to learn by example, please consult our |examples| 
 which use various features of Optunity to cover a wide variety of tuning tasks. 
 In case of confusion, we provide a list of basic `Terminology`_.
 
@@ -32,9 +32,9 @@ very simple functions that offer basic functionality which should meet the needs
 use cases. Subsequently we will introduce the expert interface functions which have more
 bells and whistles that can be configured.
 
-A variety of solvers is available, discussed in more detail :doc:`here </user/solvers>`.
-Optunity additionally provides :doc:`k-fold cross-validation </user/cross_validation>` and
-several :doc:`score functions </user/score_functions>`.
+A variety of solvers is available, discussed in more detail |solvers|.
+Optunity additionally provides |cross_validation| and
+several |score_functions|.
 
 .. rubric:: Simple interface
 

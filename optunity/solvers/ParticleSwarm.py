@@ -30,10 +30,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
-.. include global.rst
-"""
-
 import math
 import operator as op
 import random
@@ -122,7 +118,7 @@ class ParticleSwarm(Solver):
         .. warning:: This solver is not explicitly constrained. The box constraints that are given
             are used to initialise the swarm, but particles may leave the specified region during iterations.
             If this is unacceptable, you must manually constrain the domain of the objective function
-            prior to using this solver (cfr. |constraints|).
+            prior to using this solver (cfr. :doc:`/user/constraints`).
 
         """
 

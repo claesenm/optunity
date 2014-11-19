@@ -1,6 +1,9 @@
 .. |constraints| replace:: :doc:`/user/constraints`
-.. |cross-validation| replace:: :doc:`/user/cross_validation`
+.. |cross_validation| replace:: :doc:`/user/cross_validation`
 .. |solvers| replace:: :doc:`/user/solvers`
+.. |score_functions| replace:: :doc:`/user/score_functions`
+.. |api| replace:: :doc:`/api/optunity`
+.. |examples| replace:: :doc:`/examples/index`
 
 .. |pso| replace:: :doc:`/user/solvers/particle_swarm`
 .. |cmaes| replace:: :doc:`/user/solvers/CMA_ES`
