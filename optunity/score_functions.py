@@ -63,7 +63,7 @@ def contingency_tables(ys, decision_values, positive=True):
                            key=op.itemgetter(1)))
 
     # resort y
-    y = map(lambda x: ys[x] == positive, ind)
+    y = list(map(lambda x: ys[x] == positive, ind))
 
     num_instances = len(ind)
     total_num_pos = sum(y)
@@ -434,7 +434,7 @@ def r_squared(y, yhat):
     :param positive: the positive label
 
     :returns:
-        .. math:: R^2 = 1-\\frac{SS_{res}}{SS_{tot}} = 1-\\frac{(\sum_i y_i yhat_i)^2}{(y_i - mean(y))^2}
+        .. math:: R^2 = 1-\\frac{SS_{res}}{SS_{tot}} = 1-\\frac{\sum_i (y_i - yhat_i)^2}{\sum_i (y_i - mean(y))^2}
 
     """
     ymean = float(sum(y)) / len(y)
