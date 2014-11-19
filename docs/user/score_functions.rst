@@ -25,7 +25,7 @@ Classification
 +----------------------+--------------------------------------------------------+----------------+
 | Score                | Associated Optunity function                           | Parameterized? |
 +======================+========================================================+================+
-| accuracy             | :func:`accuracy <optunity.score_functions.accuracy>`   | no             |
+| accuracy             | :func:`~optunity.score_functions.accuracy`             | no             |
 | area under ROC curve | :func:`auroc <optunity.score_functions.auroc>`         | no             |
 | area under PR curve  | :func:`aupr <optunity.score_functions.aupr>`           | no             |
 | Brier score          | :func:`brier <optunity.score_functions.brief>`         | no             |
