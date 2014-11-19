@@ -126,10 +126,6 @@ Indices and tables
 
     /user/installation
     /user/index
-    /user/solvers
-    /user/cross_validation
-    /user/score_functions
-    /user/constraints
     /examples/index
     /wrappers/index
     /dev/index
