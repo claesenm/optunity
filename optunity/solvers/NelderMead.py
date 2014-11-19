@@ -52,7 +52,7 @@ class NelderMead(Solver):
     """
     .. include:: /global.rst
 
-    Performs |nelder-mead| optimization to minimize f.
+    Please refer to |nelder-mead| for details about this algorithm.
 
     >>> s = NelderMead(x=1, y=1, xtol=1e-8) #doctest:+SKIP
     >>> best_pars, _ = s.optimize(lambda x, y: -x**2 - y**2) #doctest:+SKIP

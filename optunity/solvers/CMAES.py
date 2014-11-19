@@ -63,9 +63,12 @@ class CMA_ES(Solver):
     """
     .. include:: /global.rst
 
-    This solver implements |cmaes|.
+    Please refer to |cmaes| for details about this algorithm.
 
     This solver uses an implementation available in the DEAP library [DEAP2012]_.
+
+    .. warning:: This solver has dependencies on DEAP and NumPy
+        and will be unavailable if these are not met.
 
     """
 
