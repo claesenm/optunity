@@ -16,17 +16,16 @@ Optunity API
         optunity.solvers
         optunity.cross_validation
         optunity.score_functions
-        optunity.functions
 
     **Other content**
 
     .. toctree::
         :maxdepth: 1
 
-        optunity.api
-        optunity.communication
+        optunity.functions
         optunity.util
         optunity.standalone
+        optunity.communication
 
 
 .. automodule:: optunity
