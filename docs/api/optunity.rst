@@ -1,5 +1,34 @@
-optunity package
 ================
+Optunity API
+================
+
+.. sidebar:: optunity submodules
+
+    **Key content**
+
+    .. toctree::
+        :maxdepth: 1
+
+        optunity.solvers
+        optunity.cross_validation
+        optunity.score_functions
+        optunity.functions
+
+    **Other content**
+
+    .. toctree::
+        :maxdepth: 1
+
+        optunity.api
+        optunity.communication
+        optunity.util
+        optunity.standalone
+
+
+.. automodule:: optunity
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Subpackages
 -----------
