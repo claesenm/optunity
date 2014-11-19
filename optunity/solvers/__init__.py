@@ -34,30 +34,17 @@
 
 Main classes in this module:
 
-* :class:`Solver`
 * :class:`GridSearch`
 * :class:`RandomSearch`
 * :class:`NelderMead`
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
-  :class:`CSA`
 
 .. warning::
-    :class:`CMA_ES` require DEAP_.
+    :class:`CMA_ES` require DEAP_ and NumPy_.
 
     .. _DEAP: https://code.google.com/p/deap/
-
-
-Bibliographic references for some solvers:
-
-.. [HANSEN2001] Nikolaus Hansen and Andreas Ostermeier. *Completely
-    derandomized self-adaptation in evolution  strategies*.
-    Evolutionary computation, 9(2):159-195, 2001.
-
-.. [DEAP2012] Felix-Antoine Fortin, Francois-Michel De Rainville, Marc-Andre Gardner,
-    Marc Parizeau and Christian Gagne, *DEAP: Evolutionary Algorithms Made Easy*,
-    Journal of Machine Learning Research, pp. 2171-2175, no 13, jul 2012.
-
+    .. _NumPy: http://www.numpy.org
 
 .. moduleauthor:: Marc Claesen
 

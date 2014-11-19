@@ -1,4 +1,4 @@
-Optunity
+optunity
 ========
 
 .. toctree::

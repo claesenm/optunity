@@ -51,6 +51,13 @@ from .util import Solver, _copydoc, shrink_bounds, uniform_in_bounds
                   'Bergstra, James, and Yoshua Bengio. Random search for hyper-parameter optimization. Journal of Machine Learning Research 13 (2012): 281-305.']
                  )
 class RandomSearch(Solver):
+    """
+    .. include:: /global.rst
+
+    Please refer to |randomsearch| for more details about this algorithm.
+
+    """
+
 
     def __init__(self, num_evals, **kwargs):
         """Initializes the solver with bounds and a number of allowed evaluations.

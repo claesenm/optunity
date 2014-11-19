@@ -2,30 +2,29 @@
 Optunity API
 ================
 
-Module contents
----------------
+.. toctree::
+    :hidden:
+
 
 .. sidebar:: optunity submodules
 
-    **Key submodules**
+    **Key features**
 
     .. toctree::
+        :maxdepth: 1
 
         optunity.solvers
         optunity.cross_validation
         optunity.score_functions
         optunity.functions
 
-    **Other submodules**
+    **Standalone process**
 
     .. toctree::
         :maxdepth: 1
 
-        optunity.api
-        optunity.communication
-        optunity.solver_registry
-        optunity.util
         optunity.standalone
+        optunity.communication
 
 
 .. automodule:: optunity
@@ -33,10 +32,3 @@ Module contents
     :undoc-members:
     :show-inheritance:
 
-
-Subpackages
------------
-
-.. toctree::
-
-    optunity.test

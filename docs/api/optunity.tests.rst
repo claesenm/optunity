@@ -1,18 +1,17 @@
-optunity.test package
-=====================
+optunity.tests package
+======================
 
 Submodules
 ----------
 
 .. toctree::
 
-   optunity.test.functions
-   optunity.test.solvers
+   optunity.tests.test_all
 
 Module contents
 ---------------
 
-.. automodule:: optunity.test
+.. automodule:: optunity.tests
     :members:
     :undoc-members:
     :show-inheritance:

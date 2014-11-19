@@ -1,7 +1,7 @@
-optunity.test.solvers module
+optunity.solvers.util module
 ============================
 
-.. automodule:: optunity.test.solvers
+.. automodule:: optunity.solvers.util
     :members:
     :undoc-members:
     :show-inheritance:

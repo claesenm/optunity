@@ -1,7 +1,7 @@
-optunity.test.functions module
+optunity.tests.test_all module
 ==============================
 
-.. automodule:: optunity.test.functions
+.. automodule:: optunity.tests.test_all
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,5 +1,5 @@
-optunity.cross_validation
-=============================
+Cross-validation
+================================
 
 .. automodule:: optunity.cross_validation
     :members:

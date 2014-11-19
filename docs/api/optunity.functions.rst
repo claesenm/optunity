@@ -1,4 +1,4 @@
-optunity.functions
+Function decorators
 =========================
 
 .. automodule:: optunity.functions

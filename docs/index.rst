@@ -19,6 +19,7 @@ and a plethora of score functions.
     * :doc:`User guide <user/index>`
     * `Report a problem <https://github.com/claesenm/optunity/issues/new>`_
 
+
     **Obtaining Optunity**
 
     * at PyPI_ (releases)
@@ -32,9 +33,8 @@ follows: the objective function is non-convex, non-smooth and
 typically expensive to evaluate. Tuning examples include optimizing regularization 
 or kernel parameters.
 
-The Optunity library is implemented in Python and allows straightforward
-integration in other machine learning environments. Optunity will soon become
-available in :doc:`R </wrappers/R/index>` and :doc:`MATLAB </wrappers/matlab/index>`.
+The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
+Optunity is currently also supported in :doc:`R </wrappers/R/index>`, :doc:`MATLAB </wrappers/matlab/index>` and Java through Jython.
 
 Optunity is free software, using a BSD-style license.
 
@@ -122,11 +122,10 @@ Indices and tables
 
 .. toctree::
     :maxdepth: 2
-    :includehidden:
+    :hidden:
 
     /user/installation
     /user/index
     /examples/index
     /wrappers/index
-    /dev/index
     /api/optunity

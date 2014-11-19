@@ -30,7 +30,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import collections
 import math
 import operator as op
 import random
@@ -59,7 +58,9 @@ from .util import Solver, _copydoc, uniform_in_bounds
                   ])
 class ParticleSwarm(Solver):
     """
-    TODO
+    .. include:: /global.rst
+
+    Please refer to |pso| for details on this algorithm.
     """
 
     class Particle:
@@ -86,13 +87,43 @@ class ParticleSwarm(Solver):
             string += '}'
             return string
 
-    def __init__(self, num_particles, num_generations, max_speed=None, **kwargs):
-        """blah"""
+    def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
+        """
+        Initializes a PSO solver.
+
+        :param num_particles: number of particles to use
+        :type num_particles: int
+        :param num_generations: number of generations to use
+        :type num_generations: int
+        :param max_speed: maximum velocity of each particle
+        :type max_speed: float or None
+        :param phi1: parameter used in updating position based on local best
+        :type phi1: float
+        :param phi2: parameter used in updating position best on global best
+        :type phi2: float
+        :param kwargs: box constraints for each hyperparameter
+        :type kwargs: {'name': [lb, ub], ...}
+
+        The number of function evaluations it will perform is `num_particles`*`num_generations`.
+        The search space is rescaled to the unit hypercube before the solving process begins.
+
+        >>> solver = ParticleSwarm(num_particles=10, num_generations=5, x=[-1, 1], y=[0, 2])
+        >>> solver.bounds['x']
+        [-1, 1]
+        >>> solver.bounds['y']
+        [0, 2]
+        >>> solver.num_particles
+        10
+        >>> solver.num_generations
+        5
+
+        .. warning:: |warning-unconstrained|
+
+        """
 
         assert all([len(v) == 2 and v[0] <= v[1]
                     for v in kwargs.values()]), 'kwargs.values() are not [lb, ub] pairs'
         self._bounds = kwargs
-        self._ttype = collections.namedtuple('ttype', kwargs.keys())
         self._num_particles = num_particles
         self._num_generations = num_generations
 
@@ -103,8 +134,8 @@ class ParticleSwarm(Solver):
                         for _, b in self.bounds.items()]
         self._smin = map(op.neg, self.smax)
 
-        self._phi1 = 2.0
-        self._phi2 = 2.0
+        self._phi1 = phi1
+        self._phi2 = phi2
 
     @property
     def phi1(self):
@@ -116,6 +147,29 @@ class ParticleSwarm(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
+        """Create a configuration for a ParticleSwarm solver.
+
+        :param num_evals: number of permitted function evaluations
+        :type num_evals: int
+        :param kwargs: box constraints
+        :type kwargs: {'param': [lb, ub], ...}
+
+        >>> config = ParticleSwarm.suggest_from_box(200, x=[-1, 1], y=[0, 1])
+        >>> config['x']
+        [-1, 1]
+        >>> config['y']
+        [0, 1]
+        >>> config['num_particles'] > 0
+        True
+        >>> config['num_generations'] > 0
+        True
+        >>> solver = ParticleSwarm(**config)
+        >>> solver.bounds['x']
+        [-1, 1]
+        >>> solver.bounds['y']
+        [0, 1]
+
+        """
         d = dict(kwargs)
         if num_evals > 200:
             d['num_particles'] = 50
@@ -152,11 +206,8 @@ class ParticleSwarm(Solver):
     def bounds(self):
         return self._bounds
 
-    @property
-    def ttype(self):
-        return self._ttype
-
     def generate(self):
+        """Generate a new Particle."""
         part = ParticleSwarm.Particle(position=array.array('d', uniform_in_bounds(self.bounds)),
                                       speed=array.array('d', map(random.uniform,
                                                                  self.smin, self.smax)),
@@ -164,6 +215,7 @@ class ParticleSwarm(Solver):
         return part
 
     def updateParticle(self, part, best, phi1, phi2):
+        """Update the particle."""
         u1 = (random.uniform(0, phi1) for _ in range(len(part.position)))
         u2 = (random.uniform(0, phi2) for _ in range(len(part.position)))
         v_u1 = map(op.mul, u1,

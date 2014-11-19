@@ -2,23 +2,25 @@
 Installing Optunity
 ====================
 
-.. toctree::
-    :hidden:
+The source can be obtained from git at http://git.optunity.net (recommended), releases can be obtained from
+http://releases.optunity.net. Optunity is compatible with Python 2.7 and 3.x. Note that you must have Python installed
+before Optunity can be used (all Linux distributions have this, but Windows requires explicit installation).
 
-    /wrappers/matlab/installation
-    /wrappers/R/installation
+Obtaining the latest version of Optunity using git can be done as follows::
 
-Optunity can be installed as a typical Python package.
+    git clone https://github.com/claesenm/optunity.git
+
+Installation instructions per environment:
+
+-   :ref:`install-python`
+-   :ref:`install-matlab`
+-   :ref:`install-r`
+-   :ref:`install-java`
 
 .. note::
 
-    Optunity has soft dependencies on NumPy_ and SciPy_ 
-    (for the :doc:`CMA-ES </user/solvers/CMA_ES>` and 
-    :doc:`Nelder-Mead </user/solvers/nelder-mead>` solvers, respectively).
-    If these dependencies are not met, the associated solvers are unavailable.
-    Optunity additionally ships with DEAP, a library for evolutionary algorithms [DEAP2012]_,
-    which is used to implement the :doc:`/user/solvers/particle_swarm` 
-    and the :doc:`/user/solvers/CMA_ES`.
+    Optunity has soft dependencies on NumPy_ and [DEAP2012]_ for the :doc:`CMA-ES </user/solvers/CMA_ES>` solver.
+    If these Python libraries are unavailable, the CMA-ES solver will be unavailable.
 
     .. [DEAP2012] Fortin, Félix-Antoine, et al. "DEAP: Evolutionary algorithms made easy."
         Journal of Machine Learning Research 13.1 (2012): 2171-2175.
@@ -26,13 +28,69 @@ Optunity can be installed as a typical Python package.
     .. _NumPy:
         http://www.numpy.org
 
-    .. _SciPy:
-        http://www.scipy.org
+.. _install-python:
 
-Setting up Optunity for other environments
-===========================================
+Installing Optunity for Python
+-------------------------------
 
-If you want to use Optunity in a non-Python environment, please refer to the environment-specific installation instructions.
+If you want to use Optunity in another environment, this is not required. 
+Optunity can be installed as a typical Python package, for example:
 
-- :doc:`MATLAB installation <../wrappers/matlab/installation>`
-- :doc:`R installation <../wrappers/R/installation>`
+-   Add Optunity's root directory (the one you cloned/extracted) to your ``PYTHONPATH`` environment variable.
+    Note that this will only affect your current shell. To make it permanent, add this line to your .bashrc (Linux)
+    or adjust the PYTHONPATH variable manually (Windows). 
+    
+    Extending ``PYTHONPATH`` in Linux (not permanent)::
+
+        export PYTHONPATH=$PYTHONPATH:/path/to/optunity/
+
+    Extending ``PYTHONPATH`` in Windows (not permanent)::
+        
+        set PYTHONPATH=%PYTHONPATH%;/path/to/optunity
+
+-   Install using Optunity' setup script::
+
+        python setup.py install [--home=/desired/installation/directory/]
+
+-   Install using pip::
+
+        pip install optunity [-t /desired/installation/directory/]
+
+After these steps, you should be able to import ``optunity`` module::
+
+    python -c 'import optunity'
+
+.. _install-matlab:
+
+Installing Optunity for MATLAB
+-------------------------------
+
+To install Optunity for MATLAB, you must add `<optunity>/wrappers/matlab/` and its subdirectories to your MATLAB path.
+You can set the path in `Preferences -> Path` or using the following commands::
+
+    addpath(genpath('/path/to/optunity/wrappers/matlab/'));
+    savepath
+
+.. warning::
+
+    The MATLAB wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
+    `<optunity>/wrappers/matlab` subdirectory it will not work.
+
+
+.. _install-r:
+
+Installing Optunity for R
+--------------------------
+
+Make sure you have necessary R packages installed (rjson), clone the git repository and then issue the following commands::
+
+    cd optunity/wrappers
+    R CMD build R/
+    R CMD INSTALL optunity_<version number>.tar.gz
+
+.. _install-java:
+
+Installing Optunity for Java
+-----------------------------
+
+Optunity is available for Java through Jython (v2.7+). To use Optunity via Jython the Python package must be installed first (see above).
