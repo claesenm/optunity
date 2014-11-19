@@ -1,8 +1,23 @@
 optunity.solvers package
 ========================
 
+This package bundles all solvers and related logic available in Optunity.
+
+The following solvers are available:
+
+.. toctree::
+    :glob:
+
+    /api/optunity.solvers.*
+
+    :hidden:
+    /api/optunity.solvers.util
+    /api/optunity.solvers.solver_registry
+
 Submodules
 ----------
+
+
 
 .. toctree::
 

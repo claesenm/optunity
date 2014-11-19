@@ -34,8 +34,7 @@ A variety of solvers is available, discussed in more detail :doc:`here </user/so
 Optunity additionally provides :doc:`k-fold cross-validation </user/cross_validation>` and
 several :doc:`score functions </user/score_functions>`.
 
-Simple interface
-----------------
+.. rubric:: Simple interface
 
 For beginning users, we offer a set of functions with simple arguments. These functions
 should be enough for most of your needs. In case these functions are insufficient, 
@@ -62,8 +61,7 @@ please refer to the expert functions listed below or to submodules.
     is performed is highly configurable, including support for strata and clusters.
     More details are available :doc:`here </user/cross_validation>`.
 
-Expert interface
------------------
+.. rubric:: Expert interface
 
 The following functions are recommended for more advanced use of Optunity. This
 part of the API allows you to fully configure every detail about the provided solvers.

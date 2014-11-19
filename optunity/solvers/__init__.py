@@ -34,18 +34,17 @@
 
 Main classes in this module:
 
-* :class:`Solver`
 * :class:`GridSearch`
 * :class:`RandomSearch`
 * :class:`NelderMead`
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
-  :class:`CSA`
 
 .. warning::
-    :class:`CMA_ES` require DEAP_.
+    :class:`CMA_ES` require DEAP_ and NumPy_.
 
     .. _DEAP: https://code.google.com/p/deap/
+    .. _NumPy: http://www.numpy.org
 
 
 Bibliographic references for some solvers:
