@@ -71,6 +71,10 @@ You can set the path in `Preferences -> Path` or using the following commands::
     addpath(genpath('/path/to/optunity/wrappers/matlab/'));
     savepath
 
+After these steps, you should be able to run the examples in `<optunity>/wrappers/matlab/optunity_example.m`::
+
+    optunity_example
+
 .. warning::
 
     The MATLAB wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
@@ -82,7 +86,11 @@ You can set the path in `Preferences -> Path` or using the following commands::
 Installing Optunity for R
 --------------------------
 
-Make sure you have necessary R packages installed (rjson), clone the git repository and then issue the following commands::
+First install all dependencies. In R, issue the following command::
+
+    install.packages(c("rjson", "ROCR", "enrichvs", "plyr"))
+
+Subsequently, clone the git repository and then issue the following commands::
 
     cd optunity/wrappers
     R CMD build R/
