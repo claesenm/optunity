@@ -2,6 +2,8 @@
 Installing Optunity
 ====================
 
+.. include:: /global.rst
+
 The source can be obtained from git at http://git.optunity.net (recommended), releases can be obtained from
 http://releases.optunity.net. Optunity is compatible with Python 2.7 and 3.x. Note that you must have Python installed
 before Optunity can be used (all Linux distributions have this, but Windows requires explicit installation).
@@ -16,6 +18,8 @@ Installation instructions per environment:
 -   :ref:`install-matlab`
 -   :ref:`install-r`
 -   :ref:`install-java`
+
+If you encounter any difficulties during installation, please open an issue at |issues|.
 
 .. note::
 
