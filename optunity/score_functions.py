@@ -218,9 +218,29 @@ def mse(y, yhat):
     :returns:
         .. math:: \\frac{1}{n} \sum_{i=1}^n \\big[(\hat{y}-y)^2\\big]
 
-    Lower is better."""
+    Lower is better.
+
+    >>> mse([0, 0], [2, 3])
+    6.5
+
+    """
     return float(sum([(l - p) ** 2
                       for l, p in zip(y, yhat)])) / len(y)
+
+
+def absolute_error(y, yhat):
+    """Returns the maximal absolute error between y and yhat.
+
+    :param y: true function values
+    :param yhat: predicted function values
+
+    Lower is better.
+
+    >>> absolute_error([0,1,2,3], [0,0,1,1])
+    2.0
+
+    """
+    return float(max(map(lambda x, y: math.fabs(x-y), y, yhat)))
 
 
 def accuracy(y, yhat):
