@@ -54,7 +54,7 @@ Optunity can be installed as a typical Python package, for example:
 
 -   Install using Optunity' setup script::
 
-        python setup.py install [--home=/desired/installation/directory/]
+        python optunity/setup.py install [--home=/desired/installation/directory/]
 
 -   Install using pip::
 
