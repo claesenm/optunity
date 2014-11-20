@@ -118,6 +118,7 @@ cv.run <- function(setup, f, ...) {
 }
 
 cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
   if (length(args) == 0)
     stop("Please provide grid for f, like cv.grid_search(setup, f, param1=c(1, 3, 5)).")
@@ -126,6 +127,48 @@ cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   fcv <- function(...) cv.run(setup, f, ...)$score.mean
   
   res <- grid_search(fcv, ..., maximize = maximize)
+  return(res)
+}
+
+cv.random_search <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
+  args <- list(...)
+  if (length(args) == 0)
+    stop("Please provide parameter intervals for f, like cv.random_search(setup, f, param1=c(0, 20)).")
+  check_cv_args(f, args)
+  
+  fcv <- function(...) cv.run(setup, f, ...)$score.mean
+  
+  res <- random_search(fcv, ..., maximize = maximize, num_evals = num_evals)
+  return(res)
+}
+
+cv.nelder_mead <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
+  args <- list(...)
+  if (length(args) == 0)
+    stop("Please provide parameter initial values for f, like cv.nelder_mead(setup, f, param1=2)).")
+  check_cv_args(f, args)
+  
+  fcv <- function(...) cv.run(setup, f, ...)$score.mean
+  
+  res <- nelder_mead(fcv, ..., maximize = maximize, num_evals = num_evals)
+  return(res)
+}
+
+cv.particle_swarm <- function(setup, f, ..., num_particles=5, num_generations=10, maximize = TRUE, nested = FALSE) {
+  if (nested) stop("Nested cross-validation is not yet supported.")
+  args <- list(...)
+  if (length(args) == 0)
+    stop("Please provide parameter intervals for f, like cv.particle_swarm(setup, f, param1=c(0, 20)).")
+  check_cv_args(f, args)
+  
+  fcv <- function(...) cv.run(setup, f, ...)$score.mean
+  
+  res <- particle_swarm(fcv, ..., 
+                        num_particles=num_particles, 
+                        num_generations=num_generations, 
+                        maximize = maximize)
   return(res)
 }
 

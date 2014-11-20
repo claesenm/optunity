@@ -112,28 +112,3 @@ test_that("cv.run works with 2 user.score's", {
   expect_equal(names(result$score.mean), c("sqerror", "abserror"))
 })
 
-test_that("cv.grid_search fails with wrong parameter", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 3, num_iter = 2)
-  expect_error( {cv.grid_search(cv, regr, noparam = c(1,2) )} )
-})
-
-
-test_that("cv.grid_search works", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 3, num_iter = 2)
-  res <- cv.grid_search(cv, regr, reg = c(0, 1e-2, 1e-1), maximize=FALSE )
-  expect_equal(res$stats$num_evals, 3)
-})
-
-test_that("cv.grid_search works with 2 params", {
-  regr <- function(x, y, xtest, ytest, reg, unused) {
-    beta = solve(t(x) %*% x + diag(x=reg, ncol(x)), t(x) %*% y)
-    xtest %*% beta
-  }
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 3, num_iter = 2)
-  res <- cv.grid_search(cv, regr, reg = c(0, 1e-2, 1e-1), unused=c(1), maximize=FALSE )
-  expect_equal(res$stats$num_evals, 3)
-})
-
-context("Nested cross-validation")
-
-
