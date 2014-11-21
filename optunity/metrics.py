@@ -330,7 +330,7 @@ def fbeta(y, yhat, beta, positive=True):
     :param positive: the positive label
 
     :returns:
-        .. math:: (1 + \\beta^2)\\frac{(\\beta^2\\cdot precision)\\cdot recall}{precision+recall}
+        .. math:: (1 + \\beta^2)\\frac{cdot precision\\cdot recall}{(\\beta^2 * precision)+recall}
 
     """
     bsq = beta ** 2
