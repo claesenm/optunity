@@ -1,4 +1,4 @@
-Examples with Spark 
+Spark 
 ====================
 
 .. toctree::

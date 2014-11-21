@@ -1,4 +1,4 @@
-Examples with PyBrain
+PyBrain
 ===========================
 
 .. toctree::

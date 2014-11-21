@@ -2,18 +2,21 @@
 Examples
 ===========
 
-Here you can find a variety of examples to illustrate how Optunity can be useed in tandem with other machine learning software.
+Here you can find a variety of examples to illustrate how Optunity can be used in tandem with other machine learning software.
 
-We have split the examples per language and library. Jump to:
+We have split the examples per language and library.
 
--  Python
--  R
--  MATLAB
+..
+    README: KEEP THE EXAMPLE PAGES TIDY AND STRUCTURED
 
-.. 
-    To add examples: add them to the correct subfolder by language.
+    To add examples, add them to the correct subfolder by language.
     If you plan to make several examples involving a specific package, make a subfolder for that package name,
     and add a rst file with its name that links to the subdirectory (cfr. python/sklearn.rst for an example).
+    For single examples, just add a rst file in the language's subfolder.
+
+    Try to make each example self-contained. If possible, add a minimal working example in 
+    bin/examples/<language>/<library>/
+    for interested readers to run. Dependencies on other libraries are ok.
 
 
 Python

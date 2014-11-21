@@ -1,4 +1,4 @@
-Examples with OpenCV
+OpenCV
 =========================
 
 .. toctree::

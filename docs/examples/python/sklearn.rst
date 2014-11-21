@@ -1,4 +1,4 @@
-Examples with scikit-learn
+scikit-learn
 ===========================
 
 .. toctree::
