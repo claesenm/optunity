@@ -46,7 +46,7 @@ This involves optimizing the hyperparameters ``gamma`` and ``C``:
 
 .. literalinclude:: /examples/python/sklearn/svc.py
     :language: python
-    :emphasize-lines: 5,12
+    :emphasize-lines: 6,13
 
 For more examples, please see our :doc:`examples page </examples/index>`.
 
