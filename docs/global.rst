@@ -22,5 +22,9 @@
 .. |api-randomsearch| replace:: :class:`optunity.solvers.RandomSearch`
 .. |api-nelder-mead| replace:: :class:`optunity.solvers.NelderMead`
 
+.. |wrapper-matlab| replace:: :doc:`/wrappers/matlab`
+.. |wrapper-r| replace:: :doc:`/wrappers/r`
+.. |wrapper-java| replace:: :doc:`/wrappers/java`
+
 .. |warning-unconstrained| replace:: This solver is not explicitly constrained. The box constraints that are given are used for initialization, but solver may leave the specified region during iterations. If this is unacceptable, you must manually constrain the domain of the objective function prior to using this solver (cfr. |constraints|).
 .. |issues| replace:: https://github.com/claesenm/optunity/issues/new
