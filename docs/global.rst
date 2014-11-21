@@ -1,7 +1,8 @@
 .. |constraints| replace:: :doc:`/user/constraints`
 .. |cross_validation| replace:: :doc:`/user/cross_validation`
 .. |solvers| replace:: :doc:`/user/solvers`
-.. |score_functions| replace:: :doc:`/user/score_functions`
+.. |score_functions| replace:: :doc:`/user/metrics`
+.. |metrics| replace:: :doc:`/user/metrics`
 .. |api| replace:: :doc:`/api/optunity`
 .. |examples| replace:: :doc:`/examples/index`
 
