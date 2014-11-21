@@ -47,15 +47,9 @@ import math
 import random
 import itertools as it
 import functools
-import collections
 import operator as op
 import array
-
-try:
-    import numpy
-    numpy_available = True
-except ImportError:
-    numpy_available = False
+import inspect
 
 
 __all__ = ['select', 'random_permutation', 'cross_validated',
@@ -63,11 +57,19 @@ __all__ = ['select', 'random_permutation', 'cross_validated',
 
 
 def select(collection, indices):
-    """Selects the subset specified by indices from collection."""
-    if numpy_available and type(collection) is numpy.ndarray:
-        return collection[indices, :]
+    """Selects the subset specified by indices from collection.
+
+    >>> select([0, 1, 2, 3, 4], [1, 3])
+    [1, 3]
+
+    """
+    if len(indices) == 1:
+        return collection[indices[0]]
     else:
-        return [collection[i] for i in indices]
+        try:
+            return collection[indices, ...]
+        except TypeError: # not dealing with numpy or comparable, problably a list
+            return [collection[i] for i in indices]
 
 
 # https://docs.python.org/2/library/itertools.html#itertools.permutations
@@ -238,31 +240,30 @@ class cross_validated_callable(object):
         Strata signify instances that must be spread across folds.
         Not every instance must be in a stratum.
         Specify strata as a list of lists of instance indices.
-    :param folds: (optional) prespecified cross-validation folds to be used (list of lists).
+    :param folds: (optional) prespecified cross-validation folds to be used (list of lists (iterations) of lists (folds)).
     :param num_iter: (optional) number of iterations to use (default 1)
     :param regenerate_folds: (optional) whether or not to regenerate folds on every evaluation (default false)
     :param clusters: (optional) clusters to account for when generating folds.
         Clusters signify instances that must be assigned to the same fold.
         Not every instance must be in a cluster.
         Specify clusters as a list of lists of instance indices.
-    :param reduce: function to aggregate scores of different folds (default: mean)
+    :param aggregator: function to aggregate scores of different folds (default: mean)
 
     Use :func:`cross_validated` to create instances of this class.
     """
     def __init__(self, f, x, num_folds=10, y=None, strata=None, folds=None,
                  num_iter=1, regenerate_folds=False, clusters=None,
-                 reduce=mean):
+                 aggregator=mean):
         self._x = x
         self._y = y
         self._strata = strata
         self._clusters = clusters
-        # TODO: sanity check between strata & clusters? define what is allowed
         self._regenerate_folds = regenerate_folds
         self._f = f
-        self._reduce = reduce
+        self._reduce = aggregator
         if folds:
             assert (len(folds) == num_iter), 'Number of fold sets does not equal num_iter.'
-            assert (len(folds[0] == num_folds)), 'Number of folds does not match num_folds.'
+            assert (len(folds[0]) == num_folds), 'Number of folds does not match num_folds.'
             self._folds = folds
         else:
             self._folds = [generate_folds(len(x), num_folds, self.strata, self.clusters)
@@ -320,6 +321,18 @@ class cross_validated_callable(object):
         return self._regenerate_folds
 
     def __call__(self, *args, **kwargs):
+        if args:
+            # called with positionals, we must translate them to kwargs of f
+            # otherwise positionals mess up with bounded arguments
+            argspec = inspect.getargspec(self.f).args
+            argspec.remove('x_train')
+            argspec.remove('x_test')
+            if self.y is not None:
+                argspec.remove('y_train')
+                argspec.remove('y_test')
+            for argname, arg in zip(argspec, args):
+                kwargs[argname] = arg
+
         if self.regenerate_folds:
             self._folds = [generate_folds(len(x), self.num_folds, self.strata)
                            for _ in range(self.num_iter)]
@@ -335,7 +348,7 @@ class cross_validated_callable(object):
                 if not self.y is None:  # dealing with a supervised algorithm
                     kwargs['y_train'] = select(self.y, rows_train)
                     kwargs['y_test'] = select(self.y, rows_test)
-                scores.append(self.f(*args, **kwargs))
+                scores.append(self.f(**kwargs))
         return self.reduce(scores)
 
 
@@ -351,7 +364,7 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
         Strata signify instances that must be spread across folds.
         Not every instance must be in a stratum.
         Specify strata as a list of lists of instance indices.
-    :param folds: (optional) prespecified cross-validation folds to be used (list of lists).
+    :param folds: (optional) prespecified cross-validation folds to be used (list of lists (iterations) of lists (folds)).
     :param num_iter: (optional) number of iterations to use (default 1)
     :param regenerate_folds: (optional) whether or not to regenerate folds on every evaluation (default false)
     :param clusters: (optional) clusters to account for when generating folds.
@@ -360,12 +373,39 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
         Specify clusters as a list of lists of instance indices.
     :param aggregator: function to aggregate scores of different folds (default: mean)
     :returns: a :class:`cross_validated_callable` with the proper configuration.
+
+    This resulting decorator must be used on a function with the following signature:
+
+    :param x_train: training data
+    :type x_train: iterable
+    :param y_train: training labels (optional)
+    :type y_train: iterable
+    :param x_test: testing data
+    :type x_test: iterable
+    :param y_test: testing labels (optional)
+    :type y_test: iterable
+
+    `y_train` and `y_test` must be available of the `y` argument to this function is not None.
+
+    These 4 keyword arguments will be bound upon decoration.
+    Further arguments will remain free (e.g. hyperparameter names).
+
+    >>> data = list(range(5))
+    >>> @cross_validated(x=data, num_folds=5, folds=[[[i] for i in range(5)]], aggregator=identity)
+    ... def f(x_train, x_test, a):
+    ...     return x_test + a
+    >>> f(a=1)
+    [1, 2, 3, 4, 5]
+    >>> f(1)
+    [1, 2, 3, 4, 5]
+    >>> f(a=2)
+    [2, 3, 4, 5, 6]
+
     """
+    args = dict(locals())
     def wrapper(f):
-        cv_callable = cross_validated_callable(f, x, num_folds, y, strata, folds,
-                                               num_iter, regenerate_folds, clusters,
-                                               aggregator)
-        return cv_callable
+        args['f'] = f
+        return cross_validated_callable(**args)
     return wrapper
 
 
