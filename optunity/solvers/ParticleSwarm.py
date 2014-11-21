@@ -171,10 +171,13 @@ class ParticleSwarm(Solver):
 
         """
         d = dict(kwargs)
-        if num_evals > 200:
-            d['num_particles'] = 50
+        if num_evals > 1000:
+            d['num_particles'] = 100
             d['num_generations'] = int(math.ceil(float(num_evals) / 50))
-        elif num_evals > 10:
+        elif num_evals >= 200:
+            d['num_particles'] = 20
+            d['num_generations'] = int(math.ceil(float(num_evals) / 50))
+        elif num_evals >= 10:
             d['num_particles'] = 10
             d['num_generations'] = int(math.ceil(float(num_evals) / 10))
         else:
@@ -231,14 +234,16 @@ class ParticleSwarm(Solver):
                 part.speed[i] = self.smax[i]
         part.position[:] = array.array('d', map(op.add, part.position, part.speed))
 
+    def particle2dict(self, particle):
+        return dict([(k, v) for k, v in zip(self.bounds.keys(),
+                                            particle.position)])
+
     @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
         @functools.wraps(f)
-        def evaluate(particle):
-            return f(**dict([(k, v)
-                              for k, v in zip(self.bounds.keys(),
-                                              particle.position)]))
+        def evaluate(d):
+            return f(**d)
 
         if maximize:
             fit = 1.0
@@ -249,7 +254,7 @@ class ParticleSwarm(Solver):
         best = None
 
         for g in range(self.num_generations):
-            fitnesses = pmap(evaluate, pop)
+            fitnesses = pmap(evaluate, map(self.particle2dict, pop))
             for part, fitness in zip(pop, fitnesses):
                 part.fitness = fit*fitness
                 if not part.best or part.best_fitness < part.fitness:
