@@ -371,7 +371,7 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
     :param aggregator: function to aggregate scores of different folds (default: mean)
     :returns: a :class:`cross_validated_callable` with the proper configuration.
 
-    This resulting decorator must be used on a function with the following signature:
+    This resulting decorator must be used on a function with the following signature (+ potential other arguments):
 
     :param x_train: training data
     :type x_train: iterable
