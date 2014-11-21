@@ -6,6 +6,12 @@ Here you can find a variety of examples to illustrate how Optunity can be useed 
 
 We have split the examples per language and library.
 
+.. 
+    To add examples: add them to the correct subfolder by language.
+    If you plan to make several examples involving a specific package, make a subfolder for that package name,
+    and add a rst file with its name that links to the subdirectory (cfr. python/sklearn.rst for an example).
+
+
 Python
 ----------
 
@@ -19,17 +25,17 @@ Python
 MATLAB
 ^^^^^^
 
--   tuning a least-squares SVM with LS-SVMlab
--   tuning bandwidth for kernel spectral clustering with KSClab
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    /examples/matlab/*
 
 R
 ^^^^
 
-TODO
-
-
 .. toctree::
     :maxdepth: 2
-    :includehidden:
+    :glob:
 
-    /examples/cross_validation
+    /examples/r/*
