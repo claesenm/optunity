@@ -20,6 +20,9 @@ To get a basic understanding of the way various solvers in Optunity work, we can
 The source code for this example is available in `bin/examples/python/parabola.py`. Below are plots of the traces and precision of various solvers in optimizing a 2D parabola.
 These results are averaged over 200 runs, in each run the solvers got a budget of 100 function evaluations with the box :math:`x=(-5, 5)`, :math:`y=-(5, 5)`.
 
+Note that both |nelder-mead| and |cmaes| started from an initial solution close to the optimal one. 
+The results on this toy problem do not generalize directly to a real tuning problem.
+
 .. figure:: parabola_solver_traces.png
 
     Solver traces showing the evolution of their search for a single run on the 2D parabola.
