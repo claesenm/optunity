@@ -3,7 +3,6 @@ Examples
 ===========
 
 Here you can find a variety of examples to illustrate how Optunity can be used in tandem with other machine learning software.
-
 We have split the examples per language and library.
 
 ..

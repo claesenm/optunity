@@ -15,3 +15,6 @@ The full code in Python::
     optimal_pars, details, _ = optunity.maximize(f, num_evals=200, x=[-5, 5], y=[-5, 5])
 
 For such simple functions we would use different solvers in practice, but the main idea remains.
+
+To get a basic understanding of the way various solvers in Optunity work, we can optimize this function with all solvers and plot the resulting call logs.
+This code for this is available in `bin/examples/python/parabola.py`.

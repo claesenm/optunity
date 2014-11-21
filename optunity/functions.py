@@ -190,6 +190,9 @@ class Args(object):
         return "{" + ", ".join(['\'' + str(k) + '\'' + ': ' + str(v)
                                 for k, v in sorted(self.parameters)]) + "}"
 
+    def _asdict(self):
+        return dict([(k, v) for k, v in self.parameters])
+
     def keys(self):
         """Returns a list of argument names."""
         return map(op.itemgetter(0), self.parameters)

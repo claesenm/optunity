@@ -79,6 +79,14 @@ def _manual_lines(solver_name=None):
         return solver_registry.manual(), solver_registry.solver_names()
 
 
+def available_solvers():
+    """Returns a list of all available solvers.
+
+    These can be used in :func:`optunity.make_solver`.
+    """
+    return solver_registry.solver_names()
+
+
 def manual(solver_name=None):
     """Prints the manual of requested solver.
 

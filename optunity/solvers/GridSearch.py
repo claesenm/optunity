@@ -32,11 +32,15 @@
 
 import operator as op
 import itertools
-import math
 
 from ..functions import static_key_order
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, shrink_bounds
+
+# http://stackoverflow.com/a/15978862
+def nth_root(val, n):
+    ret = int(val**(1./n))
+    return ret + 1 if (ret + 1) ** n == val else ret
 
 @register_solver('grid search',
                  'finds optimal parameter values on a predefined grid',
@@ -108,8 +112,9 @@ class GridSearch(Solver):
         new bounds covering 99% of the area.
 
         The resulting solver will use an equally spaced grid with the same number
-        of points in every dimension. The amount of points that is used is
-        equal to floor(log(num_evals)/log(len(kwargs))).
+        of points in every dimension. The amount of points that is used is per
+        dimension is the nth root of num_evals, rounded down, where n is the number
+        of hyperparameters.
 
         >>> s = GridSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
         >>> s['x'] #doctest:+SKIP
@@ -125,7 +130,7 @@ class GridSearch(Solver):
 
         # number of grid points in each dimension
         # so we get density^num_par grid points in total
-        density = math.floor(math.log(num_evals)/math.log(num_pars))
+        density = nth_root(num_evals, num_pars)
         grid = dict([(k, GridSearch.assign_grid_points(b[0], b[1], density))
                      for k, b in bounds.items()])
         return grid

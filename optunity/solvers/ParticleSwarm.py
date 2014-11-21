@@ -128,7 +128,7 @@ class ParticleSwarm(Solver):
         self._num_generations = num_generations
 
         if max_speed is None:
-            max_speed = 2.0/num_generations
+            max_speed = 0.5 / num_generations
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
