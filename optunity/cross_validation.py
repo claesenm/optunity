@@ -63,13 +63,10 @@ def select(collection, indices):
     [1, 3]
 
     """
-    if len(indices) == 1:
-        return collection[indices[0]]
-    else:
-        try:
-            return collection[indices, ...]
-        except TypeError: # not dealing with numpy or comparable, problably a list
-            return [collection[i] for i in indices]
+    try:
+        return collection[indices, ...]
+    except TypeError: # not dealing with numpy or comparable, probably a list
+        return [collection[i] for i in indices]
 
 
 # https://docs.python.org/2/library/itertools.html#itertools.permutations
@@ -393,7 +390,7 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
     >>> data = list(range(5))
     >>> @cross_validated(x=data, num_folds=5, folds=[[[i] for i in range(5)]], aggregator=identity)
     ... def f(x_train, x_test, a):
-    ...     return x_test + a
+    ...     return x_test[0] + a
     >>> f(a=1)
     [1, 2, 3, 4, 5]
     >>> f(1)
