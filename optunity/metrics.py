@@ -403,24 +403,24 @@ def roc_auc(ys, yhat, positive=True):
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)
-    return auc(curve)
-
-def roc_hull(ys, yhat, positive=True):
-    """Computes the area under the convex hull of the receiver operating characteristic curve (higher is better).
-
-    :param y: true function values
-    :param yhat: predicted function values
-    :param positive: the positive label
-
-    >>> roc_hull([0, 0, 1, 1], [0, 0, 1, 1], 1)
-    1.0
-
-    >>> roc_hull([0,0,1,1], [0,1,1,2], 1)
-    0.875
-
-    """
-    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
     return convex_hull(curve)
+
+#def roc_hull(ys, yhat, positive=True):
+#    """Computes the area under the convex hull of the receiver operating characteristic curve (higher is better).
+#
+#    :param y: true function values
+#    :param yhat: predicted function values
+#    :param positive: the positive label
+#
+#    >>> roc_hull([0, 0, 1, 1], [0, 0, 1, 1], 1)
+#    1.0
+#
+#    >>> roc_hull([0,0,1,1], [0,1,1,2], 1)
+#    0.875
+#
+#    """
+#    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
+#    return convex_hull(curve)
 
 
 def pr_auc(ys, yhat, positive=True):

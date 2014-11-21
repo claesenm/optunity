@@ -30,8 +30,6 @@ Classification
 +----------------------+---------------------------------------------+
 | area under PR curve  | :func:`~optunity.score_functions.pr_auc`    |
 +----------------------+---------------------------------------------+
-| convex hull of ROC   | :func:`~optunity.score_functions.roc_hull`  |
-+----------------------+---------------------------------------------+
 | :math:`F_\beta`      | :func:`~optunity.score_functions.fbeta`     |
 +----------------------+---------------------------------------------+
 | precision/PPV        | :func:`~optunity.score_functions.precision` |
