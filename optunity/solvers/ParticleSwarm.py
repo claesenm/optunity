@@ -173,10 +173,10 @@ class ParticleSwarm(Solver):
         d = dict(kwargs)
         if num_evals > 1000:
             d['num_particles'] = 100
-            d['num_generations'] = int(math.ceil(float(num_evals) / 50))
+            d['num_generations'] = int(math.ceil(float(num_evals) / 100))
         elif num_evals >= 200:
-            d['num_particles'] = 20
-            d['num_generations'] = int(math.ceil(float(num_evals) / 50))
+            d['num_particles'] = 40
+            d['num_generations'] = int(math.ceil(float(num_evals) / 40))
         elif num_evals >= 10:
             d['num_particles'] = 10
             d['num_generations'] = int(math.ceil(float(num_evals) / 10))
