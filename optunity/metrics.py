@@ -399,7 +399,7 @@ def roc_auc(ys, yhat, positive=True):
     1.0
 
     >>> roc_auc([0,0,1,1], [0,1,1,2], 1)
-    0.75
+    0.875
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)

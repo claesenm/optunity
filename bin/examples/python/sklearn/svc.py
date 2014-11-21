@@ -30,18 +30,19 @@ labels = [True] * len(positive_idx) + [False] * len(negative_idx)
 folds = optunity.cross_validation.generate_folds(data.shape[0], num_folds=3)
 outer_cv = optunity.cross_validated(x=data, y=labels, num_folds=3, folds=[folds],
                                     aggregator=optunity.cross_validation.identity)
+outer_cv = optunity.cross_validated(x=data, y=labels, num_folds=3)
 
 # compute area under ROC curve of default parameters
 def compute_roc_standard(x_train, y_train, x_test, y_test):
     model = sklearn.svm.SVC().fit(x_train, y_train)
     decision_values = model.decision_function(x_test)
-    auc = optunity.metrics.roc_hull(y_test, decision_values)
+    auc = optunity.metrics.roc_auc(y_test, decision_values)
     auc2 = sklearn.metrics.roc_auc_score(y_test, decision_values)
     pr = optunity.metrics.pr_auc(y_test, decision_values)
     pr2 = sklearn.metrics.average_precision_score(y_test, decision_values)
     print('auc ' + str(auc) + ' auc2 ' + str(auc2))
     print('pr ' + str(pr) + ' pr2 ' + str(pr2))
-    return (decision_values, y_test)
+    return auc
 
 #preds = outer_cv(compute_roc_standard)()
 #
