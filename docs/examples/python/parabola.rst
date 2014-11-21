@@ -1,6 +1,8 @@
 Optimizing a simple 2D parabola
 ================================
 
+.. include:: /global.rst
+
 In this example, we will use Optunity to optimize a very simple function, namely a two-dimensional parabola.
 
 More specifically, the objective function is :math:`f(x, y) = -x^2 - y^2`.
