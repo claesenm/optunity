@@ -1,7 +1,7 @@
-Score and loss functions
+Metrics
 ========================
 
-Score/loss functions are used to quantify the performance of a given model. Score functions are typically maximized (e.g. accuracy, concordance, ...) whereas
+Metrics (score/loss functions) are used to quantify the performance of a given model. Score functions are typically maximized (e.g. accuracy, concordance, ...) whereas
 loss functions should be minimized (e.g. mean squared error, error rate, ...). Optunity provides common score/loss functions for your convenience.
 
 We use the following calling convention: 
@@ -11,7 +11,7 @@ We use the following calling convention:
 -   we assume `y` and `yhat` are of the same length (though we do not assert this).
 -   potential parameters of the score function must be added by keyword
 
-All functions listed here are available in :mod:`optunity.score_functions`.
+All functions listed here are available in :mod:`optunity.metrics`.
 
 Score functions
 ---------------
