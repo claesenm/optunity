@@ -10,6 +10,7 @@
 .. |minimize| replace:: :func:`optunity.minimize`
 .. |make_solver| replace:: :func:`optunity.make_solver`
 .. |optimize| replace:: :func:`optunity.optimize`
+.. |wrap-constraints| replace:: :func:`optunity.wrap_constraints`
 
 .. |pso| replace:: :doc:`/user/solvers/particle_swarm`
 .. |cmaes| replace:: :doc:`/user/solvers/CMA_ES`

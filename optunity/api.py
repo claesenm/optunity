@@ -321,7 +321,8 @@ def wrap_call_log(f, call_dict):
 
 def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
                      lb_o=None, lb_c=None, range_oo=None,
-                     range_co=None, range_oc=None, range_cc=None):
+                     range_co=None, range_oc=None, range_cc=None,
+                     custom=None):
     """Decorates f with given input domain constraints.
 
     :param f: the function that will be constrained
@@ -348,6 +349,10 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     :param range_cc: range constraints (closed lb and closed ub)
         :math:`lb \leq x \leq ub`
     :type range_cc: dict with 2-element lists as values ([lb, ub])
+    :param custom: custom, user-defined constraints
+    :type custom: list of constraints
+
+    *custom constraints are binary functions that yield False in case of violations.
 
     >>> def f(x):
     ...     return x
@@ -355,15 +360,33 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     >>> fc(x=5)
     -1
 
+    We can define any custom constraint that we want. For instance,
+    assume we have a binary function with arguments `x` and `y`, and we want
+    to make sure that the provided values remain within the unit circle.
+
+    >>> def f(x, y):
+    ...     return x + y
+    >>> circle_constraint = lambda x, y: (x ** 2 + y ** 2) <= 1
+    >>> fc = wrap_constraints(f, default=1234, custom=[circle_constraint])
+    >>> fc(0.0, 0.0)
+    0.0
+    >>> fc(1.0, 0.0)
+    1.0
+    >>> fc(0.5, 0.5)
+    1.0
+    >>> fc(1, 0.5)
+    1234
+
     """
     kwargs = locals()
     del kwargs['f']
     del kwargs['default']
+    del kwargs['custom']
     for k, v in list(kwargs.items()):
         if v is None:
             del kwargs[k]
 
-    if not kwargs:
+    if not kwargs and not custom:
         return f
 
     # jump table to get the right constraint function
@@ -384,6 +407,8 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
             constraints.append(functools.partial(constr_fun,
                                                  field=field,
                                                  bounds=bounds))
+    if custom:
+        constraints.extend(custom)
 
     # wrap function
     if default is None:
