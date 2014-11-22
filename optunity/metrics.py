@@ -136,19 +136,7 @@ def auc(curve):
         x2, y2 = curve[i + 1]
         if y1 is None:
             y1 = 0.0
-        area += float(min(y1, y2)) * float(x2 - x1)
-
-    return area
-
-def convex_hull(curve):
-    """Computes the area under the convex hull of the specified curve."""
-    area = 0.0
-    for i in range(len(curve) - 1):
-        x1, y1 = curve[i]
-        x2, y2 = curve[i + 1]
-        if y1 is None:
-            y1 = 0.0
-        area += float(y1) * float(x2 - x1) + float(max(y1, y2) - min(y1, y2)) * float(x2 - x1) / 2
+        area += float(y1) * float(x2 - x1) + float(y2 - y1) * float(x2 - x1) / 2
 
     return area
 
@@ -403,24 +391,7 @@ def roc_auc(ys, yhat, positive=True):
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)
-    return convex_hull(curve)
-
-#def roc_hull(ys, yhat, positive=True):
-#    """Computes the area under the convex hull of the receiver operating characteristic curve (higher is better).
-#
-#    :param y: true function values
-#    :param yhat: predicted function values
-#    :param positive: the positive label
-#
-#    >>> roc_hull([0, 0, 1, 1], [0, 0, 1, 1], 1)
-#    1.0
-#
-#    >>> roc_hull([0,0,1,1], [0,1,1,2], 1)
-#    0.875
-#
-#    """
-#    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
-#    return convex_hull(curve)
+    return auc(curve)
 
 
 def pr_auc(ys, yhat, positive=True):
@@ -434,7 +405,7 @@ def pr_auc(ys, yhat, positive=True):
     1.0
 
     >>> round(pr_auc([0,0,1,1], [0,1,1,2], 1), 2)
-    0.83
+    0.92
 
     .. note:: Precision is undefined at recall = 0.
         In this case, we set precision equal to the precision that was obtained at the lowest non-zero recall.
