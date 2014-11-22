@@ -357,10 +357,12 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     >>> def f(x):
     ...     return x
     >>> fc = wrap_constraints(f, default=-1, range_oc={'x': [0, 1]})
-    >>> fc(x=5)
-    -1
+    >>> fc(x=0.5)
+    0.5
     >>> fc(x=1)
     1
+    >>> fc(x=5)
+    -1
     >>> fc(x=0)
     -1
 
