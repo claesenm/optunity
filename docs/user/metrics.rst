@@ -24,21 +24,21 @@ Classification
 +----------------------+---------------------------------------------+
 | Score                | Associated Optunity function                |
 +======================+=============================================+
-| accuracy             | :func:`~optunity.score_functions.accuracy`  |
+| accuracy             | :func:`~optunity.metrics.accuracy`  |
 +----------------------+---------------------------------------------+
-| area under ROC curve | :func:`~optunity.score_functions.roc_auc`   |
+| area under ROC curve | :func:`~optunity.metrics.roc_auc`   |
 +----------------------+---------------------------------------------+
-| area under PR curve  | :func:`~optunity.score_functions.pr_auc`    |
+| area under PR curve  | :func:`~optunity.metrics.pr_auc`    |
 +----------------------+---------------------------------------------+
-| :math:`F_\beta`      | :func:`~optunity.score_functions.fbeta`     |
+| :math:`F_\beta`      | :func:`~optunity.metrics.fbeta`     |
 +----------------------+---------------------------------------------+
-| precision/PPV        | :func:`~optunity.score_functions.precision` |
+| precision/PPV        | :func:`~optunity.metrics.precision` |
 +----------------------+---------------------------------------------+
-| recall/sensitivity   | :func:`~optunity.score_functions.recall`    |
+| recall/sensitivity   | :func:`~optunity.metrics.recall`    |
 +----------------------+---------------------------------------------+
-| specificity/NPV      | :func:`~optunity.score_functions.npv`       |
+| specificity/NPV      | :func:`~optunity.metrics.npv`       |
 +----------------------+---------------------------------------------+
-| PU score             | :func:`~optunity.score_functions.pu_score`  |
+| PU score             | :func:`~optunity.metrics.pu_score`  |
 +----------------------+---------------------------------------------+
 
 Regression
@@ -47,7 +47,7 @@ Regression
 +----------------------+---------------------------------------------+
 | Score                | Associated Optunity function                |
 +======================+=============================================+
-| R squared            | :func:`~optunity.score_functions.r_squared` |
+| R squared            | :func:`~optunity.metrics.r_squared` |
 +----------------------+---------------------------------------------+
 
 Loss functions
@@ -61,11 +61,11 @@ Classification
 +----------------------+----------------------------------------------+
 | Score                | Associated Optunity function                 |
 +======================+==============================================+
-| Brier score          | :func:`~optunity.score_functions.brier`      |
+| Brier score          | :func:`~optunity.metrics.brier`      |
 +----------------------+----------------------------------------------+
-| error rate           | :func:`~optunity.score_functions.error_rate` |
+| error rate           | :func:`~optunity.metrics.error_rate` |
 +----------------------+----------------------------------------------+
-| log loss             | :func:`~optunity.score_functions.logloss`    |
+| log loss             | :func:`~optunity.metrics.logloss`    |
 +----------------------+----------------------------------------------+
 
 Regression
@@ -74,7 +74,7 @@ Regression
 +----------------------+---------------------------------------------------+
 | Score                | Associated Optunity function                      |
 +======================+===================================================+
-| mean squared error   | :func:`~optunity.score_functions.mse`             |
+| mean squared error   | :func:`~optunity.metrics.mse`             |
 +----------------------+---------------------------------------------------+
-| absolute error       | :func:`~optunity.score_functions.absolute_error`  |
+| absolute error       | :func:`~optunity.metrics.absolute_error`  |
 +----------------------+---------------------------------------------------+
