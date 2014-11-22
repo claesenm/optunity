@@ -4,9 +4,9 @@ Domain constraints
 .. include:: /global.rst
 
 Optunity supports domain constraints on the objective function. Domain constraints are used to enforce solvers to remain within a prespecified search space.
-Most solvers that Optunity provides are implicitly unconstrained (cfr. |solvers|), though hyperparameters are obviously constrained in some way (ex: regularization coefficients must be positive).
+Most solvers that Optunity provides are implicitly unconstrained (cfr. |solvers|), though hyperparameters are usually constrained in some way (ex: regularization coefficients must be positive).
 
-A set of simple constraints and facilities to use them are provided in :module:`optunity.functions`. Specifically, the following constraints are provided:
+A set of simple constraints and facilities to use them are provided in :api:`optunity.functions`. Specifically, the following constraints are provided:
 
 -   `lb_{oc}`: assigns a lower bound (open or closed)
 -   `ub_{oc}`: assigns an upper bound (open or closed)
@@ -19,8 +19,8 @@ Note that the functions |maximize| and |minimize| wrap explicit box constraints 
 |optimize| does not do this for you, which allows more flexibility at the price of verbosity.
 
 Constraint violations in Optunity raise a `ConstraintViolation` exception by default. 
-The usual way we handle these exceptions is by returning a certain (typically bad) default function value, which will cause the solver to stop searching in
-the infeasible region (using the :func:`optunity.functions.violations_defaulted` decorator).
+The usual way we handle these exceptions is by returning a certain (typically bad) default function value (using the :func:`optunity.functions.violations_defaulted` decorator).
+This will cause solvers to stop searching in the infeasible region.
 
 To add a series of constraints, we recommend using the |wrap-constraints| function. 
 This function takes care of assigning default values on constraint violations if desired.
@@ -46,8 +46,3 @@ To constrain `f`, we use |wrap-constraints|::
     fc = optunity.wrap_constraints(f, custom=[constraint])
 
 The constrained function `fc(x, y)` will yield `x + y` if the arguments are within the unit circle, or raise a `ConstraintViolation` exception otherwise.
-
-
-maximize and minimize do it for you
-
-make your own and attach with wrap_constraints()
