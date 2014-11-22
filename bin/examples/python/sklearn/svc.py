@@ -37,46 +37,8 @@ def compute_roc_standard(x_train, y_train, x_test, y_test):
     model = sklearn.svm.SVC().fit(x_train, y_train)
     decision_values = model.decision_function(x_test)
     auc = optunity.metrics.roc_auc(y_test, decision_values)
-    auc2 = sklearn.metrics.roc_auc_score(y_test, decision_values)
-    pr = optunity.metrics.pr_auc(y_test, decision_values)
-    pr2 = sklearn.metrics.average_precision_score(y_test, decision_values)
-    print('auc ' + str(auc) + ' auc2 ' + str(auc2))
-    print('pr ' + str(pr) + ' pr2 ' + str(pr2))
     return auc
 
-#preds = outer_cv(compute_roc_standard)()
-#
-#decvals = []
-#labels = []
-#for p in preds:
-#    decvals.extend(p[0].tolist())
-#    labels.extend(p[1])
-#
-#optunity.metrics.roc_auc(labels, decvals)
-#sklearn.metrics.roc_auc_score(labels, decvals)
-#
-#fpr, tpr, _ = sklearn.metrics.roc_curve(labels, decvals)
-#
-#tables = optunity.metrics.contingency_tables(labels, decvals)
-#curve = optunity.metrics.compute_curve(labels, decvals, optunity.metrics._fpr, optunity.metrics._recall)
-#
-#x, y = zip(*curve)
-#optunity.metrics.auc(curve)
-#sklearn.metrics.auc(x, y)
-#optunity.metrics.roc_hull(labels, decvals)
-#
-#plt.figure()
-#plt.plot(fpr, tpr, label='ROC curve')
-#plt.plot([0, 1], [0, 1], 'k--')
-#plt.plot(x, y, 'r+', label='ROC2')
-#plt.xlim([0.0, 1.0])
-#plt.ylim([0.0, 1.05])
-#plt.xlabel('False Positive Rate')
-#plt.ylabel('True Positive Rate')
-#plt.title('Receiver operating characteristic example')
-#plt.legend(loc="lower right")
-#plt.show()
-#
 # decorate with cross-validation
 compute_roc_standard = outer_cv(compute_roc_standard)
 roc_standard = compute_roc_standard()
@@ -103,8 +65,6 @@ def compute_roc_tuned(x_train, y_train, x_test, y_test):
     tuned_model = sklearn.svm.SVC(**optimal_pars).fit(x_train, y_train)
     decision_values = tuned_model.decision_function(x_test)
     auc = optunity.metrics.roc_auc(y_test, decision_values)
-    auc2 = sklearn.metrics.roc_auc_score(y_test, decision_values)
-    print('auc ' + str(auc) + ' auc2 ' + str(auc2))
     return auc
 
 # decorate with cross-validation
