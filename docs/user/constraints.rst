@@ -6,7 +6,7 @@ Domain constraints
 Optunity supports domain constraints on the objective function. Domain constraints are used to enforce solvers to remain within a prespecified search space.
 Most solvers that Optunity provides are implicitly unconstrained (cfr. |solvers|), though hyperparameters are usually constrained in some way (ex: regularization coefficients must be positive).
 
-A set of simple constraints and facilities to use them are provided in :api:`optunity.functions`. Specifically, the following constraints are provided:
+A set of simple constraints and facilities to use them are provided in :doc:`/api/optunity.functions`. Specifically, the following constraints are provided:
 
 -   `lb_{oc}`: assigns a lower bound (open or closed)
 -   `ub_{oc}`: assigns an upper bound (open or closed)
