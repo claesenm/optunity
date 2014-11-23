@@ -13,11 +13,8 @@ arguments, we use `varargs` with the convention of `<name>`, `<value>`.
 
 For MATLAB, the following main features are provided:
 
--   :ref:`manual`
-
--   :ref:`optimizing`
-
--   :ref:`cross-validation`
+.. toctree::
+    :maxdepth: 1
 
 The file `<optunity>/wrappers/matlab/optunity_example.m` contains code for all the functionality that is
 available in MATLAB.
@@ -51,7 +48,7 @@ The MATLAB wrapper offers `optunity.maximize()`, `optunity.minimize()` and `optu
 provide the same functionality as their Python equivalents.
 
 The following code fragment shows how to optimize a simple function `f` with |randomsearch| within the box
-:math:`-4 < x < 4` and :math:`-5 < y < 5`::
+:math:`-4 < x < 4` and :math:`-5 < y < 5` and 200 evaluations::
     
     offx = rand();
     offy = rand();
