@@ -151,3 +151,27 @@ are hyperparameters to be optimized for accuracy:
 
 .. note::
     You are free to use different score and aggregation functions in the inner and outer cv.
+
+Aggregators
+----------------
+
+Optunity's cross-validation implementation allows you to specify an `aggregator`. This is the function that will be used to
+compute the cross-validation result based on the results of individual folds. The default function is `mean`. You can
+specify any function to compute another measure if desired (for instance `min`, `max`, ...).
+
+Computing multiple performance measures during cross-validation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes it is desired to compute multiple performance measures using cross-validation. This is particularly useful for nested cross-validation.
+This is possible in Optunity by letting the wrapped function return multiple scores and using the :func:`optunity.cross_validation.list_mean` aggregator::
+
+    @optunity.cross_validated(x=data, y=labels, num_folds=3, 
+                            aggregator=optunity.cross_validation.list_mean)
+    def f(x_train, y_train, x_test, y_test):
+        model = train(x_train, y_train)
+        predictions = model.predict(x_test)
+        score_1 = score_1(y_test, predictions)
+        score_2 = score_2(y_test, predictions)
+        return score_1, score_2
+
+For even more flexibility, you can use :func:`optunity.cross_validation.identity` as aggregator, which will return a list of return values for every cross-validation fold.
