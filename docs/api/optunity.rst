@@ -15,7 +15,7 @@ Optunity API
 
         optunity.solvers
         optunity.cross_validation
-        optunity.score_functions
+        optunity.metrics
         optunity.functions
 
     **Standalone process**
