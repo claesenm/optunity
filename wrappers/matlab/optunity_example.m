@@ -17,36 +17,36 @@ folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', st
 
 %% optimize using grid-search
 grid_solver = optunity.make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
-[grid_solution, grid_details] = optunity.optimize(grid_solver, f, 'parallelize', false);
+[grid_solution, grid_details] = optunity.optimize(grid_solver, f);
 
 %% simple API
 % maximization
-[max_solution, max_details, max_solver] = optunity.maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5], 'parallelize', false);
+[max_solution, max_details, max_solver] = optunity.maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5]);
 % minimization
-[min_solution, min_details, min_solver] = optunity.minimize(f, 200, 'x', [-5, 5], 'y', [-5, 5], 'parallelize', false);
+[min_solution, min_details, min_solver] = optunity.minimize(f, 200, 'x', [-5, 5], 'y', [-5, 5]);
 
 %% optimize using random-search
 rnd_solver = optunity.make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], 'num_evals', 400);
-[rnd_solution, rnd_details] = optunity.optimize(rnd_solver, f, 'parallelize', false);
+[rnd_solution, rnd_details] = optunity.optimize(rnd_solver, f);
 
 %% check if the nelder-mead solver is available in the list of solvers
 nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
 nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
-[nm_solution, nm_details] = optunity.optimize(nm_solver, f, 'parallelize', false);
+[nm_solution, nm_details] = optunity.optimize(nm_solver, f);
 
 %% check if PSO is available
 pso_solver = optunity.make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
     'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
-[pso_solution, pso_details] = optunity.optimize(pso_solver, f, 'parallelize', false);
+[pso_solution, pso_details] = optunity.optimize(pso_solver, f);
 
 %% check if CMA-ES is available
 cma_available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
 if cma_available
     cma_solver = optunity.make_solver('cma-es', 'num_generations', 25, ...
         'sigma', 5, 'x', 2, 'y', 4);
-    [cma_solution, cma_details] = optunity.optimize(cma_solver, f, 'parallelize', false);
+    [cma_solution, cma_details] = optunity.optimize(cma_solver, f);
 end
 
 %% draw a figure to illustrate the call log of all solvers
@@ -108,7 +108,7 @@ end
 s_oo1 = optunity.make_solver('grid search', 'x', -5:0.5:5, 'y', -5:0.5:5);
 constraints = struct('ub_o', struct('x', 3));
 [constr_solution, constr_details] = s_oo1.optimize(f, ...
-    'constraints', constraints, 'default', -100, 'parallelize', false);
+    'constraints', constraints, 'default', -100);
 
 %% grid-search with warm start: already evaluated grid -> warm_nevals = 0
 s_oo2 = optunity.make_solver('grid search', 'x', [1, 2], 'y', [1, 2]);
@@ -116,7 +116,7 @@ call_log = struct('args',struct('x',[1 1 2 2], 'y', [1 2 1 2]), ...
     'values',[1 2 3 4]);
 [warm_solution, warm_details] = ...    
     s_oo2.optimize(f, ...
-    'call_log', call_log, 'parallelize', false);
+    'call_log', call_log);
 
 
 

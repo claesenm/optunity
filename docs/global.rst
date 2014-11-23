@@ -18,6 +18,7 @@
 .. |randomsearch| replace:: :doc:`/user/solvers/random_search`
 .. |nelder-mead| replace:: :doc:`/user/solvers/nelder-mead`
 
+.. |api-solvers| replace:: :doc:`optunity.solvers`
 .. |api-pso| replace:: :class:`optunity.solvers.ParticleSwarm`
 .. |api-cmaes| replace:: :class:`optunity.solvers.CMA_ES`
 .. |api-gridsearch| replace:: :class:`optunity.solvers.GridSearch`

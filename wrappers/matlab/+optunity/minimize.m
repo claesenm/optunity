@@ -6,14 +6,14 @@ function [solution, details, solver] = minimize(f, num_evals, varargin)
 % - varargin: a list of optional key:value pairs
 %   - solver_name: name of the solver to use (default '')
 %   - parallelize: (boolean) whether or not to parallelize evaluations
-%       (default true)
+%       (default false)
 %   - box constraints: key-value pairs
 %       key: hyperparameter name
 %       value: [lower_bound, upper_bound]
 
 %% process varargin
 defaults = struct('solver_name', '', ...
-    'parallelize', true);
+    'parallelize', false);
 options = optunity.process_varargin(defaults, varargin, false);
 parallelize = options.parallelize;
 options = rmfield(options, 'parallelize');

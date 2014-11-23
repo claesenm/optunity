@@ -50,6 +50,16 @@ Optimizing hyperparameters
 The MATLAB wrapper offers `optunity.maximize()`, `optunity.minimize()` and `optunity.optimize()`. These
 provide the same functionality as their Python equivalents.
 
+The following code fragment shows how to optimize a simple function `f` with |randomsearch| within the box
+:math:`-4 < x < 4` and :math:`-5 < y < 5`::
+    
+    offx = rand();
+    offy = rand();
+    f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
+
+    [max_solution, max_details, max_solver] = optunity.maximize(f, 200, ...
+            'solver_name', 'random search', 'x', [-4, 4], 'y', [-5, 5]);
+
 Differences between Python and MATLAB version of `optimize`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -57,7 +67,7 @@ The MATLAB version has an extra argument `constraints` where you can specify dom
 (the MATLAB wrapper has no equivalent of :func:`optunity.wrap_constraints`). Constraints are
 communicated as a struct with the correct field names and corresponding values (more info at |constraints|).
 
-As an example, to add constraints :math:`x < 3` and `y \geq 0`, we use the following code::
+As an example, to add constraints :math:`x < 3` and :math:`y \geq 0`, we use the following code::
 
     constraints = struct('ub_o', struct('x', 3), 'lb_c', struct('y', 0));
 

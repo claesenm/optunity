@@ -11,7 +11,7 @@ function [solution, details] = optimize( solver, f, varargin)
 %   - default: default function value if constraints are violated
 %   - call_log: struct representing an existing call log of f
 %   - parallelize: (boolean) whether or not to parallelize evaluations
-%       (default true)
+%       (default false)
 %
 % Constraints on the domain of f can be formulated via a struct.
 % The following constraints are available:
@@ -28,7 +28,7 @@ defaults = struct('maximize', true, 'max_evals', 0, ...
     'constraints', NaN, ...
     'call_log', NaN, ...
     'default', NaN, ...
-    'parallelize', true);
+    'parallelize', false);
 options = optunity.process_varargin(defaults, varargin, true);
 parallelize = options.parallelize;
 options = rmfield(options, 'parallelize');
