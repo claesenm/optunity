@@ -77,7 +77,13 @@ The following code fragment shows how to optimize a simple function `f` with |ra
             'solver_name', 'random search', 'x', [-4, 4], 'y', [-5, 5]);
 
 If you want to use `optunity.optimize()`, you must create the solver in advance using `optunity.make_solver()`.
-This will return an `optunity.Solver` object or return an error message.
+This will return an `optunity.Solver` object or return an error message::
+
+    f = @(pars) pars.x + pars.y
+    rnd_solver = optunity.make_solver('random search', 'x', [-5, 5], ...
+            'y', [-5, 5], 'num_evals', 400);
+    [rnd_solution, rnd_details] = optunity.optimize(rnd_solver, f);
+
 
 Differences between Python and MATLAB version of `optimize`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
