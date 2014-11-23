@@ -1,6 +1,8 @@
 MATLAB
 =======
 
+.. include:: /global.rst
+
 In this page we briefly discuss the MATLAB wrapper, which provides most of Optunity's functionality. 
 For a general overview, we recommend reading the :doc:`/user/index`.
 
