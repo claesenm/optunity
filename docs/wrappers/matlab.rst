@@ -66,6 +66,9 @@ The following code fragment shows how to optimize a simple function `f` with |ra
     [max_solution, max_details, max_solver] = optunity.maximize(f, 200, ...
             'solver_name', 'random search', 'x', [-4, 4], 'y', [-5, 5]);
 
+If you want to use `optunity.optimize()`, you must create the solver in advance using `optunity.make_solver()`.
+This will return an `optunity.Solver` object or return an error message.
+
 Differences between Python and MATLAB version of `optimize`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
