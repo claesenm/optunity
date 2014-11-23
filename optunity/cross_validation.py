@@ -38,6 +38,9 @@ The main functions in this module are:
 * :func:`generate_folds`
 * :func:`strata_by_labels`
 * :func:`random_permutation`
+* :func:`mean`
+* :func:`identity`
+* :func:`list_mean`
 
 .. moduleauthor:: Marc Claesen
 
@@ -53,7 +56,8 @@ import inspect
 
 
 __all__ = ['select', 'random_permutation', 'cross_validated',
-           'generate_folds', 'strata_by_labels']
+           'generate_folds', 'strata_by_labels', 'mean', 'identity',
+           'list_mean']
 
 
 def select(collection, indices):
@@ -220,6 +224,23 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
 
 def mean(x):
     return float(sum(x)) / len(x)
+
+def list_mean(list_of_measures):
+    """Computes means of consequent elements in given list.
+
+    :param list_of_measures: a list of tuples to compute means from
+    :type list_of_measures: list
+    :returns: a list containing the means
+
+    This function can be used as an aggregator in :func:`cross_validated`,
+    when multiple performance measures are being returned by the wrapped function.
+
+    >>> list_mean([(1, 4), (2, 5), (3, 6)])
+    [2.0, 5.0]
+
+    """
+    return map(mean, zip(*list_of_measures))
+
 
 def identity(x):
     return x
