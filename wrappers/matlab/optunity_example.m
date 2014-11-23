@@ -135,5 +135,5 @@ call_log = struct('args',struct('x',[1 1 2 2], 'y', [1 2 1 2]), ...
 
 %% cross-validation
 x = (1:10)';
-cvf = optunity.cross_validate(@cv_fun, x);
+cvf = optunity.cross_validate(@optunity_cv_fun, x);
 performance = cvf(struct('x',1,'y',2));
