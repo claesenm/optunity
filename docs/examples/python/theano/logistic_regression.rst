@@ -120,35 +120,35 @@ Typical output of this script will look like::
     true model: 1 + 2 * x1 + 3 * x2
 
     evaluating untuned LR model
-    + model: -0.57 + 1.499 * x1 + 2.236 * x2
-    ++ log loss in test fold: 21.0226856646
-    ++ Brier loss in test fold: 0.101380685133
+    + model: -0.18 + 1.679 * x1 + 2.045 * x2
+    ++ log loss in test fold: 17.8422503964
+    ++ Brier loss in test fold: 0.0786225946458
 
-    + model: -0.32 + 1.322 * x1 + 2.056 * x2
-    ++ log loss in test fold: 19.2689130486
-    ++ Brier loss in test fold: 0.0828433187038
+    + model: -0.36 + 1.449 * x1 + 2.247 * x2
+    ++ log loss in test fold: 16.4341958116
+    ++ Brier loss in test fold: 0.070741583014
 
-    + model: -0.39 + 1.388 * x1 + 2.010 * x2
-    ++ log loss in test fold: 18.3351740054
-    ++ Brier loss in test fold: 0.0773383227468
+    + model: -0.48 + 1.443 * x1 + 2.187 * x2
+    ++ log loss in test fold: 21.0907130314
+    ++ Brier loss in test fold: 0.0941325050801
 
     evaluating tuned LR model
-    + model: -0.73 + 2.353 * x1 + 3.783 * x2
-    ++ log loss in test fold: 16.7015108571
-    ++ Brier loss in test fold: 0.0816756198798
+    + model: -0.66 + 2.354 * x1 + 3.441 * x2
+    ++ log loss in test fold: 15.0177449446
+    ++ Brier loss in test fold: 0.0718020866519
 
-    + model: -1.17 + 2.163 * x1 + 3.674 * x2
-    ++ log loss in test fold: 19.2969838283
-    ++ Brier loss in test fold: 0.0923373167052
+    + model: -0.44 + 2.648 * x1 + 3.817 * x2
+    ++ log loss in test fold: 14.3778358575
+    ++ Brier loss in test fold: 0.0638209513581
 
-    + model: -0.59 + 2.512 * x1 + 3.803 * x2
-    ++ log loss in test fold: 15.343653823
-    ++ Brier loss in test fold: 0.0693951543853
+    + model: -0.45 + 2.689 * x1 + 3.858 * x2
+    ++ log loss in test fold: 12.7616071862
+    ++ Brier loss in test fold: 0.0590374290183
 
     Log loss (lower is better):
-    untuned: 19.5422575729
-    tuned: 17.1140495028
+    untuned: 18.4557197465
+    tuned: 14.0523959961
 
     Brier loss (lower is better):
-    untuned: 0.0871874421946
-    tuned: 0.0811360303235
+    untuned: 0.0811655609133
+    tuned: 0.0648868223427
