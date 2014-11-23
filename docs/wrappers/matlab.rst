@@ -94,3 +94,11 @@ Two functions are provided for cross-validation:
 -   `optunity.generate_folds()`: generates a set of cross-validation folds
 
 -   `optunity.cross_validate()`: function decorator, to perform cross-validation with specified function
+
+Both functions can deal with strata and clusters. You can specify these as a cell array of vectors of indices::
+
+    strata = {[1,2,3], [6,7,8,9]};
+    folds = optunity.generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
+
+Cross-validation folds are returned as a matrix of `num_instances * num_iter` with entries ranging from 1 to `num_folds` to indicate
+the fold each instance belongs to per iteration.
