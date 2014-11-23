@@ -3,7 +3,7 @@ Using Other Environments
 =========================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    /wrappers/matlab/index
-    /wrappers/R/index
+    /wrappers/matlab.rst
+    /wrappers/r.rst

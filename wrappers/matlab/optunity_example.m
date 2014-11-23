@@ -1,6 +1,9 @@
 close all; clear all;
 drawfig = true;
 
+%% print general manual and obtain list of solvers
+solvers = optunity.manual();
+
 %% target function: f(x,y) = - x^2 - y^2
 offx = rand();
 offy = rand();
@@ -27,22 +30,16 @@ rnd_solver = optunity.make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], '
 [rnd_solution, rnd_details] = optunity.optimize(rnd_solver, f, 'parallelize', false);
 
 %% check if the nelder-mead solver is available in the list of solvers
-solvers = optunity.manual(); % obtain a list of available solvers
 nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
-if nm_available
-    nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
-    [nm_solution, nm_details] = optunity.optimize(nm_solver, f, 'parallelize', false);
-end
+nm_solver = optunity.make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
+[nm_solution, nm_details] = optunity.optimize(nm_solver, f, 'parallelize', false);
 
 %% check if PSO is available
-pso_available = any(arrayfun(@(x) strcmp(x, 'particle swarm'), solvers));
-if pso_available
-    pso_solver = optunity.make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
-        'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
-    [pso_solution, pso_details] = optunity.optimize(pso_solver, f, 'parallelize', false);
-end
+pso_solver = optunity.make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
+    'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
+[pso_solution, pso_details] = optunity.optimize(pso_solver, f, 'parallelize', false);
 
 %% check if CMA-ES is available
 cma_available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
@@ -57,9 +54,7 @@ if drawfig
     figure; hold on;
     plot(grid_details.call_log.args.x, grid_details.call_log.args.y, 'r+','LineWidth', 2);
     plot(rnd_details.call_log.args.x, rnd_details.call_log.args.y, 'k+','LineWidth', 2);
-    if nm_available
-        plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'm', 'LineWidth', 3);
-    end
+    plot(nm_details.call_log.args.x, nm_details.call_log.args.y, 'm', 'LineWidth', 3);
     plot(pso_details.call_log.args.x, pso_details.call_log.args.y, 'bo', 'LineWidth', 2);
     if cma_available
         plot(cma_details.call_log.args.x, cma_details.call_log.args.y, 'go', 'LineWidth', 2);
@@ -77,12 +72,8 @@ if drawfig
              ['random search (',num2str(rnd_details.stats.num_evals),' evals)'], ...
         };
     
-    if nm_available
-        legends{end+1} = ['Nelder-Mead (',num2str(nm_details.stats.num_evals),' evals)'];
-    end
-    if pso_available
-        legends{end+1} = ['particle swarm (',num2str(pso_details.stats.num_evals),' evals)'];
-    end
+    legends{end+1} = ['Nelder-Mead (',num2str(nm_details.stats.num_evals),' evals)'];
+    legends{end+1} = ['particle swarm (',num2str(pso_details.stats.num_evals),' evals)'];
     if cma_available
         legends{end+1} = ['CMA-ES (',num2str(cma_details.stats.num_evals),' evals)'];
     end
@@ -91,16 +82,12 @@ if drawfig
     num_evals = [grid_details.stats.num_evals, rnd_details.stats.num_evals];
     optima = [grid_details.optimum, rnd_details.optimum];
     ticks = {'grid search', 'random search'};
-    if nm_available
-       num_evals(end+1) = nm_details.stats.num_evals;
-       optima(end+1) = nm_details.optimum;
-       ticks{end+1} = 'Nelder-Mead';
-    end
-    if pso_available
-       num_evals(end+1) = pso_details.stats.num_evals;
-       optima(end+1) = pso_details.optimum;
-       ticks{end+1} = 'particle swarm';
-    end
+    num_evals(end+1) = nm_details.stats.num_evals;
+    optima(end+1) = nm_details.optimum;
+    ticks{end+1} = 'Nelder-Mead';
+    num_evals(end+1) = pso_details.stats.num_evals;
+    optima(end+1) = pso_details.optimum;
+    ticks{end+1} = 'particle swarm';
     if cma_available
        num_evals(end+1) = cma_details.stats.num_evals;
        optima(end+1) = cma_details.optimum;

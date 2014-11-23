@@ -1,6 +1,18 @@
 function folds = generate_folds( n, varargin )
 %GENERATE_FOLDS Generates k-fold cross-validation folds.
-% todo
+%
+%- n: the number of instances in the data set
+%- varargin: a list of optional key:value pairs to further configure
+%      the cross-validation procedure
+%  - num_folds: number of folds to use in cross-validation
+%      default: 10
+%  - num_iter: number of cross-validation iterations to perform 
+%      default: 1
+%  - strata: cell array containing strata, e.g. indices of instances that
+%      must be spread out across folds (default: empty)
+%  - clusters: cell array containing clusters, e.g. indices of instances
+%      that must be kept within a single fold
+%      default: empty
 
 %% process varargin
 defaults = struct('num_instances', n, ...
