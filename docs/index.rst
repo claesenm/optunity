@@ -22,11 +22,8 @@ and a plethora of score functions.
 
     **Obtaining Optunity**
 
-    * at PyPI_ (releases)
-    * at GitHub_ (development)
-
-.. _PyPI: https://pypi.python.org/pypi/Optunity
-.. _GitHub: https://github.com/claesenm/optunity
+    * at |pypi| (releases)
+    * at |github| (development)
 
 From an optimization point of view, the tuning problem can be considered as 
 follows: the objective function is non-convex, non-smooth and 

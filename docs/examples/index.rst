@@ -2,8 +2,12 @@
 Examples
 ===========
 
+.. include:: /global.rst
+
 Here you can find a variety of examples to illustrate how Optunity can be used in tandem with other machine learning software.
 We have split the examples per language and library.
+
+To contribute examples, please send us a pull request on Github_.
 
 ..
     README: KEEP THE EXAMPLE PAGES TIDY AND STRUCTURED
