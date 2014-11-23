@@ -136,4 +136,12 @@ This must be decorated with cross-validation, for instance::
 
     x = (1:10)';
     cvf = optunity.cross_validate(@optunity_cv_fun, x);
+
+    % evaluate the function: this will return a cross-validation result
     performance = cvf(struct('x',1,'y',2));
+
+.. warning:: 
+
+    After decorating with cross-validation, the objective function should have a single argument,
+    namely a struct of hyperparameters.
+
