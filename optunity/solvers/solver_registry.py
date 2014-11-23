@@ -74,8 +74,8 @@ def manual():
         manual.append(name + ' :: ' + cls.desc_brief)
     manual.append(' ')
     manual.append("For a solver-specific manual, include its name in the request.")
-    manual.append("For more detailed info, please consult the Optunity user wiki at:")
-    manual.append("http://optunity.readthedocs.org/en/latest/")
+    manual.append("For more detailed info, please consult the Optunity documentation at:")
+    manual.append("http://docs.optunity.net")
     return manual
 
 
