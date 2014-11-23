@@ -9,7 +9,16 @@ For a general overview, we recommend reading the :doc:`/user/index`.
 For installation instructions, please refer to |installation|.
 
 Whenever the Python API requires a dictionary, we use a MATLAB `struct`. As MATLAB has no keyword
-arguments, we use `varargs` with the convention of `<name>`, `<value>`.
+arguments, we use `varargs` with the convention of `<name>`, `<value>`. Please refer to each
+function's help for details on how to use it.
+
+.. warning:: Since MATLAB does not have keyword arguments, every objective function you define
+    should accept a single struct argument, whose fields represent hyperparameters.
+
+    Example, to model a function :math:`f(x, y) = x + y`::
+
+        f = @(pars) pars.x + pars.y;
+
 
 For MATLAB, the following main features are provided:
 
@@ -102,3 +111,23 @@ Both functions can deal with strata and clusters. You can specify these as a cel
 
 Cross-validation folds are returned as a matrix of `num_instances * num_iter` with entries ranging from 1 to `num_folds` to indicate
 the fold each instance belongs to per iteration.
+
+`optunity.cross_validate()` requires a function handle as its first argument. This is the function that will be decorated, which
+must have the following first arguments: `x_train` and `x_test` (if unsupervised) or `x_train, y_train, x_test, y_test`.
+
+As an example, assume we have a function `optunity_cv_fun(x_train, x_test, pars)`::
+
+    function [ result ] = cv_fun( x_train, x_test, pars )
+    disp('training set:');
+    disp(x_train');
+    disp('test set:');
+    disp(x_test');
+
+    result = -pars.x^2 - pars.y^2;
+    end
+
+This must be decorated with cross-validation, for instance::
+
+    x = (1:10)';
+    cvf = optunity.cross_validate(@optunity_cv_fun, x);
+    performance = cvf(struct('x',1,'y',2));
