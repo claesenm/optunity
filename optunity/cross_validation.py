@@ -239,7 +239,7 @@ def list_mean(list_of_measures):
     [2.0, 5.0]
 
     """
-    return map(mean, zip(*list_of_measures))
+    return list(map(mean, zip(*list_of_measures)))
 
 
 def identity(x):
