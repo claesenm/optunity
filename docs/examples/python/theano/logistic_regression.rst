@@ -43,7 +43,7 @@ The next thing we need is a training function for LR models, based on Theano's e
 
         # Construct Theano expression graph
         p_1 = 1 / (1 + T.exp(-T.dot(x, w) - b))                 # Probability that target = 1
-        prediction = p_1                                        # The prediction thresholded
+        prediction = p_1
         xent = -y * T.log(p_1) - (1-y) * T.log(1-p_1)           # Cross-entropy loss function
         cost = xent.mean() + regularization * (w ** 2).sum()    # The cost to minimize
         gw, gb = T.grad(cost, [w, b])                           # Compute the gradient of the cost
@@ -68,7 +68,6 @@ Now that we know how to train, we can define a modeling strategy with default an
 
 
     def lr_untuned(x_train, y_train, x_test, y_test):
-        # Declare Theano symbolic variables
         predict, w, b = train_lr(x_train, y_train)
         yhat = predict(x_test)
         loss = optunity.metrics.logloss(y_test, yhat)
