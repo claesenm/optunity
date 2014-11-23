@@ -1,4 +1,4 @@
-Solver Overview
+Solver overview
 ===================
 
 .. include:: /global.rst
