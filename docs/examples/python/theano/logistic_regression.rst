@@ -72,10 +72,6 @@ Now that we know how to train, we can define a modeling strategy with default an
         yhat = predict(x_test)
         loss = optunity.metrics.logloss(y_test, yhat)
         brier = optunity.metrics.brier(y_test, yhat)
-        print('+ model: ' + str(b.get_value())[:5] + ' + ' + str(w.get_value()[0])[:5] + ' * x1 + ' + str(w.get_value()[1])[:5] + ' * x2')
-        print('++ log loss in test fold: ' + str(loss))
-        print('++ Brier loss in test fold: ' + str(brier))
-        print('')
         return loss, brier
 
     def lr_tuned(x_train, y_train, x_test, y_test):
@@ -93,10 +89,6 @@ Now that we know how to train, we can define a modeling strategy with default an
         yhat = predict(x_test)
         loss = optunity.metrics.logloss(y_test, yhat)
         brier = optunity.metrics.brier(y_test, yhat)
-        print('+ model: ' + str(b.get_value())[:5] + ' + ' + str(w.get_value()[0])[:5] + ' * x1 + ' + str(w.get_value()[1])[:5] + ' * x2')
-        print('++ log loss in test fold: ' + str(loss))
-        print('++ Brier loss in test fold: ' + str(brier))
-        print('')
         return loss, brier
 
 Note that both modeling functions (train, predict, score) return two score measures (log loss and Brier score). We will evaluate
