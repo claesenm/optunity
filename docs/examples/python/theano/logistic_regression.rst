@@ -113,33 +113,33 @@ Typical output of this script will look like::
 
     evaluating untuned LR model
     + model: -0.18 + 1.679 * x1 + 2.045 * x2
-    ++ log loss in test fold: 17.8422503964
+    ++ log loss in test fold: 0.08921125198
     ++ Brier loss in test fold: 0.0786225946458
 
     + model: -0.36 + 1.449 * x1 + 2.247 * x2
-    ++ log loss in test fold: 16.4341958116
+    ++ log loss in test fold: 0.08217097905
     ++ Brier loss in test fold: 0.070741583014
 
     + model: -0.48 + 1.443 * x1 + 2.187 * x2
-    ++ log loss in test fold: 21.0907130314
+    ++ log loss in test fold: 0.10545356515
     ++ Brier loss in test fold: 0.0941325050801
 
     evaluating tuned LR model
     + model: -0.66 + 2.354 * x1 + 3.441 * x2
-    ++ log loss in test fold: 15.0177449446
+    ++ log loss in test fold: 0.07508872472
     ++ Brier loss in test fold: 0.0718020866519
 
     + model: -0.44 + 2.648 * x1 + 3.817 * x2
-    ++ log loss in test fold: 14.3778358575
+    ++ log loss in test fold: 0.0718891792875
     ++ Brier loss in test fold: 0.0638209513581
 
     + model: -0.45 + 2.689 * x1 + 3.858 * x2
-    ++ log loss in test fold: 12.7616071862
+    ++ log loss in test fold: 0.06380803593
     ++ Brier loss in test fold: 0.0590374290183
 
     Log loss (lower is better):
-    untuned: 18.4557197465
-    tuned: 14.0523959961
+    untuned: 0.0922785987325000
+    tuned: 0.070261979980
 
     Brier loss (lower is better):
     untuned: 0.0811655609133
