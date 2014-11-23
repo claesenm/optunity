@@ -7,6 +7,8 @@
 
 ==========
 
+.. include:: /global.rst
+
 Optunity is a library containing various optimizers for hyperparameter tuning.
 Hyperparameter tuning is a recurrent problem in many machine learning tasks,
 both supervised and unsupervised.This package provides several distinct approaches 
@@ -31,7 +33,7 @@ typically expensive to evaluate. Tuning examples include optimizing regularizati
 or kernel parameters.
 
 The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
-Optunity is currently also supported in :doc:`R </wrappers/R/index>`, :doc:`MATLAB </wrappers/matlab/index>` and Java through Jython.
+Optunity is currently also supported in |wrapper-r|, |wrapper-matlab| and Java through Jython.
 
 Optunity is free software, using a BSD-style license.
 
@@ -45,7 +47,7 @@ This involves optimizing the hyperparameters ``gamma`` and ``C``:
     :language: python
     :emphasize-lines: 6,13
 
-For more examples, please see our :doc:`examples page </examples/index>`.
+For more examples, please see our |examples|.
 
 Quick setup
 ----------------
@@ -80,7 +82,8 @@ Installation may require superuser priviliges.
 Developer Guide
 -----------------
 
-- :doc:`API reference <api/optunity>`
+|api|
+
 
 Contributors
 ------------
