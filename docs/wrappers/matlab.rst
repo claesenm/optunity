@@ -25,14 +25,15 @@ available in MATLAB.
 .. note::
 
     If you experience any issues with the MATLAB wrapper, create a global variable `DEBUG_OPTUNITY`
-    and set its value to true. This will show all debugging output. Please submit this output
-    as an issue at |issues| to obtain help::
+    and set its value to true. This will show all debugging output::
 
         global DEBUG_OPTUNITY
         DEBUG_OPTUNITY=true;
 
+    Please submit this output as an issue at |new-issue| to obtain help.
+
     If MATLAB hangs while using Optunity there is a communication issue. This should not occur, 
-    if you encounter this please file an issue at |issues|. Currently the only way out of this is to kill MATLAB.
+    if you encounter this please file an issue at |new-issue|. Currently the only way out of this is to kill MATLAB.
 
 .. _manual:
 
