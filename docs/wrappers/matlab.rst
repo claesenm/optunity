@@ -32,7 +32,7 @@ available in MATLAB.
         DEBUG_OPTUNITY=true;
 
     If MATLAB hangs while using Optunity there is a communication issue. This should not occur, 
-    if you encounter this please file an |issue|. Currently the only way out of this is to kill MATLAB.
+    if you encounter this please file an issue at |issues|. Currently the only way out of this is to kill MATLAB.
 
 .. _manual:
 
