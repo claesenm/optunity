@@ -13,8 +13,11 @@ arguments, we use `varargs` with the convention of `<name>`, `<value>`.
 
 For MATLAB, the following main features are provided:
 
-.. toctree::
-    :maxdepth: 1
+-   :ref:`manual`
+
+-   :ref:`optimizing`
+
+-   :ref:`cross-validation`
 
 The file `<optunity>/wrappers/matlab/optunity_example.m` contains code for all the functionality that is
 available in MATLAB.
@@ -31,7 +34,7 @@ available in MATLAB.
     If MATLAB hangs while using Optunity there is a communication issue. This should not occur, 
     if you encounter this please file an |issue|. Currently the only way out of this is to kill MATLAB.
 
-.. manual_:
+.. _manual:
 
 Manual
 -------
@@ -39,7 +42,13 @@ Manual
 To obtain the manual of all solvers and a list of available solver names, use `optunity.manual()`.
 If you specify a solver name, its manual will be printed out.
 
-.. optimizing_:
+You can verify whether or not a certain solver, for instance `cma-es`, is available like this::
+
+    solvers = optunity.manual();
+    available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
+
+
+.. _optimizing:
 
 Optimizing hyperparameters
 ---------------------------
@@ -71,7 +80,13 @@ As an example, to add constraints :math:`x < 3` and :math:`y \geq 0`, we use the
 Information about the solvers can be obtained at |solvers|. To learn about the specific parameter names
 for each solver, check out the |api-solvers|.
 
-.. cross-validation_:
+.. _cross-validation:
 
 Cross-validation
 -----------------
+
+Two functions are provided for cross-validation:
+
+-   `optunity.generate_folds()`: generates a set of cross-validation folds
+
+-   `optunity.cross_validate()`: function decorator, to perform cross-validation with specified function
