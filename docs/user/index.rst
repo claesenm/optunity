@@ -86,10 +86,10 @@ to the objective function, please consult :doc:`this page </user/constraints`.
 .. toctree::
     :hidden:
 
-    /user/solvers
-    /user/cross_validation
-    /user/score_functions
-    /user/constraints
+    |solvers|
+    |cross_validation|
+    |metrics|
+    |constraints|
 
 Terminology
 ------------

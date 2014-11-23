@@ -262,7 +262,7 @@ def logloss(y, yhat):
                 filter(lambda i: i[0], zip(y, yhat))])
     loss += sum([math.log(1 - pred) for _, pred in
                 filter(lambda i: not i[0], zip(y, yhat))])
-    return -loss
+    return - float(loss) / len(y)
 
 
 def brier(y, yhat, positive=True):
