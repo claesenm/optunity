@@ -42,7 +42,7 @@ plot(Xt, Yt,'k');
 plot(Xt, Yt_lssvm, 'r');
 plot(Xt, Yt_optunity, 'b');
 plot(X, Y, 'b.');
-axis([-2, 2, -0.5, 1.5]);
+axis([-3, 3, -0.5, 1.5]);
 legend('true function', ['LS-SVM (test mse=',num2str(mse_lssvm),')'], ...
     ['Optunity (test mse=',num2str(mse_optunity),')']);
 xlabel('X');
