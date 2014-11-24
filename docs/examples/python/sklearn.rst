@@ -5,4 +5,4 @@ scikit-learn
     :maxdepth: 1
     :glob:
 
-    /examples/python/sklearn/*
+    sklearn/*
