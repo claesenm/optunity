@@ -3,7 +3,6 @@ close all; clear;
 fun = @(X) sinc(X) + 0.03 * sin(15*pi * X);
 
 %% construct the data set
-% X = (-3:0.1:3)';
 X = randn(200, 1);
 Y = fun(X)+0.1*randn(length(X),1);
 
@@ -16,7 +15,7 @@ disp(['LS-SVMlab tuning results: gam=',num2str(lssvm_gam),', sig2=',num2str(lssv
 
 
 %% tune with Optunity
-% objective function: 10-fold cross-validated ma
+% objective function: 10-fold cross-validated mse
 obj_fun = optunity.cross_validate(@demo_regression_mse, X, 'y', Y, 'num_folds', 10);
 % perform tuning, using 100 function evaluations:
 %   1 < gam < 30
