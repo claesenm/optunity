@@ -17,7 +17,7 @@ disp(['LS-SVMlab tuning results: gam=',num2str(lssvm_gam),', sig2=',num2str(lssv
 
 %% tune with Optunity
 % objective function: twice iterated 10-fold cross-validated ma
-obj_fun = optunity.cross_validate(@regression_mse, X, 'y', Y, 'num_folds', 10);
+obj_fun = optunity.cross_validate(@demo_regression_mse, X, 'y', Y, 'num_folds', 10);
 % perform tuning, using 100 function evaluations:
 %   1 < gam < 30
 %   0.01 < sig2 < 1

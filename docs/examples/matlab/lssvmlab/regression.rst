@@ -3,7 +3,7 @@ Least-squares SVM regression
 
 .. include:: /global.rst
 
-You can find a MATLAB script for this example in `<optunity>/wrappers/matlab/examples/` in your Optunity release.
+You can find a MATLAB script for this example in `<optunity>/wrappers/matlab/example_lssvmlab/demo_regression.m` in your Optunity release.
 
 In this example, we will perform nonlinear regression using LS-SVM with RBF kernel using the LS-SVMlab toolbox. 
 In this case, we have to tune two hyperparameters: `gam` (regularization) and `sig2` (kernel bandwidth).
@@ -30,7 +30,7 @@ Tuning with LS-SVMlab's built in procedure (in this case a combination of couple
     type = 'function estimation';
     [alpha_lssvm,b_lssvm] = trainlssvm({X,Y,type,lssvm_gam,lssvm_sig2,'RBF_kernel'});
 
-To do the same with Optunity, we must first define an objective function, lets say `regression_mse.m`::
+To do the same with Optunity, we must first define an objective function, lets say `demo_regression_mse.m`::
 
     function [ mse ] = demo_regression_mse( x_train, y_train, x_test, y_test, pars )
 
@@ -49,7 +49,7 @@ To do the same with Optunity, we must first define an objective function, lets s
 The objective function seems quite involved but it's essentially training a model, predicting test data and evaluating. 
 The code to perform the actual tuning (we use 10-fold cross-validation)::
 
-    obj_fun = optunity.cross_validate(@regression_mse, X, 'y', Y, 'num_folds', 10);
+    obj_fun = optunity.cross_validate(@demo_regression_mse, X, 'y', Y, 'num_folds', 10);
     opt_pars = optunity.minimize(obj_fun, 100, 'gam', [1, 30], 'sig2', [0.01, 1]);
     [alpha_optunity,b_optunity] = trainlssvm({X, Y, type, ...
             opt_pars.gam, opt_pars.sig2, 'RBF_kernel'});
