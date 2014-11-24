@@ -33,7 +33,7 @@ Tuning with LS-SVMlab's built in procedure (in this case a combination of couple
             'leaveoneoutlssvm', {'misclass'});
     [alpha_lssvm,b_lssvm] = trainlssvm({X,Y,type,lssvm_gam,lssvm_sig2,'RBF_kernel'});
 
-To do the same with Optunity, we must first define an objective function, lets say `demo_regression_mse.m`::
+To do the same with Optunity, we must first define an objective function, lets say `demo_classification_misclass.m`::
 
     function [ misclass ] = demo_classification_misclass( x_train, y_train, x_test, y_test, pars )
 
