@@ -9,7 +9,7 @@ manual(solver_name = "")
 \item{solver_name}{solver name, or an empty string for a of all available solvers}
 }
 \value{
-solver name(s) or list of available solvers if solver_name=''
+Solver name(s) or list of available solvers if solver_name=''. Also prints out manual for the solver.
 }
 \description{
 Displays manuals for optimization methods in Optunity package.

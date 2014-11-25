@@ -1,7 +1,7 @@
 #' Displays manuals for optimization methods in Optunity package.
 #'
 #' @param solver_name solver name, or an empty string for a of all available solvers
-#' @return solver name(s) or list of available solvers if solver_name='' 
+#' @return Solver name(s) or list of available solvers if solver_name=''. Also prints out manual for the solver.
 #' @seealso \code{\link{optimize2}} low level function for running different solvers
 #' @export
 #' @examples
@@ -19,6 +19,14 @@ manual <- function(solver_name=''){
     return (content$solver_names)
 }
 
+#' Tests if solver can be made with supplied arguments.
+#'
+#' @param solver_name solver name
+#' @return TRUE if succeeds, otherwise throws error
+#' @seealso \code{\link{manual}} for list of solvers and their arguments
+#' @export
+#' @examples
+#' make_solver('random search', num_evals = 30)
 make_solver <- function(solver_name, ...){
   cons <- launch()
   on.exit(close_pipes(cons))
@@ -33,6 +41,21 @@ make_solver <- function(solver_name, ...){
   return(TRUE)
 }
 
+#' Generates folds for cross-validation.
+#'
+#' @param num_instances number of samples
+#' @param num_folds     number of folds
+#' @param num_iter      number of iterations (for doing repeated cross-validation)
+#' @param strata        (optional) list of strata, each strata is a list of samples ids that will be stratified (balanced) among the folds
+#' @param clusters      (optional) list of clusters, each cluster is a list of samples that always goes to the same fold
+#' @return matrix of folds, size: num_instances x num_iter
+#' @seealso \code{\link{cv.setup}} for full cross-validation approach
+#' @export
+#' @examples
+#' folds1 = generate_folds(num_instances = 20, num_folds = 5)
+#' folds2 = generate_folds(num_instances = 20, num_folds = 5, num_iter=2)
+#' ## stratified folds
+#' folds3 = generate_folds(num_instances = 100, strata = list(1:50, 51:100))
 generate_folds <- function(num_instances, num_folds=5,
                            num_iter=1, strata=list(),
                            clusters=list()){
@@ -152,6 +175,29 @@ check_box <- function(args, methodName) {
   }
 }
 
+#' Low level function to call any optimizer with custom configuration.
+#'
+#' @param f             function to be optimized
+#' @param solver_name   name of the solver (see manual() for available solvers)
+#' @param solver_config list of configuration options for the solver
+#' @param constraints   list of constraints, if needed
+#' @param maximize      whether to maximize (TRUE) or minimize (FALSE)
+#' @param max_evals     number of evaluations to perform
+#' @param call_log      currently not used.
+#' @param default       default value given to solvers when constraints are violated
+#' @return result of optimization
+#' @seealso \code{\link{grid_search}}, \code{\link{random_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for high level methods for optimization.
+#' @export
+#' @examples
+#' ## function to be minimized
+#' f <- function(x,y,z) { (x-1)^2 + (y-1)^2 + (z-2)^2 }
+#' ## bounds for parameters
+#' args = list(x = c(-10, 10), y = c(-10, 10), z = c(-10, 10))
+#' ## particle swarm setup
+#' args$num_particles   = 8
+#' args$num_generations = 10
+#'
+#' optimize2(f, solver_name="particle swarm", maximize=FALSE, solver_config =args )
 optimize2 <- function(f,
                       solver_name,
                       solver_config = list(),
@@ -159,9 +205,7 @@ optimize2 <- function(f,
                       maximize    = TRUE,
                       max_evals   = 0,
                       call_log    = NULL,
-                      return_call_log = FALSE,
                       default = NULL){
-    if ( ! is.logical(return_call_log)) stop("Input 'return_call_log' has to be TRUE or FALSE.")
     if ( ! is.logical(maximize))        stop("Input 'maximize' has to be TRUE or FALSE.")
 
     cons <- launch()
@@ -171,7 +215,6 @@ optimize2 <- function(f,
       optimize = list(max_evals = max_evals, maximize=maximize),
       solver   = c( list(solver_name = solver_name),
                     solver_config )
-                    #return_call_log = return_call_log)
     )
 
     if (!is.null(call_log)) msg$call_log <- call_log
