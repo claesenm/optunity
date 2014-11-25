@@ -1,4 +1,12 @@
-
+#' Displays manuals for optimization methods in Optunity package.
+#'
+#' @param solver_name solver name, or an empty string for a of all available solvers
+#' @return solver name(s) or list of available solvers if solver_name='' 
+#' @seealso \code{\link{optimize2}} low level function for running different solvers
+#' @export
+#' @examples
+#' manual('')
+#' manual('particle_swarm')
 manual <- function(solver_name=''){
     cons <- launch()
     on.exit(close_pipes(cons))
