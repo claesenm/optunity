@@ -85,6 +85,18 @@ generate_folds <- function(num_instances, num_folds=5,
   return (folds)
 }
 
+#' Finds optimum for function using random search.
+#'
+#' @param f         function to be optimized
+#' @param ...       box constraints of form x = c(-5, 5) where x is input to f
+#' @param maximize  whether to maximize or minimize
+#' @param num_evals maximum number of evaluations of f
+#' @return found solution
+#' @seealso \code{\link{grid_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for high level methods for optimization.
+#' @export
+#' @examples
+#' f <- function(x,y) -x*x - 0.5*y*y
+#' solution <- random_search(f, x=c(-5,5), y=c(-5,5), num_evals=40 )
 random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
   args <- list(...)
