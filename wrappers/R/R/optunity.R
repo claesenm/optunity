@@ -88,15 +88,19 @@ generate_folds <- function(num_instances, num_folds=5,
 #' Finds optimum for function using random search.
 #'
 #' @param f         function to be optimized
-#' @param ...       box constraints of form x = c(-5, 5) where x is input to f
+#' @param ...       box constraints of form x = c(-5, 5) where x is input parameter to f
 #' @param maximize  whether to maximize or minimize
 #' @param num_evals maximum number of evaluations of f
-#' @return found solution
-#' @seealso \code{\link{grid_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for high level methods for optimization.
+#' @return solution and details
+#' @seealso \code{\link{grid_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for other high level methods for optimization.
 #' @export
 #' @examples
 #' f <- function(x,y) -x*x - 0.5*y*y
-#' solution <- random_search(f, x=c(-5,5), y=c(-5,5), num_evals=40 )
+#' opt <- random_search(f, x=c(-5,5), y=c(-5,5), num_evals=40 )
+#' ## solution found
+#' opt$solution
+#' ## value of f at the solution
+#' opt$optimum
 random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "random search", "num_evals": 5, "x":[0,10]} }
   args <- list(...)
@@ -106,6 +110,21 @@ random_search <- function(f, ..., maximize  = TRUE, num_evals = 50) {
   return( optimize2(f, solver_name="random search", maximize=maximize, solver_config = args) )
 }
 
+#' Finds optimum for function using grid search.
+#'
+#' @param f         function to be optimized
+#' @param ...       grid in the form x = c(-5, -1, 1, 5) where x is input parameter to f
+#' @param maximize  whether to maximize or minimize
+#' @return solution and details
+#' @seealso \code{\link{random_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for other high level methods for optimization.
+#' @export
+#' @examples
+#' f <- function(x,y) -x*x - 0.5*y*y
+#' opt <- grid_search(f, x=seq(-5, 5, 2), y=seq(-5, 5, 2))
+#' ## solution found
+#' opt$solution
+#' ## value of f at the solution
+#' opt$optimum
 grid_search <- function(f, ..., maximize  = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "grid search", "x":[0,10]}}
   args <- list(...)
@@ -119,6 +138,23 @@ grid_search <- function(f, ..., maximize  = TRUE) {
   return( optimize2(f, solver_name="grid search", maximize=maximize, solver_config = args) )
 }
 
+#' Finds optimum for function using Nelder-Mead.
+#'
+#' @param f         function to be optimized
+#' @param ...       starting point in the form x = 5, where x is input parameter to f
+#' @param maximize  whether to maximize or minimize
+#' @param num_evals maximum number of evaluations of f
+#' @return solution and details
+#' @details Nelder-Mead is efficient if f is convex, otherwise it can easily get stuck into local minima.
+#' @seealso \code{\link{grid_search}}, \code{\link{random_search}}, and \code{\link{particle_swarm}} for other high level methods for optimization.
+#' @export
+#' @examples
+#' f <- function(x,y) -x*x - 0.5*y*y
+#' opt <- nelder_mead(f, x=5, y=5)
+#' ## solution found
+#' opt$solution
+#' ## value of f at the solution
+#' opt$optimum
 nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "nelder-mead", "x":2}}
   args <- list(...)
@@ -129,6 +165,23 @@ nelder_mead <- function(f, ..., num_evals = 50, maximize = TRUE) {
   return( optimize2(f, solver_name="nelder-mead", maximize=maximize, solver_config = args) )
 }
 
+#' Finds optimum for function using Particle Swarm.
+#'
+#' @param f         function to be optimized
+#' @param ...       box constraints of form x = c(-5, 5) where x is input parameter to f
+#' @param num_particles   number of particles
+#' @param num_generations number of generations
+#' @param maximize  whether to maximize or minimize
+#' @return solution and details
+#' @seealso \code{\link{grid_search}}, \code{\link{random_search}}, and \code{\link{particle_swarm}} for other high level methods for optimization.
+#' @export
+#' @examples
+#' f <- function(x,y) -x*x - 0.5*y*y
+#' opt <- particle_swarm(f, x=c(-5, 5), y=c(-5, 5) )
+#' ## solution found
+#' opt$solution
+#' ## value of f at the solution
+#' opt$optimum
 particle_swarm <- function(f, ..., num_particles=5, num_generations=10, maximize = TRUE) {
   # {"optimize" : {"max_evals": 0}, "solver": {"solver_name" : "particle swarm", "x":[2, 6]}}
   args <- list(...)

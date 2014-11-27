@@ -8,23 +8,27 @@ random_search(f, ..., maximize = TRUE, num_evals = 50)
 \arguments{
 \item{f}{function to be optimized}
 
-\item{...}{box constraints of form x = c(-5, 5) where x is input to f}
+\item{...}{box constraints of form x = c(-5, 5) where x is input parameter to f}
 
 \item{maximize}{whether to maximize or minimize}
 
 \item{num_evals}{maximum number of evaluations of f}
 }
 \value{
-found solution
+solution and details
 }
 \description{
 Finds optimum for function using random search.
 }
 \examples{
 f <- function(x,y) -x*x - 0.5*y*y
-solution <- random_search(f, x=c(-5,5), y=c(-5,5), num_evals=40 )
+opt <- random_search(f, x=c(-5,5), y=c(-5,5), num_evals=40 )
+## solution found
+opt$solution
+## value of f at the solution
+opt$optimum
 }
 \seealso{
-\code{\link{grid_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for high level methods for optimization.
+\code{\link{grid_search}}, \code{\link{nelder_mead}} and \code{\link{particle_swarm}} for other high level methods for optimization.
 }
 
