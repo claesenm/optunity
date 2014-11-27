@@ -80,6 +80,37 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
 }
 
 
+#' Runs cross-validation on predict-train function
+#'
+#' @param setup cv settings created by cv.setup
+#' @param f     function that trains a model and makes prediction. Its 4 first inputs have to be xtrain, ytrain, xtest, ytest. Should return predictions of xtest or final score, depending on cv setup, see details.
+#' @param ...   additional parameters that will be passed to f
+#' @return cross-validation scores for method f 
+#' @seealso \code{\link{cv.setup}} for creating cv.setup object and \code{\link{cv.particle_swarm}} for finding optimal parameters
+#' @details 
+#' There are two modes for f, depending on cv.setup's score parameter, if:
+#' \itemize{
+#'   \item{score=a_score_function}{f should perform train-predict: train model on xtrain and ytrain, then return predictions on xtest}
+#'   \item{score='user.score'}{f should perform train-predict-score: train model on xtrain and ytrain, then make predictions on xtest, finally return score based on ytest.}
+#' }
+#' @export
+#' @examples
+#' ## data
+#' x <- matrix(runif(50*40), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#'
+#' ## ridge regression
+#' regr <- function(x, y, xtest, ytest, reg=0) {
+#'     C =  diag(x=reg, ncol(x))
+#'     ## train model
+#'     beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'     ## make predictions for xtest
+#'     xtest %*% beta
+#' }
+#' cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 2)
+#' ## checking accuracy with different regularization
+#' result1 <- cv.run(cv, regr, reg = 0.1)
+#' result2 <- cv.run(cv, regr, reg = 1.0)
 cv.run <- function(setup, f, ...) {
   if ( ! inherits(setup, "cv.setup"))
     stop("Input setup has to be of class 'cv.setup'. Use cv.setup() to create it.")
@@ -150,6 +181,7 @@ cv.run <- function(setup, f, ...) {
   return( out )
 }
 
+#' @describeIn grid_search Cross-validation with grid search
 cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
