@@ -3,8 +3,8 @@
 \alias{generate_folds}
 \title{Generates folds for cross-validation.}
 \usage{
-generate_folds(num_instances, num_folds = 5, num_iter = 1,
-  strata = list(), clusters = list())
+generate_folds(num_instances, num_folds = 5, num_iter = 1, strata = NULL,
+  clusters = NULL)
 }
 \arguments{
 \item{num_instances}{number of samples}

@@ -1,4 +1,37 @@
 
+#' Creates cross-validation setup
+#'
+#' @param x     data matrix
+#' @param y     output labels, useful for supervised setup
+#' @param score score function, like mean.se, or a list of functions. Set it to 'user.score' if evaluated functions (in cv.run, cv.particle_swarm) will also perform scoring.
+#' @inheritParams generate_folds
+#' @param seed  set seed for the random generator for generating folds
+#' @return object of class 'cv.setup' to be used for cv.run and optimization methods, like cv.particle_swarm
+#' @seealso \code{\link{cv.run}} for running cross-validation and \code{\link{cv.particle_swarm}} for finding optimal parameters
+#' @details cv.setup is used to make a setup by passing in your data as x and y (later is optional). The cv.setup object will define how the data will be partitioned and the score(s) computed in in the later commands.
+#' @export
+#' @examples
+#' ## data
+#' x <- matrix(runif(50*40), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#'
+#' ## ridge regression
+#' regr <- function(x, y, xtest, ytest, reg=0) {
+#'     C =  diag(x=reg, ncol(x))
+#'     beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'     ## make predictions for xtest
+#'     xtest %*% beta
+#' }
+#'
+#' ## compute mean squared error with CV with 2 repeats (iterations) and 10 folds
+#' cv <- cv.setup(x, y, score=mean.se, num_folds = 10, num_iter = 2)
+#' result <- cv.run(cv, regr)
+#' result$score.mean
+#'
+#' ## compute both mean squared error and absolute error with CV
+#' cv <- cv.setup(x, y, score=list(mse=mean.se, mae=mean.ae), num_folds = 10, num_iter = 2)
+#' result <- cv.run(cv, regr)
+#' result$score.mean
 cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1, 
                      strata=NULL, clusters=NULL,
                      seed=NULL) {

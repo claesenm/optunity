@@ -57,8 +57,8 @@ make_solver <- function(solver_name, ...){
 #' ## stratified folds
 #' folds3 = generate_folds(num_instances = 100, strata = list(1:50, 51:100))
 generate_folds <- function(num_instances, num_folds=5,
-                           num_iter=1, strata=list(),
-                           clusters=list()){
+                           num_iter=1, strata=NULL,
+                           clusters=NULL){
   if ( ! is.numeric(num_iter)) stop("num_iter has to be numeric.")
   if ( ! is.numeric(num_folds)) stop("num_folds has to be numeric.")
   
