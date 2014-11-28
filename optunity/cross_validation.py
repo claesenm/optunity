@@ -59,12 +59,6 @@ __all__ = ['select', 'random_permutation', 'cross_validated',
            'generate_folds', 'strata_by_labels', 'mean', 'identity',
            'list_mean']
 
-_spark_available = True
-try:
-    import pyspark
-except ImportError:
-    _spark_available = False
-
 
 def select(collection, indices):
     """Selects the subset specified by indices from collection.
@@ -76,9 +70,6 @@ def select(collection, indices):
     try:
         return collection[indices, ...]
     except TypeError: # not dealing with numpy or comparable, probably a list
-        if pyspark and isinstance(collection, pyspark.rdd.RDD):
-            indexset = set(indices)
-            return collection.zipWithIndex().filter(lambda x: x[1] in indexset).map(lambda x: x[0])
         return [collection[i] for i in indices]
 
 
@@ -293,17 +284,9 @@ class cross_validated_callable(object):
             assert (len(folds[0]) == num_folds), 'Number of folds does not match num_folds.'
             self._folds = folds
         else:
-            self._folds = [generate_folds(self.len_x, num_folds, self.strata, self.clusters)
+            self._folds = [generate_folds(len(x), num_folds, self.strata, self.clusters)
                            for _ in range(num_iter)]
         functools.update_wrapper(self, f)
-
-    @property
-    def len_x(self):
-        """ Number of samples in x """
-        if pyspark and isinstance(self._x, pyspark.rdd.RDD):
-            return self._x.count()
-        return len(self._x)
-
 
     @property
     def reduce(self):
@@ -369,7 +352,7 @@ class cross_validated_callable(object):
                 kwargs[argname] = arg
 
         if self.regenerate_folds:
-            self._folds = [generate_folds(self.len_x, self.num_folds, self.strata)
+            self._folds = [generate_folds(len(x), self.num_folds, self.strata)
                            for _ in range(self.num_iter)]
         scores = []
         for folds in self.folds:
