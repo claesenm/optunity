@@ -76,7 +76,7 @@ def select(collection, indices):
     try:
         return collection[indices, ...]
     except TypeError: # not dealing with numpy or comparable, probably a list
-        if pyspark and isinstance(collection, pyspark.rdd.RDD):
+        if _spark_available and isinstance(collection, pyspark.rdd.RDD):
             indexset = set(indices)
             return collection.zipWithIndex().filter(lambda x: x[1] in indexset).map(lambda x: x[0])
         return [collection[i] for i in indices]
