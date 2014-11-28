@@ -31,14 +31,14 @@ regr.score2 <- function(x, y, xtest, ytest, reg=0) {
 
 
 test_that("cv.setup can be created", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 10, num_iter = 2)
+  cv <- cv.setup(x, y, score=mean_se, num_folds = 10, num_iter = 2)
   expect_equal( cv$supervised, TRUE )
   expect_equal( nrow(cv$folds), 50 )
   expect_equal( ncol(cv$folds), 2 )
 })
 
 test_that("cv.run works with regression", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 2)
+  cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
   result <- cv.run(cv, regr)
   expect_equal(ncol(result$scores), cv$num_folds)
   expect_equal(nrow(result$scores), cv$num_iter)
@@ -46,7 +46,7 @@ test_that("cv.run works with regression", {
 })
 
 test_that("1-iter cv.run works with regression", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 1)
+  cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 1)
   result <- cv.run(cv, regr)
   expect_equal(ncol(result$scores), cv$num_folds)
   expect_equal(nrow(result$scores), cv$num_iter)
@@ -54,7 +54,7 @@ test_that("1-iter cv.run works with regression", {
 })
 
 test_that("cv.run works with regression that has 1 param", {
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 2)
+  cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
   ## linear regression + L2 regularization
   result <- cv.run(cv, regr, reg = 2.5)
   expect_equal(ncol(result$scores), cv$num_folds)
@@ -64,7 +64,7 @@ test_that("cv.run works with regression that has 1 param", {
 
 test_that("cv.run and grid_search over lambda",{
   ## linear regression + L2 regularization
-  cv <- cv.setup(x, y, score=mean.se, num_folds = 3, num_iter = 2)
+  cv <- cv.setup(x, y, score=mean_se, num_folds = 3, num_iter = 2)
   regr.cv <- function(reg) cv.run(cv, regr, reg = reg)$score.mean
   
   ## optimize
@@ -74,7 +74,7 @@ test_that("cv.run and grid_search over lambda",{
 })
 
 test_that("cv.run works with multiple score functions", {
-  cv <- cv.setup(x, y, score=list(mse=mean.se, mae=mean.ae), num_folds = 3, num_iter = 2)
+  cv <- cv.setup(x, y, score=list(mse=mean_se, mae=mean_ae), num_folds = 3, num_iter = 2)
   result <- cv.run(cv, regr)
   expect_equal(dim(result$scores), c(cv$num_iter, cv$num_folds, length(cv$score)) )
   expect_equal(length(result$score.mean), 2)

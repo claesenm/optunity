@@ -3,7 +3,7 @@
 #'
 #' @param x     data matrix
 #' @param y     output labels, useful for supervised setup
-#' @param score score function, like mean.se, or a list of functions. Set it to 'user.score' if evaluated functions (in cv.run, cv.particle_swarm) will also perform scoring.
+#' @param score score function, like mean_se, or a list of functions. Set it to 'user.score' if evaluated functions (in cv.run, cv.particle_swarm) will also perform scoring.
 #' @inheritParams generate_folds
 #' @param seed  set seed for the random generator for generating folds
 #' @return object of class 'cv.setup' to be used for cv.run and optimization methods, like cv.particle_swarm
@@ -24,13 +24,26 @@
 #' }
 #'
 #' ## compute mean squared error with CV with 2 repeats (iterations) and 10 folds
-#' cv <- cv.setup(x, y, score=mean.se, num_folds = 10, num_iter = 2)
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 10, num_iter = 2)
 #' result <- cv.run(cv, regr)
 #' result$score.mean
 #'
 #' ## compute both mean squared error and absolute error with CV
-#' cv <- cv.setup(x, y, score=list(mse=mean.se, mae=mean.ae), num_folds = 10, num_iter = 2)
+#' cv <- cv.setup(x, y, score=list(mse=mean_se, mae=mean_ae), num_folds = 10, num_iter = 2)
 #' result <- cv.run(cv, regr)
+#' result$score.mean
+#'
+#'
+#' ###### Example of user.score #######
+#' ## linear regression with own scoring function
+#' regr.score <- function(x, y, xtest, ytest, reg=0) {
+#'   C =  diag(x=reg, ncol(x))
+#'   beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'   sum((xtest %*% beta - ytest)^2)
+#' }
+#' 
+#' cv <- cv.setup(x, y, score="user.score", num_folds = 3, num_iter = 2)
+#' result <- cv.run(cv, regr.score, reg = 0.1)
 #' result$score.mean
 cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1, 
                      strata=NULL, clusters=NULL,
@@ -39,7 +52,7 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
     stop("x has to be either a matrix, data.frame or of class Matrix.")
   
   if (missing(score))
-    stop("Please set score to 'user.score' or provide score function(ytrue, yscore), like accuracy for classification or mean.se for regression. If score='user.score' then f has to return score(s) instead of predictions.")
+    stop("Please set score to 'user.score' or provide score function(ytrue, yscore), like accuracy for classification or mean_se for regression. If score='user.score' then f has to return score(s) instead of predictions.")
   
   if (!is.list(score) && !is.function(score) && score != 'user.score')
     stop("Score has to be 'user.score', a function or list of scoring functions.")
@@ -107,7 +120,7 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
 #'     ## make predictions for xtest
 #'     xtest %*% beta
 #' }
-#' cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 2)
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
 #' ## checking accuracy with different regularization
 #' result1 <- cv.run(cv, regr, reg = 0.1)
 #' result2 <- cv.run(cv, regr, reg = 1.0)
@@ -181,7 +194,24 @@ cv.run <- function(setup, f, ...) {
   return( out )
 }
 
-#' @describeIn grid_search Cross-validation with grid search
+#' Grid search to find parameters giving best cross-validated score
+#' @inheritParams cv.run
+#' @param ...       grid in the form \code{logreg = -2:3} where logreg is input parameter to f
+#' @param maximize  whether to maximize or minimize the score (first of the scores if cv.setup has several scores)
+#' @param nested    whether to perform nested CV
+#' @seealso \code{\link{cv.run}} for how to define learn-predict function f.
+#' @examples
+#' x <- matrix(runif(50*5), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#' 
+#' ## linear regression
+#' regr <- function(x, y, xtest, ytest, logreg=0) {
+#'   C =  diag(x=exp(logreg), ncol(x))
+#'   beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'   xtest %*% beta
+#' }
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
+#' res <- cv.grid_search(cv, regr, logreg = -2:3, maximize=FALSE )
 cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
@@ -195,6 +225,25 @@ cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
   return(res)
 }
 
+#' Random search to find parameters giving best cross-validated score
+#' @inheritParams cv.run
+#' @param ...       box constraints for parameters in the form \code{logreg = c(-2, 5)} where logreg is input parameter to f
+#' @param maximize  whether to maximize or minimize the score (first of the scores if cv.setup has several scores)
+#' @param num_evals maximum number of parameter evaluations
+#' @param nested    whether to perform nested CV
+#' @seealso \code{\link{cv.run}} for how to define learn-predict function f.
+#' @examples
+#' x <- matrix(runif(50*5), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#' 
+#' ## linear regression
+#' regr <- function(x, y, xtest, ytest, logreg=0) {
+#'   C =  diag(x=exp(logreg), ncol(x))
+#'   beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'   xtest %*% beta
+#' }
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
+#' res <- cv.random_search(cv, regr, logreg = c(-2, 5), num_evals = 10, maximize=FALSE)
 cv.random_search <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nested = FALSE) {
   if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
@@ -208,6 +257,25 @@ cv.random_search <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nes
   return(res)
 }
 
+#' Nelder-Mead optimization to find parameters giving best cross-validated score
+#' @inheritParams cv.run
+#' @param ...       starting point for the parameter search, in the form \code{logreg = 1} where logreg is input for f
+#' @param maximize  whether to maximize or minimize the score (first of the scores if cv.setup has several scores)
+#' @param num_evals maximum number of parameter evaluations
+#' @param nested    whether to perform nested CV
+#' @seealso \code{\link{cv.run}} for how to define learn-predict function f.
+#' @examples
+#' x <- matrix(runif(50*5), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#' 
+#' ## linear regression
+#' regr <- function(x, y, xtest, ytest, logreg=0) {
+#'   C =  diag(x=exp(logreg), ncol(x))
+#'   beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'   xtest %*% beta
+#' }
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
+#' res <- cv.nelder_mead(cv, regr, logreg = 2, num_evals = 10, maximize=FALSE)
 cv.nelder_mead <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nested = FALSE) {
   if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
@@ -221,6 +289,26 @@ cv.nelder_mead <- function(setup, f, ..., maximize = TRUE, num_evals = 50, neste
   return(res)
 }
 
+#' Particle swarm optimization to find parameters giving best cross-validated score
+#' @inheritParams cv.run
+#' @param ...       box constraints for parameters in the form \code{logreg = c(-2, 5)} where logreg is input parameter to f
+#' @param maximize  whether to maximize or minimize the score (first of the scores if cv.setup has several scores)
+#' @param num_particles   number of particles (setting for particle swarm)
+#' @param num_generations number of generations (setting for particle swarm)
+#' @param nested          whether to perform nested CV
+#' @seealso \code{\link{cv.run}} for how to define learn-predict function f.
+#' @examples
+#' x <- matrix(runif(50*5), 50, 40)
+#' y <- x[,1] + 0.5*x[,2] + 0.1*runif(50)
+#' 
+#' ## linear regression
+#' regr <- function(x, y, xtest, ytest, logreg=0) {
+#'   C =  diag(x=exp(logreg), ncol(x))
+#'   beta = solve(t(x) %*% x + C, t(x) %*% y)
+#'   xtest %*% beta
+#' }
+#' cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
+#' res <- cv.particle_swarm(cv, regr, logreg = c(-3, 5), num_particles = 3, num_generations = 4, maximize = FALSE)
 cv.particle_swarm <- function(setup, f, ..., num_particles=5, num_generations=10, maximize = TRUE, nested = FALSE) {
   if (nested) stop("Nested cross-validation is not yet supported.")
   args <- list(...)
@@ -252,15 +340,35 @@ check_cv_args <- function(f, args) {
   }
 }
 
-mean.se <- function(ytrue, yhat) {
+#' Scoring functions for measuring model performance
+#' @param ytrue  true (test) values for y
+#' @param yhat   estimated values for y
+#' @param yprob  estimated probabilities of positive class, used for binary classification
+#' @param yscore ranking scores for computing AUC for ROC and Precision-Recall curve
+#' @param decreasing whether high score corresponds to TRUE (positive) class or FALSE (negative) class
+#' @param top    value between 0.0 and 1.0, the proportion of top ratings used, if 1.0 all are used for computing AUC, if 0.1 then AUC only depends on top 10\%
+#' @param alpha  how many of the top ranked samples are important, used in early discovery metrics to define what is considered 'early', default 20.
+#' @name  Scoring
+NULL
+
+#' @rdname Scoring
+#' @return mean of squared errors between ytrue and yhat
+#' @export
+mean_se <- function(ytrue, yhat) {
   mean((ytrue-yhat)^2)
 }
 
-mean.ae <- function(ytrue, yhat) {
+#' @rdname Scoring
+#' @return mean of absolute errors between ytrue and yhat
+#' @export
+mean_ae <- function(ytrue, yhat) {
   mean(abs(ytrue-yhat))
 }
 
-accuracy.from.p <- function(ytrue, yprob) {
+#' @rdname Scoring
+#' @return proportion of correct predictions with yprob > 0.5 is used as cut-off
+#' @export
+accuracy_from_p <- function(ytrue, yprob) {
   if (is.logical(ytrue)) {
     return( mean(ytrue == (yprob > 0.5)) )
   } else if (is.factor(ytrue)) {
@@ -272,11 +380,17 @@ accuracy.from.p <- function(ytrue, yprob) {
   }
 }
 
+#' @rdname Scoring
+#' @return proportion of correct predictions, i.e. \code{mean(ytrue==yhat)}
+#' @export
 accuracy <- function(ytrue, yhat) {
   mean(ytrue==yhat)
 }
 
-auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
+#' @rdname Scoring
+#' @return Area under ROC curve
+#' @export
+auc_roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
   if (length(ytrue) != length(yscore)) {
     stop(sprintf("length of ytrue(%d) should be the same as length of ycore(%d).", 
                  length(true), length(yscore) ))
@@ -288,7 +402,10 @@ auc.roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
   )
 }
 
-auc.pr <- function(ytrue, yscore, decreasing=TRUE) {
+#' @rdname Scoring
+#' @return Area under precision-recall curve
+#' @export
+auc_pr <- function(ytrue, yscore, decreasing=TRUE) {
   tryCatch( {
     perf <- ROCR::performance(ROCR::prediction(yscore, ytrue), "prec", "rec")
     prec <- perf@y.values[[1]]
@@ -309,11 +426,17 @@ to1or0 <- function(y) {
   return(y)
 }
 
-early.rie <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
+#' @rdname Scoring
+#' @return Early discovery metric RIE (robust initial enhancement)
+#' @export
+early_rie <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
   enrichvs::rie(yscore, to1or0(ytrue), decreasing=decreasing, alpha=alpha)
 }
 
-early.bedroc <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
+#' @rdname Scoring
+#' @return Early discovery metric BEDROC (Boltzmann-enhanced discrimination of ROC)
+#' @export
+early_bedroc <- function(ytrue, yscore, decreasing=TRUE, alpha=20.0) {
   enrichvs::bedroc(yscore, to1or0(ytrue), decreasing=TRUE, alpha=20.0)
 }
 

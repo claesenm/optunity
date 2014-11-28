@@ -11,7 +11,7 @@ cv.setup(x, y = NULL, score, num_folds = 5, num_iter = 1, strata = NULL,
 
 \item{y}{output labels, useful for supervised setup}
 
-\item{score}{score function, like mean.se, or a list of functions. Set it to 'user.score' if evaluated functions (in cv.run, cv.particle_swarm) will also perform scoring.}
+\item{score}{score function, like mean_se, or a list of functions. Set it to 'user.score' if evaluated functions (in cv.run, cv.particle_swarm) will also perform scoring.}
 
 \item{num_folds}{number of folds}
 
@@ -46,13 +46,26 @@ regr <- function(x, y, xtest, ytest, reg=0) {
 }
 
 ## compute mean squared error with CV with 2 repeats (iterations) and 10 folds
-cv <- cv.setup(x, y, score=mean.se, num_folds = 10, num_iter = 2)
+cv <- cv.setup(x, y, score=mean_se, num_folds = 10, num_iter = 2)
 result <- cv.run(cv, regr)
 result$score.mean
 
 ## compute both mean squared error and absolute error with CV
-cv <- cv.setup(x, y, score=list(mse=mean.se, mae=mean.ae), num_folds = 10, num_iter = 2)
+cv <- cv.setup(x, y, score=list(mse=mean_se, mae=mean_ae), num_folds = 10, num_iter = 2)
 result <- cv.run(cv, regr)
+result$score.mean
+
+
+###### Example of user.score #######
+## linear regression with own scoring function
+regr.score <- function(x, y, xtest, ytest, reg=0) {
+  C =  diag(x=reg, ncol(x))
+  beta = solve(t(x) \%*\% x + C, t(x) \%*\% y)
+  sum((xtest \%*\% beta - ytest)^2)
+}
+
+cv <- cv.setup(x, y, score="user.score", num_folds = 3, num_iter = 2)
+result <- cv.run(cv, regr.score, reg = 0.1)
 result$score.mean
 }
 \seealso{

@@ -16,7 +16,7 @@ Displays manuals for optimization methods in Optunity package.
 }
 \examples{
 manual('')
-manual('particle_swarm')
+manual('particle swarm')
 }
 \seealso{
 \code{\link{optimize2}} low level function for running different solvers

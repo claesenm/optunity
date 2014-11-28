@@ -6,7 +6,7 @@
 #' @export
 #' @examples
 #' manual('')
-#' manual('particle_swarm')
+#' manual('particle swarm')
 manual <- function(solver_name=''){
     cons <- launch()
     on.exit(close_pipes(cons))
@@ -19,9 +19,10 @@ manual <- function(solver_name=''){
     return (content$solver_names)
 }
 
-#' Tests if solver can be made with supplied arguments.
+#' Tests if solver can be made with supplied arguments. Low level API.
 #'
 #' @param solver_name solver name
+#' @param ...         parameters passed to making the solver
 #' @return TRUE if succeeds, otherwise throws error
 #' @seealso \code{\link{manual}} for list of solvers and their arguments
 #' @export

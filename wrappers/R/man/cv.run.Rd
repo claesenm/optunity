@@ -38,7 +38,7 @@ regr <- function(x, y, xtest, ytest, reg=0) {
     ## make predictions for xtest
     xtest \%*\% beta
 }
-cv <- cv.setup(x, y, score=mean.se, num_folds = 5, num_iter = 2)
+cv <- cv.setup(x, y, score=mean_se, num_folds = 5, num_iter = 2)
 ## checking accuracy with different regularization
 result1 <- cv.run(cv, regr, reg = 0.1)
 result2 <- cv.run(cv, regr, reg = 1.0)
