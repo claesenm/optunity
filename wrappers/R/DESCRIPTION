@@ -1,5 +1,5 @@
 Package: optunity
-Version: 0.7
+Version: 1.0
 Title: Optimization Methods for Hyperparameter Tuning
 Description: Optunity is a library containing various optimizers for
     hyperparameter tuning, like Particle Swarms, Genetic Algorithm,
