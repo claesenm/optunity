@@ -206,7 +206,7 @@ cv.run <- function(setup, f, ...) {
 #' 
 #' ## linear regression
 #' regr <- function(x, y, xtest, ytest, logreg=0) {
-#'   C =  diag(x=exp(logreg), ncol(x))
+#'   C =  diag(x = 10^logreg, ncol(x))
 #'   beta = solve(t(x) %*% x + C, t(x) %*% y)
 #'   xtest %*% beta
 #' }
@@ -238,7 +238,7 @@ cv.grid_search <- function(setup, f, ..., maximize = TRUE, nested = FALSE) {
 #' 
 #' ## linear regression
 #' regr <- function(x, y, xtest, ytest, logreg=0) {
-#'   C =  diag(x=exp(logreg), ncol(x))
+#'   C =  diag(x = 10^logreg, ncol(x))
 #'   beta = solve(t(x) %*% x + C, t(x) %*% y)
 #'   xtest %*% beta
 #' }
@@ -270,7 +270,7 @@ cv.random_search <- function(setup, f, ..., maximize = TRUE, num_evals = 50, nes
 #' 
 #' ## linear regression
 #' regr <- function(x, y, xtest, ytest, logreg=0) {
-#'   C =  diag(x=exp(logreg), ncol(x))
+#'   C =  diag(x = 10^logreg, ncol(x))
 #'   beta = solve(t(x) %*% x + C, t(x) %*% y)
 #'   xtest %*% beta
 #' }
@@ -303,7 +303,7 @@ cv.nelder_mead <- function(setup, f, ..., maximize = TRUE, num_evals = 50, neste
 #' 
 #' ## linear regression
 #' regr <- function(x, y, xtest, ytest, logreg=0) {
-#'   C =  diag(x=exp(logreg), ncol(x))
+#'   C =  diag(x = 10^logreg, ncol(x))
 #'   beta = solve(t(x) %*% x + C, t(x) %*% y)
 #'   xtest %*% beta
 #' }
