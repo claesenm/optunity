@@ -30,11 +30,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""A variety of useful function decorators for logging, constraints and more.
+"""A variety of useful function decorators for logging and more.
 
 Main features in this module:
 
-* :func:`constrained`
 * :func:`logged`
 * :func:`max_evals`
 
@@ -46,116 +45,6 @@ import collections
 import functools
 import threading
 import operator as op
-
-def constr_ub_o(field, bounds, *args, **kwargs):
-    """Models ``args.field < bounds``."""
-    return kwargs[field] < bounds
-
-
-def constr_ub_c(field, bounds, *args, **kwargs):
-    """Models ``args.field <= bounds``."""
-    return kwargs[field] <= bounds
-
-
-def constr_lb_o(field, bounds, *args, **kwargs):
-    """Models ``args.field > bounds``."""
-    return kwargs[field] > bounds
-
-
-def constr_lb_c(field, bounds, *args, **kwargs):
-    """Models ``args.field >= bounds``."""
-    return kwargs[field] >= bounds
-
-
-def constr_range_oo(field, bounds, *args, **kwargs):
-    """Models ``args.field in (bounds[0], bounds[1])``."""
-    return kwargs[field] > bounds[0] and kwargs[field] < bounds[1]
-
-
-def constr_range_cc(field, bounds, *args, **kwargs):
-    """Models ``args.field in [bounds[0], bounds[1]]``."""
-    return kwargs[field] >= bounds[0] and kwargs[field] <= bounds[1]
-
-
-def constr_range_oc(field, bounds, *args, **kwargs):
-    """Models ``args.field in (bounds[0], bounds[1]]``."""
-    return kwargs[field] > bounds[0] and kwargs[field] <= bounds[1]
-
-
-def constr_range_co(field, bounds, **kwargs):
-    """Models ``args.field in [bounds[0], bounds[1])``."""
-    return kwargs[field] >= bounds[0] and kwargs[field] < bounds[1]
-
-
-class ConstraintViolation(Exception):
-    """Thrown when constraints are not met."""
-    def __init__(self, constraint, *args, **kwargs):
-        self.__constraint = constraint
-        self.__args = args
-        self.__kwargs = kwargs
-
-    @property
-    def args(self):
-        return self.__args
-
-    @property
-    def constraint(self):
-        return self.__constraint
-
-    @property
-    def kwargs(self):
-        return self.__kwargs
-
-
-def constrained(constraints):
-    """Decorator that puts constraints on the domain of f.
-
-    >>> @constrained([lambda x: x > 0])
-    ... def f(x): return x+1
-    >>> f(1)
-    2
-    >>> f(0) #doctest:+SKIP
-    Traceback (most recent call last):
-    ...
-    ConstraintViolation
-    >>> len(f.constraints)
-    1
-
-    """
-    def wrapper(f):
-        @functools.wraps(f)
-        def wrapped_f(*args, **kwargs):
-            violations = [c for c in wrapped_f.constraints
-                          if not c(*args, **kwargs)]
-            if violations:
-                raise ConstraintViolation(violations, *args, **kwargs)
-            return f(*args, **kwargs)
-        wrapped_f.constraints = constraints
-        return wrapped_f
-    return wrapper
-
-
-def violations_defaulted(default):
-    """Decorator to default function value when a :class:`ConstraintViolation` occurs.
-
-    >>> @violations_defaulted("foobar")
-    ... @constrained([lambda x: x > 0])
-    ... def f(x): return x+1
-    >>> f(1)
-    2
-    >>> f(0)
-    'foobar'
-
-    """
-    def wrapper(f):
-        @functools.wraps(f)
-        def wrapped_f(*args, **kwargs):
-            try:
-                return f(*args, **kwargs)
-            except ConstraintViolation:
-                return default
-        return wrapped_f
-    return wrapper
 
 
 class Args(object):
@@ -350,6 +239,7 @@ def logged(f):
 
     logged as inner decorator:
 
+    >>> from .constraints import constrained
     >>> @logged
     ... @constrained([lambda x: x > 1])
     ... def f2(x): return x+1
@@ -362,6 +252,7 @@ def logged(f):
 
     logged as outer decorator:
 
+    >>> from .constraints import constrained
     >>> @constrained([lambda x: x > 1])
     ... @logged
     ... def f3(x): return x+1
@@ -371,8 +262,6 @@ def logged(f):
     3
     >>> print(f3.call_log)
     {'pos_0': 2} --> 3
-
-    logging twice does not remove original call_log
 
     >>> @logged
     ... def f(x): return 1
