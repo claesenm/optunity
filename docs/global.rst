@@ -25,7 +25,7 @@
 .. |api-randomsearch| replace:: :class:`optunity.solvers.RandomSearch`
 .. |api-nelder-mead| replace:: :class:`optunity.solvers.NelderMead`
 
-.. |api-constraints| replace:: :doc:`/api/constraints.constraints`
+.. |api-constraints| replace:: :doc:`/api/optunity.constraints`
 
 .. |wrapper-matlab| replace:: :doc:`/wrappers/matlab`
 .. |wrapper-r| replace:: :doc:`/wrappers/r`

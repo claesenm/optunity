@@ -1,4 +1,4 @@
-optunity.constraints module
+Domain constraints
 ===========================
 
 .. automodule:: optunity.constraints

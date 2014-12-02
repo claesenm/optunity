@@ -1,4 +1,4 @@
-Metrics
+Quality metrics
 ===============
 
 .. automodule:: optunity.metrics
