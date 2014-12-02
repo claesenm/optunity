@@ -17,9 +17,9 @@ Imports:
     plyr
 Suggests:
     testthat
-SystemRequirements: Python (2.6, 2.7 or 3)
+SystemRequirements: Python (2.7 or 3)
 License: BSD_3_clause + file LICENSE
-URL: http://optunity.org
+URL: http://optunity.net
 Packaged: 2014-08-25 11:16:12 UTC; wucloud
 Maintainer: Jaak Simm <jaak.simm@gmail.com>
 NeedsCompilation: no
