@@ -1,6 +1,6 @@
 tests: 
 	nosetests optunity/solvers/ -i optunity/*.py -e optunity/standalone.py --with-doctest -v
-	python tests/test_solvers.py
+	python optunity/tests/test_solvers.py
 
 sphinx:
 	sphinx-apidoc --separate -o docs/api/ optunity/
