@@ -445,28 +445,4 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
 
 
 if __name__ == '__main__':
-    x = list(range(10))
-    clusters = [[1,2],[3,4,5]]
-
-    @cross_validated(x, num_folds=3, num_iter=2, clusters=clusters)
-    def f1(woops, x_train, x_test):
-        print(x_train)
-        return 0
-
-    print(f1.folds)
-    result = f1(woops='blah')
-    print(result)
-
-    def f(x, y, z):
-        return x + y + z
-
-    def f2(**kwargs):
-        kwargs['z'] = 2
-        return f(**kwargs)
-    print(str(f2(x=1, y=2)))
-
-    @cross_validated(list(range(20)), num_folds=10, num_iter=2, strata=[[1,2,3],[6,7,8,9]])
-    def f1(woops, x_train, x_test):
-        print(x_train)
-        return 0
-
+    pass
