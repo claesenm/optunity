@@ -6,7 +6,7 @@ Domain constraints
 Optunity supports domain constraints on the objective function. Domain constraints are used to enforce solvers to remain within a prespecified search space.
 Most solvers that Optunity provides are implicitly unconstrained (cfr. |solvers|), though hyperparameters are usually constrained in some way (ex: regularization coefficients must be positive).
 
-A set of simple constraints and facilities to use them are provided in :doc:`/api/optunity.functions`. Specifically, the following constraints are provided:
+A set of simple constraints and facilities to use them are provided in |api-constraints|. Specifically, the following constraints are provided:
 
 -   `lb_{oc}`: assigns a lower bound (open or closed)
 -   `ub_{oc}`: assigns an upper bound (open or closed)
@@ -19,7 +19,7 @@ Note that the functions |maximize| and |minimize| wrap explicit box constraints 
 |optimize| does not do this for you, which allows more flexibility at the price of verbosity.
 
 Constraint violations in Optunity raise a `ConstraintViolation` exception by default. 
-The usual way we handle these exceptions is by returning a certain (typically bad) default function value (using the :func:`optunity.functions.violations_defaulted` decorator).
+The usual way we handle these exceptions is by returning a certain (typically bad) default function value (using the :func:`optunity.constraints.violations_defaulted` decorator).
 This will cause solvers to stop searching in the infeasible region.
 
 To add a series of constraints, we recommend using the |wrap-constraints| function. 
