@@ -1,4 +1,5 @@
 include *.txt
 include README.rst
-recursive-include docs *.txt
-recursive-include wrappers *.m
+recursive-include docs *.rst *.png *.py
+recursive-include wrappers *.m *.R
+recursive-include bin *.py
