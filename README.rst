@@ -48,5 +48,3 @@ The main contributors to Optunity are:
   MATLAB wrapper and all solvers.
 
 * Jaak Simm: R wrapper.
-
-* Dusan Popovic: MATLAB examples.
