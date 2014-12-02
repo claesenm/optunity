@@ -11,7 +11,7 @@ setup(
     license = 'LICENSE.txt',
     description = 'Optimization routines for hyperparameter tuning.',
     long_description = open('README.rst').read(),
-    classifiers = ['Development Status :: 5 - Production/Stable'
+    classifiers = ['Development Status :: 5 - Production/Stable',
                    'Intended Audience :: Developers',
                    'Intended Audience :: Education',
                    'Intended Audience :: Science/Research',
