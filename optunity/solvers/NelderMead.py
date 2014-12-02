@@ -200,6 +200,7 @@ class NelderMead(Solver):
     @staticmethod
     def sort_vertices(vertices, values):
         sort_idx, values = zip(*sorted(enumerate(values), key=op.itemgetter(1)))
+        # doing the same with a map bugs out, for some reason
         vertices = [vertices[x] for x in sort_idx]
         return vertices, list(values)
 
