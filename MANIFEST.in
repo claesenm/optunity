@@ -1,5 +1,6 @@
 include *.txt
 include README.rst
+include logo/logo.png
 recursive-include docs *.rst *.png *.py
 recursive-include wrappers *.m *.R
 recursive-include bin *.py

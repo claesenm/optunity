@@ -3,3 +3,9 @@ tests:
 
 sphinx:
 	sphinx-apidoc --separate -o docs/api/ optunity/
+
+msi:
+	python setup.py bdist --formats=msi
+
+wininst:
+	python setup.py bdist --formats=wininst
