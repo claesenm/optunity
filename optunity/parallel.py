@@ -42,7 +42,7 @@ def _fun(f, q_in, q_out):
             break
         value = f(*x)
         if hasattr(f, 'call_log'):
-            k = f.call_log.keys()[-1]
+            k = list(f.call_log.keys())[-1]
         q_out.put((i, value, k))
 
 try:

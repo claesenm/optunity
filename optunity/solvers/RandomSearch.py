@@ -143,5 +143,5 @@ class RandomSearch(Solver):
         else:
             comp = min
         best_idx, _ = comp(enumerate(scores), key=op.itemgetter(1))
-        best_pars = op.itemgetter(best_idx)(zip(*tuples))
+        best_pars = op.itemgetter(best_idx)(list(zip(*tuples)))
         return dict([(k, v) for k, v in zip(self.bounds.keys(), best_pars)]), None

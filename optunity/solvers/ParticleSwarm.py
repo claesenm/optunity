@@ -132,7 +132,7 @@ class ParticleSwarm(Solver):
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
-        self._smin = map(op.neg, self.smax)
+        self._smin = list(map(op.neg, self.smax))
 
         self._phi1 = phi1
         self._phi2 = phi2
@@ -254,7 +254,7 @@ class ParticleSwarm(Solver):
         best = None
 
         for g in range(self.num_generations):
-            fitnesses = pmap(evaluate, map(self.particle2dict, pop))
+            fitnesses = pmap(evaluate, list(map(self.particle2dict, pop)))
             for part, fitness in zip(pop, fitnesses):
                 part.fitness = fit*fitness
                 if not part.best or part.best_fitness < part.fitness:
