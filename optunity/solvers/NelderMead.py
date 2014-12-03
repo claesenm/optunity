@@ -159,7 +159,7 @@ class NelderMead(Solver):
             # reflect
             xr = NelderMead.reflect(x0, vertices[-1], alpha)
             fxr = f(xr)
-            if vertices[0] < fxr < vertices[-2]:
+            if values[0] < fxr < values[-2]:
                 vertices[-1] = xr
                 values[-1] = fxr
                 continue
@@ -200,8 +200,9 @@ class NelderMead(Solver):
     @staticmethod
     def sort_vertices(vertices, values):
         sort_idx, values = zip(*sorted(enumerate(values), key=op.itemgetter(1)))
-        vertices = map(lambda x: vertices[x], sort_idx)
-        return list(vertices), list(values)
+        # doing the same with a map bugs out, for some reason
+        vertices = [vertices[x] for x in sort_idx]
+        return vertices, list(values)
 
     @staticmethod
     def scale(vertex, coeff):

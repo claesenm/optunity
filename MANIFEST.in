@@ -1,4 +1,7 @@
 include *.txt
+include Makefile
 include README.rst
-recursive-include docs *.txt
-recursive-include wrappers *.m
+include logo/logo.png
+recursive-include docs *.rst *.png *.py
+recursive-include wrappers *.m *.R
+recursive-include bin *.py

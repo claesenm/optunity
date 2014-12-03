@@ -60,6 +60,7 @@ from . import functions as fun
 from . import solvers
 from .solvers import solver_registry
 from .util import DocumentedNamedTuple as DocTup
+from .constraints import wrap_constraints
 
 
 def _manual_lines(solver_name=None):
@@ -253,7 +254,6 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
         solution = operator.itemgetter(index)(f.call_log.keys())._asdict()
     time = timeit.default_timer() - time
 
-    # FIXME: logged function's argtuple type remains None
     optimum = f.call_log.get(**solution)
     num_evals += len(f.call_log)
 
@@ -317,118 +317,6 @@ def wrap_call_log(f, call_dict):
     else:
         f.call_log = call_log
     return f
-
-
-def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
-                     lb_o=None, lb_c=None, range_oo=None,
-                     range_co=None, range_oc=None, range_cc=None,
-                     custom=None):
-    """Decorates f with given input domain constraints.
-
-    :param f: the function that will be constrained
-    :type f: callable
-    :param default: function value to default to in case of constraint violations
-    :type default: number
-    :param ub_o: open upper bound constraints, e.g. :math:`x < c`
-    :type ub_o: dict
-    :param ub_c: closed upper bound constraints, e.g. :math:`x \leq c`
-    :type ub_c: dict
-    :param lb_o: open lower bound constraints, e.g. :math:`x > c`
-    :type lb_o: dict
-    :param lb_c: closed lower bound constraints, e.g. :math:`x \geq c`
-    :type lb_c: dict
-    :param range_oo: range constraints (open lb and open ub)
-        :math:`lb < x < ub`
-    :type range_oo: dict with 2-element lists as values ([lb, ub])
-    :param range_co: range constraints (closed lb and open ub)
-        :math:`lb \leq x < ub`
-    :type range_co: dict with 2-element lists as values ([lb, ub])
-    :param range_oc: range constraints (open lb and closed ub)
-        :math:`lb < x \leq ub`
-    :type range_oc: dict with 2-element lists as values ([lb, ub])
-    :param range_cc: range constraints (closed lb and closed ub)
-        :math:`lb \leq x \leq ub`
-    :type range_cc: dict with 2-element lists as values ([lb, ub])
-    :param custom: custom, user-defined constraints
-    :type custom: list of constraints
-
-    *custom constraints are binary functions that yield False in case of violations.
-
-    >>> def f(x):
-    ...     return x
-    >>> fc = wrap_constraints(f, default=-1, range_oc={'x': [0, 1]})
-    >>> fc(x=0.5)
-    0.5
-    >>> fc(x=1)
-    1
-    >>> fc(x=5)
-    -1
-    >>> fc(x=0)
-    -1
-
-    We can define any custom constraint that we want. For instance,
-    assume we have a binary function with arguments `x` and `y`, and we want
-    to make sure that the provided values remain within the unit circle.
-
-    >>> def f(x, y):
-    ...     return x + y
-    >>> circle_constraint = lambda x, y: (x ** 2 + y ** 2) <= 1
-    >>> fc = wrap_constraints(f, default=1234, custom=[circle_constraint])
-    >>> fc(0.0, 0.0)
-    0.0
-    >>> fc(1.0, 0.0)
-    1.0
-    >>> fc(0.5, 0.5)
-    1.0
-    >>> fc(1, 0.5)
-    1234
-
-    """
-    kwargs = locals()
-    del kwargs['f']
-    del kwargs['default']
-    del kwargs['custom']
-    for k, v in list(kwargs.items()):
-        if v is None:
-            del kwargs[k]
-
-    if not kwargs and not custom:
-        return f
-
-    # jump table to get the right constraint function
-    jt = {'ub_o': fun.constr_ub_o,
-          'ub_c': fun.constr_ub_c,
-          'lb_o': fun.constr_lb_o,
-          'lb_c': fun.constr_lb_c,
-          'range_oo': fun.constr_range_oo,
-          'range_oc': fun.constr_range_oc,
-          'range_co': fun.constr_range_co,
-          'range_cc': fun.constr_range_cc}
-
-    # construct constraint list
-    constraints = []
-    for constr_name, pars in kwargs.items():
-        constr_fun = jt[constr_name]
-        for field, bounds in pars.items():
-            constraints.append(functools.partial(constr_fun,
-                                                 field=field,
-                                                 bounds=bounds))
-    if custom:
-        constraints.extend(custom)
-
-    # wrap function
-    if default is None:
-        @fun.constrained(constraints)
-        @functools.wraps(f)
-        def func(*args, **kwargs):
-            return f(*args, **kwargs)
-    else:
-        @fun.violations_defaulted(default)
-        @fun.constrained(constraints)
-        @functools.wraps(f)
-        def func(*args, **kwargs):
-            return f(*args, **kwargs)
-    return func
 
 
 def _wrap_hard_box_constraints(f, box, default):
