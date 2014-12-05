@@ -10,3 +10,6 @@ msi:
 
 wininst:
 	python setup.py bdist --formats=wininst
+
+html:
+	sphinx-build -b html docs/ docs/html/

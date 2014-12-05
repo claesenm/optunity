@@ -43,7 +43,9 @@ def _fun(f, q_in, q_out):
         value = f(*x)
         if hasattr(f, 'call_log'):
             k = list(f.call_log.keys())[-1]
-        q_out.put((i, value, k))
+            q_out.put((i, value, k))
+        else:
+            q_out.put((i, value))
 
 try:
     import multiprocessing
@@ -82,8 +84,9 @@ try:
         if hasattr(f, 'call_log'):
             for _, value, k in sorted(res):
                 f.call_log[k] = value
-
-        return [x for i, x, _ in sorted(res)]
+            return [x for i, x, _ in sorted(res)]
+        else:
+            return [x for i, x in sorted(res)]
 
 
     # http://code.activestate.com/recipes/84317-easy-threading-with-futures/
