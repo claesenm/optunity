@@ -3,8 +3,8 @@ Version: 1.0
 Title: Optimization Methods for Hyperparameter Tuning
 Description: Optunity is a library containing various optimizers for
     hyperparameter tuning, like Particle Swarms, Genetic Algorithm,
-    Nelder-Mead. Also includes cross-validation function that automize
-    common steps in model validation.
+    Nelder-Mead. Also includes cross-validation functions that automize
+    common steps in model selection and validation.
 Authors@R: c(person("Jaak", "Simm", role = c("aut", "cre"), email =
     "jaak.simm@gmail.com"), person("Marc", "Claesen", role = c("aut") ),
     person("Dusan", "Popovic", role = c("aut") ))
