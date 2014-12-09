@@ -35,7 +35,7 @@
 import math
 import operator as op
 
-def contingency_tables(ys, decision_values, positive=True, presorted=False):
+def contingency_tables(ys, decision_values, positive=True):
     """Computes contingency tables for every unique decision value.
 
     :param ys: true labels
@@ -43,8 +43,6 @@ def contingency_tables(ys, decision_values, positive=True, presorted=False):
     :param decision_values: decision values (higher = stronger positive)
     :type decision_values: iterable
     :param positive: the positive label
-    :param presorted: whether or not ys and decision_values are sorted
-    :type presorted: bool
 
     :returns: a list of contingency tables `(TP, FP, TN, FN)` and the corresponding thresholds.
     Contingency tables are built based on decision :math:`decision\_value \geq threshold`.
@@ -61,18 +59,8 @@ def contingency_tables(ys, decision_values, positive=True, presorted=False):
 
     """
     # sort decision values
-    if not presorted:
-        ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
-                            key=op.itemgetter(1)))
-    else:
-        if decision_values[0] > decision_values[-1]:
-            # presorted descending
-            ind = range(len(decision_values))
-            srt = decision_values
-        else:
-            # presorted ascending, we must reverse
-            ind = [len(decision_values) - 1 - i for i in range(len(decision_values))]
-            srt = reversed(decision_values)
+    ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
+                           key=op.itemgetter(1)))
 
     # resort y
     y = list(map(lambda x: ys[x] == positive, ind))
@@ -112,7 +100,7 @@ def contingency_tables(ys, decision_values, positive=True, presorted=False):
     return tables, thresholds
 
 
-def compute_curve(ys, decision_values, xfun, yfun, positive=True, presorted=False):
+def compute_curve(ys, decision_values, xfun, yfun, positive=True):
     """Computes a curve based on contingency tables at different decision values.
 
     :param ys: true labels
@@ -124,8 +112,6 @@ def compute_curve(ys, decision_values, xfun, yfun, positive=True, presorted=Fals
     :type xfun: callable
     :param yfun: function to compute y values, based on contingency tables
     :type yfun: callable
-    :param presorted: whether or not ys and decision_values are sorted
-    :type presorted: bool
 
     :returns: the resulting curve, as a list of (x, y)-tuples
 
@@ -390,14 +376,12 @@ def error_rate(y, yhat):
     """
     return 1.0 - accuracy(y, yhat)
 
-def roc_auc(ys, yhat, positive=True, presorted=False):
+def roc_auc(ys, yhat, positive=True):
     """Computes the area under the receiver operating characteristic curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
-    :param presorted: whether or not ys and decision_values are sorted
-    :type presorted: bool
 
     >>> roc_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
@@ -406,18 +390,16 @@ def roc_auc(ys, yhat, positive=True, presorted=False):
     0.875
 
     """
-    curve = compute_curve(ys, yhat, _fpr, _recall, positive, presorted)
+    curve = compute_curve(ys, yhat, _fpr, _recall, positive)
     return auc(curve)
 
 
-def pr_auc(ys, yhat, positive=True, presorted=False):
+def pr_auc(ys, yhat, positive=True):
     """Computes the area under the precision-recall curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
-    :param presorted: whether or not ys and decision_values are sorted
-    :type presorted: bool
 
     >>> pr_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
