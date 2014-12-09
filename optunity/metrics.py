@@ -35,7 +35,7 @@
 import math
 import operator as op
 
-def contingency_tables(ys, decision_values, positive=True):
+def contingency_tables(ys, decision_values, positive=True, presorted=False):
     """Computes contingency tables for every unique decision value.
 
     :param ys: true labels
@@ -43,6 +43,8 @@ def contingency_tables(ys, decision_values, positive=True):
     :param decision_values: decision values (higher = stronger positive)
     :type decision_values: iterable
     :param positive: the positive label
+    :param presorted: whether or not ys and yhat are already sorted
+    :type presorted: bool
 
     :returns: a list of contingency tables `(TP, FP, TN, FN)` and the corresponding thresholds.
     Contingency tables are built based on decision :math:`decision\_value \geq threshold`.
@@ -58,9 +60,17 @@ def contingency_tables(ys, decision_values, positive=True):
     [None, 3, 2, 1]
 
     """
-    # sort decision values
-    ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
-                           key=op.itemgetter(1)))
+    if presorted:
+        if decision_values[0] > decision_values[-1]:
+            ind = range(len(decision_values))
+            srt = decision_values
+        else:
+            ind = reversed(range(len(decision_values)))
+            srt = reversed(decision_values)
+    else:
+        # sort decision values
+        ind, srt = zip(*sorted(enumerate(decision_values), reverse=True,
+                            key=op.itemgetter(1)))
 
     # resort y
     y = list(map(lambda x: ys[x] == positive, ind))
@@ -100,7 +110,7 @@ def contingency_tables(ys, decision_values, positive=True):
     return tables, thresholds
 
 
-def compute_curve(ys, decision_values, xfun, yfun, positive=True):
+def compute_curve(ys, decision_values, xfun, yfun, positive=True, presorted=False):
     """Computes a curve based on contingency tables at different decision values.
 
     :param ys: true labels
@@ -112,12 +122,14 @@ def compute_curve(ys, decision_values, xfun, yfun, positive=True):
     :type xfun: callable
     :param yfun: function to compute y values, based on contingency tables
     :type yfun: callable
+    :param presorted: whether or not ys and yhat are already sorted
+    :type presorted: bool
 
     :returns: the resulting curve, as a list of (x, y)-tuples
 
     """
     curve = []
-    tables, _ = contingency_tables(ys, decision_values, positive)
+    tables, _ = contingency_tables(ys, decision_values, positive, presorted)
     curve = list(map(lambda t: (xfun(t), yfun(t)), tables))
     return curve
 
@@ -376,12 +388,14 @@ def error_rate(y, yhat):
     """
     return 1.0 - accuracy(y, yhat)
 
-def roc_auc(ys, yhat, positive=True):
+def roc_auc(ys, yhat, positive=True, presorted=False):
     """Computes the area under the receiver operating characteristic curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
+    :param presorted: whether or not ys and yhat are already sorted
+    :type presorted: bool
 
     >>> roc_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
@@ -394,12 +408,14 @@ def roc_auc(ys, yhat, positive=True):
     return auc(curve)
 
 
-def pr_auc(ys, yhat, positive=True):
+def pr_auc(ys, yhat, positive=True, presorted=False):
     """Computes the area under the precision-recall curve (higher is better).
 
     :param y: true function values
     :param yhat: predicted function values
     :param positive: the positive label
+    :param presorted: whether or not ys and yhat are already sorted
+    :type presorted: bool
 
     >>> pr_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
@@ -411,7 +427,7 @@ def pr_auc(ys, yhat, positive=True):
         In this case, we set precision equal to the precision that was obtained at the lowest non-zero recall.
 
     """
-    curve = compute_curve(ys, yhat, _recall, _precision, positive)
+    curve = compute_curve(ys, yhat, _recall, _precision, positive, presorted)
     # precision is undefined when no positives are predicted
     # we approximate by using the precision at the lowest recall
     curve[0] = (0.0, curve[1][1])
