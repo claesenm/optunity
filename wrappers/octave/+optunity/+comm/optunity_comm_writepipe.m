@@ -6,6 +6,12 @@ if DEBUG_OPTUNITY
    disp(['Sending ',json]);
 end
 
-m2py.println(java.lang.String(json));
-m2py.flush();
+%fputs(m2py, [json, "\n"]);
+fdisp(m2py, json)
+r = fflush(m2py);
+
+if r ~= 0
+    error('Unable to flush pipe.')
+end
+
 end

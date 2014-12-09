@@ -33,14 +33,14 @@ options = optunity_process_varargin(defaults, varargin, true);
 parallelize = options.parallelize;
 options = rmfield(options, 'parallelize');
 
-%% launch SOAP subprocess
+%% launch Optunity subprocess
 [m2py, py2m, stderr, subprocess, cleaner] = optunity_comm_launch();
 
-pipe_send = @(data) optunity_comm_writepipe(m2py, optunity.comm.json_encode(data));
-pipe_receive = @() optunity_comm_json_decode(optunity.comm.readpipe(py2m));
+pipe_send = @(data) optunity_comm_writepipe(m2py, optunity_comm_json_encode(data));
+pipe_receive = @() optunity_comm_json_decode(optunity_comm_readpipe(py2m));
 
 %% initialize solver
-msg = struct('solver',solver.toStruct(), ...
+msg = struct('solver', solver, ...
     'optimize', struct('maximize', options.maximize, ...
     'max_evals', options.max_evals));
 if isstruct(options.constraints)
@@ -57,7 +57,7 @@ pipe_send(msg);
 %% iteratively send function evaluation results until solved
 reply = struct();
 while true
-    reply = pipe_receive();
+    reply = pipe_receive()
     
     if isfield(reply, 'solution') || isfield(reply, 'error_msg');
         break;

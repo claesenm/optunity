@@ -1,7 +1,7 @@
 function [ content ] = optunity_comm_readpipe( pipe )
 %READPIPE Reads data chunks from Optunity over its stdout pipe.
 
-content = char(pipe.readLine());
+content = fgetl(pipe);
 
 global DEBUG_OPTUNITY
 if DEBUG_OPTUNITY

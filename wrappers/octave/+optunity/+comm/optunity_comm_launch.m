@@ -1,4 +1,4 @@
-function [ m2py, py2m, stderr, handle, cleaner ] = optunity_comm_launch()
+function [ m2py, py2m, stderr, pid, cleaner ] = optunity_comm_launch()
 %LAUNCH Wrapper around all logic involving the launching of Optunity.
 %   Optunity is launched through a Java Runtime().exec() call.
 %   To enable Optunity to locate installed libraries and necessary
@@ -17,29 +17,27 @@ persistent optunity_env
 if isempty(optunity_env)
     optunity_path = mfilename('fullpath');
     f = filesep;
-    hit = [f, 'wrappers', f, 'octave', f, '+optunity', f, '+comm', f, 'launch'];
+    hit = [f, 'wrappers', f, 'octave', f, '+optunity', f, '+comm', f, 'optunity_comm_launch'];
     optunity_path= optunity_path(1:strfind(optunity_path, hit));
     path_to_bin = [optunity_path, f, 'bin'];
-    
+
     [~, pathstr] = system(['python ', path_to_bin, f, 'print_system_path.py']);
     pathstr = pathstr(pathstr ~= '''');
     pathstr = pathstr(pathstr ~= '[');
     pathstr = pathstr(pathstr ~= ']');
     pathstr = strrep(pathstr, ', ', pathsep);
-    optunity_env = ['PYTHONPATH=', strtrim(pathstr)];
-    
+    optunity_env = strtrim(pathstr);
+
     % attach optunity_s path to optunity_env
     optunity_env = [strtrim(optunity_env), pathsep, strtrim(optunity_path)];
+    setenv("PYTHONPATH", optunity_env);
 end
 
-% cmd = [path_to_bin, 'run_optunity_piped.py'];
-cmd = 'python -m optunity_standalone';
-[m2py, py2m, handle, socket] = optunity_comm_popen( cmd, optunity_env );
+% http://octave.1599824.n4.nabble.com/example-how-to-get-popen2-working-XP-MSVC-2-9-15-octave-td1628494.html
+[m2py, py2m, pid] = popen2("python", {"-m", "optunity.standalone"}, true);
 
 % provide RAII-style automatic cleanup when cleaner goes out of scope
 % e.g. both upon normal caller exit or an error
-cleaner = onCleanup(@()optunity_comm_close_subprocess(m2py, py2m, ...
-    handle, socket));
-
+cleaner = onCleanup(@()optunity_comm_close_subprocess(m2py, py2m, pid));
 stderr = '';
 end

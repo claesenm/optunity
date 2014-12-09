@@ -5,7 +5,7 @@ function [solver_names] = optunity_manual( varargin )
 % a list of available solvers. If a name is specified, the same name is
 % returned.
 
-[m2py, py2m, stderr, subprocess, cleaner] = optunity_comm_launch();
+[m2py, py2m, stderr, pid, cleaner] = optunity_comm_launch();
 
 if nargin > 0
     init = struct('manual', varargin{1});
@@ -24,7 +24,7 @@ if isfield(reply, 'error_msg')
 end
 
 for ii=1:numel(reply.manual)
-    display(reply.manual{ii});
+    disp(reply.manual{ii});
 end
 
 solver_names = reply.solver_names;

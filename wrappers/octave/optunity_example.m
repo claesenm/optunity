@@ -10,11 +10,11 @@ offy = rand();
 f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
 
 %% cross-validation example
-% global DEBUG_OPTUNITY
-% DEBUG_OPTUNITY=true;
+global DEBUG_OPTUNITY = true;
 strata = {[1,2,3], [6,7,8,9]};
-folds = optunity_generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata);
+folds = optunity_generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata)
 
+[max_solution, max_details, max_solver] = optunity_maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5]);
 %% optimize using grid-search
 grid_solver = optunity_make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
 [grid_solution, grid_details] = optunity_optimize(grid_solver, f);

@@ -32,8 +32,8 @@ end
 %% launch SOAP subprocess
 [m2py, py2m, stderr, subprocess, cleaner] = optunity_comm_launch();
 
-pipe_send = @(data) optunity_comm_writepipe(m2py, optunity.comm.json_encode(data));
-pipe_receive = @() optunity_comm_json_decode(optunity.comm.readpipe(py2m));
+pipe_send = @(data) optunity_comm_writepipe(m2py, optunity_comm_json_encode(data));
+pipe_receive = @() optunity_comm_json_decode(optunity_comm_readpipe(py2m));
 
 %% initialize solver
 msg = options;
@@ -47,11 +47,11 @@ pipe_send(msg);
 reply = struct();
 while true
     reply = pipe_receive();
-    
+
     if isfield(reply, 'solution') || isfield(reply, 'error_msg')
         break;
-    end    
-   
+    end
+
     if iscell(reply)
         results = zeros(numel(reply), 1);
         if parallelize
@@ -63,7 +63,7 @@ while true
                 results(ii) = f(reply{ii});
             end
         end
-        
+
         % make sure the json becomes [] instead of a scalar
         % matlab automatically treats length-1 vectors as scalars
         if isscalar(results)
