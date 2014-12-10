@@ -17,13 +17,13 @@ cfg.solver_name = name;
 msg = struct('make_solver', cfg);
 
 %% launch SOAP subprocess
-[m2py, py2m, stderr, subprocess, cleaner] = optunity_comm_launch();
+[sock, pid, cleaner] = optunity_comm_launch();
 
 %% attempt to initialize solver
 json_request = optunity_comm_json_encode(msg);
-optunity_comm_writepipe(m2py, json_request);
+optunity_comm_writepipe(sock, json_request);
 
-json_reply = optunity_comm_readpipe(py2m);
+json_reply = optunity_comm_readpipe(sock);
 reply = optunity_comm_json_decode(json_reply);
 
 if isfield(reply, 'error_msg')

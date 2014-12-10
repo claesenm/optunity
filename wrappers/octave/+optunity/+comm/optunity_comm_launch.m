@@ -1,4 +1,4 @@
-function [ m2py, py2m, stderr, pid, cleaner ] = optunity_comm_launch()
+function [ sock, pid, cleaner ] = optunity_comm_launch()
 %LAUNCH Wrapper around all logic involving the launching of Optunity.
 %   Optunity is launched through a Java Runtime().exec() call.
 %   To enable Optunity to locate installed libraries and necessary
@@ -9,12 +9,14 @@ function [ m2py, py2m, stderr, pid, cleaner ] = optunity_comm_launch()
 %   Optunity subprocess. 
 %   Destruction of the subprocess must be done manually.
 
+
 % hack to fix empty paths when spawning Optunity
 % find the current optunity_pathused by python
 % necessary to pass as an optunity_env variable when launching Optunity
 persistent optunity_env
 % persistent optunity_path
 if isempty(optunity_env)
+    pkg load sockets
     optunity_path = mfilename('fullpath');
     f = filesep;
     hit = [f, 'wrappers', f, 'octave', f, '+optunity', f, '+comm', f, 'optunity_comm_launch'];
@@ -33,11 +35,27 @@ if isempty(optunity_env)
     setenv("PYTHONPATH", optunity_env);
 end
 
-% http://octave.1599824.n4.nabble.com/example-how-to-get-popen2-working-XP-MSVC-2-9-15-octave-td1628494.html
-[m2py, py2m, pid] = popen2("python", {"-m", "optunity.standalone"}, true);
+% open server socket
+servSock = socket();
+port = 0;
+do
+    port = randi([1025, 50000]);
+    r = bind(servSock, port);
+until r >= 0
+r = listen(servSock, 0);
+cmd = ['python -m optunity.standalone ', num2str(port)];
+
+pid = popen(cmd, "r");
+fflush(stdout);
+[sock, info] = accept(servSock);
+close(servSock);
+
+if pid == -1
+    error("Error launching Optunity back-end.");
+end
 
 % provide RAII-style automatic cleanup when cleaner goes out of scope
 % e.g. both upon normal caller exit or an error
-cleaner = onCleanup(@()optunity_comm_close_subprocess(m2py, py2m, pid));
+cleaner = onCleanup(@()optunity_comm_close_subprocess(sock, pid));
 stderr = '';
 end

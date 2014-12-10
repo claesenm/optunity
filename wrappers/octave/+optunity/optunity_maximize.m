@@ -29,11 +29,10 @@ for ii=1:numel(fields)
        'invalid box constraints');
 end
 
-%% launch SOAP subprocess
-[m2py, py2m, stderr, subprocess, cleaner] = optunity_comm_launch();
+[sock, ~, cleaner] = optunity_comm_launch();
 
-pipe_send = @(data) optunity_comm_writepipe(m2py, optunity_comm_json_encode(data));
-pipe_receive = @() optunity_comm_json_decode(optunity_comm_readpipe(py2m));
+pipe_send = @(data) optunity_comm_writepipe(sock, optunity_comm_json_encode(data));
+pipe_receive = @() optunity_comm_json_decode(optunity_comm_readpipe(sock));
 
 %% initialize solver
 msg = options;
