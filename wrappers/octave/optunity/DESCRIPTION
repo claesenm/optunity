@@ -1,0 +1,14 @@
+Name: optunity
+Version: 1.0.1
+Date: 2014-12-11
+Author: Marc Claesen (marc.claesen@esat.kuleuven.be)
+Maintainer: Marc Claesen (marc.claesen@esat.kuleuven.be)
+Title: Optimization routines for hyperparameter tuning
+Description: Optunity is a library containing various optimizers for hyperparameter tuning.
+ Hyperparameter tuning is a recurrent problem in many machine learning tasks, 
+ both supervised and unsupervised.  This package provides several distinct approaches to 
+ solve such problems including some helpful facilities such as cross-validation.
+License: BSD3
+Url: http://www.optunity.net, http://docs.optunity.net
+Depends: sockets (>= 1.0.8)
+SystemRequirements: Python 2.7 or higher
