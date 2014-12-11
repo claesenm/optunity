@@ -8,7 +8,7 @@ For a general overview, we recommend reading the :doc:`/user/index`.
 
 For installation instructions, please refer to |installation|.
 
-Whenever the Python API requires a dictionary, we use a octave `struct`. As octave has no keyword
+Whenever the Python API requires a dictionary, we use an Octave `struct`. As Octave has no keyword
 arguments, we use `varargs` with the convention of `<name>`, `<value>`. Please refer to each
 function's help for details on how to use it.
 
@@ -54,7 +54,7 @@ If you specify a solver name, its manual will be printed out.
 
 You can verify whether or not a certain solver, for instance `cma-es`, is available like this::
 
-    solvers = optunity.manual();
+    solvers = manual();
     available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
 
 
