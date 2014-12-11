@@ -1,4 +1,4 @@
-function [ struct, stop ] = optunity_comm_json_decode( json )
+function [ struct, stop ] = comm_json_decode( json )
 %JSON_DECODE Decodes given JSON string.
 
 start = 1;
@@ -45,7 +45,7 @@ stop = start + stop;
 assert(strcmp(json(stop:stop+2),'": '), 'ILLEGAL JSON FORMAT');
 stop = stop+3; % skipping '": '
 
-[value, offset] = optunity_comm_json_decode(json(stop:end));
+[value, offset] = comm_json_decode(json(stop:end));
 stop = stop + offset - 1;
 end
 
@@ -63,7 +63,7 @@ end
 
 list = [];
 while json(stop) ~= ']'
-    [value, offset] = optunity_comm_json_decode(json(stop:end));
+    [value, offset] = comm_json_decode(json(stop:end));
     if use_cell
         list{end+1} = value;
     else

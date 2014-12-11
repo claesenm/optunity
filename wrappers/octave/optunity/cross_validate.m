@@ -1,4 +1,4 @@
-function cv = optunity_cross_validate(fun, x, varargin)
+function cv = cross_validate(fun, x, varargin)
 %CROSS_VALIDATE: Decorates a function to perform cross-validation when
 %evaluated.
 %
@@ -34,7 +34,7 @@ function cv = optunity_cross_validate(fun, x, varargin)
 %      aggregate results across folds
 %      default: mean
 %
-%This returns an optunity_CrossValidated object, which is a function that
+%This returns an CrossValidated object, which is a function that
 %accepts a struct defining the hyperparameters. Every evaluation will
 %perform cross-validation as configured.
 
@@ -42,9 +42,9 @@ function cv = optunity_cross_validate(fun, x, varargin)
 defaults = struct('num_folds', 10, 'y', [], 'strata', [], ...
     'folds', [], 'num_iter', 1, 'regenerate_folds', false, ...
     'clusters', [], 'aggregator', @mean);
-options = optunity_process_varargin(defaults, varargin, false);
+options = process_varargin(defaults, varargin, false);
 
-cv = optunity_CrossValidated(fun, x, options.y, options.strata, options.clusters, ...
+cv = CrossValidated(fun, x, options.y, options.strata, options.clusters, ...
     options.num_folds, options.num_iter, options.folds, options.regenerate_folds, ...
     options.aggregator);
 

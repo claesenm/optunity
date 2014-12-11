@@ -1,4 +1,4 @@
-function options = optunity_process_varargin(defaults, actual_varargin, varargin)
+function options = process_varargin(defaults, actual_varargin, varargin)
 
 limit_to_options = true;
 if numel(varargin)

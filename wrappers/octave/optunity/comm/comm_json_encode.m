@@ -1,10 +1,10 @@
-function [ json ] = optunity_comm_json_encode( struct )
+function [ json ] = comm_json_encode( struct )
 %JSON_ENCODE Encodes the given struct in json format.
 
 if isstruct(struct)
     fields = fieldnames(struct);
     strings = arrayfun(@(x) ['"',fields{x},'": ', ...
-        optunity_comm_json_encode(struct.(fields{x}))], ...
+        comm_json_encode(struct.(fields{x}))], ...
         1:numel(fields),'UniformOutput',false);
     json = ['{',strjoin(strings,', '),'}'];
     
@@ -15,15 +15,15 @@ elseif iscell(struct) && isempty(struct)
     json = '[]';
     
 elseif iscell(struct) && numel(struct) == 1 % dealing with a 1-element cell
-    string = optunity_comm_json_encode(struct{1});    
+    string = comm_json_encode(struct{1});    
     json = ['[',string,']'];
    
 elseif numel(struct) > 1
     if iscell(struct)
-        strings = cellfun(@(x) optunity_comm_json_encode(x), struct,'UniformOutput',false);
+        strings = cellfun(@(x) comm_json_encode(x), struct,'UniformOutput',false);
         json = ['[', strjoin(strings, ', '), ']'];
     else
-        strings = arrayfun(@(x) optunity_comm_json_encode(x), struct,'UniformOutput',false);
+        strings = arrayfun(@(x) comm_json_encode(x), struct,'UniformOutput',false);
         json = ['[', strjoin(strings,', '),']'];
     end
    
@@ -37,7 +37,7 @@ elseif islogical(struct)
         json = 'false';
     end 
 elseif iscell(struct)
-    strs = cellfun(@(x) optunity_comm_json_encode(x), struct, 'UniformOutput', false);
+    strs = cellfun(@(x) comm_json_encode(x), struct, 'UniformOutput', false);
     json = strjoin(strs, ', ');
 else
     error('UNKNOWN DATA');

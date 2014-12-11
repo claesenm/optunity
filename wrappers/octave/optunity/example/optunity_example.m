@@ -2,7 +2,7 @@ close all; clear all;
 drawfig = true;
 
 %% print general manual and obtain list of solvers
-solvers = optunity_manual();
+solvers = manual();
 
 %% target function: f(x,y) = - x^2 - y^2
 offx = rand();
@@ -13,40 +13,40 @@ f = @(pars) - (offx+pars.x)^2 - (offy+pars.y)^2;
 %global DEBUG_OPTUNITY;
 %DEBUG_OPTUNITY = true;
 strata = {[1,2,3], [6,7,8,9]};
-folds = optunity_generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata)
+folds = generate_folds(20, 'num_folds', 10, 'num_iter', 2, 'strata', strata)
 
 %% optimize using grid-search
-grid_solver = optunity_make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
-[grid_solution, grid_details] = optunity_optimize(grid_solver, f);
+grid_solver = make_solver('grid search','x', -5:0.5:5, 'y', -5:0.5:5);
+[grid_solution, grid_details] = optimize(grid_solver, f);
 
 %% simple API
 % maximization
-[max_solution, max_details, max_solver] = optunity_maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5]);
+[max_solution, max_details, max_solver] = maximize(f, 200, 'solver_name', 'random search', 'x', [-5, 5], 'y', [-5, 5]);
 % minimization
-[min_solution, min_details, min_solver] = optunity_minimize(f, 200, 'x', [-5, 5], 'y', [-5, 5]);
+[min_solution, min_details, min_solver] = minimize(f, 200, 'x', [-5, 5], 'y', [-5, 5]);
 
 %% optimize using random-search
-rnd_solver = optunity_make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], 'num_evals', 400);
-[rnd_solution, rnd_details] = optunity_optimize(rnd_solver, f);
+rnd_solver = make_solver('random search', 'x', [-5, 5], 'y', [-5, 5], 'num_evals', 400);
+[rnd_solution, rnd_details] = optimize(rnd_solver, f);
 
 %% check if the nelder-mead solver is available in the list of solvers
 nm_available = any(arrayfun(@(x) strcmp(x, 'nelder-mead'), solvers));
 
 %% optimize using nelder-mead if it is available
-nm_solver = optunity_make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
-[nm_solution, nm_details] = optunity_optimize(nm_solver, f);
+nm_solver = make_solver('nelder-mead', 'x', 4,'y', -4, 'ftol', 1e-7);
+[nm_solution, nm_details] = optimize(nm_solver, f);
 
 %% check if PSO is available
-pso_solver = optunity_make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
+pso_solver = make_solver('particle swarm', 'num_particles', 5, 'num_generations', 30, ...
     'x', [-5, 5], 'y', [-5, 5], 'max_speed', 0.03);
-[pso_solution, pso_details] = optunity_optimize(pso_solver, f);
+[pso_solution, pso_details] = optimize(pso_solver, f);
 
 %% check if CMA-ES is available
 cma_available = any(arrayfun(@(x) strcmp(x, 'cma-es'), solvers));
 if cma_available
-    cma_solver = optunity_make_solver('cma-es', 'num_generations', 25, ...
+    cma_solver = make_solver('cma-es', 'num_generations', 25, ...
         'sigma', 5, 'x', 2, 'y', 4);
-    [cma_solution, cma_details] = optunity_optimize(cma_solver, f);
+    [cma_solution, cma_details] = optimize(cma_solver, f);
 end
 
 %% draw a figure to illustrate the call log of all solvers
@@ -105,22 +105,19 @@ if drawfig
 end
 
 %% grid-search with constraints and defaulted function value -> see call log 
-s_oo1 = optunity_make_solver('grid search', 'x', -5:0.5:5, 'y', -5:0.5:5);
+s_oo1 = make_solver('grid search', 'x', -5:0.5:5, 'y', -5:0.5:5);
 constraints = struct('ub_o', struct('x', 3));
-[constr_solution, constr_details] = s_oo1.optimize(f, ...
-    'constraints', constraints, 'default', -100);
+[constr_solution, constr_details] = optimize(s_oo1, f, 'constraints', constraints, 'default', -100);
 
 %% grid-search with warm start: already evaluated grid -> warm_nevals = 0
-s_oo2 = optunity_make_solver('grid search', 'x', [1, 2], 'y', [1, 2]);
+s_oo2 = make_solver('grid search', 'x', [1, 2], 'y', [1, 2]);
 call_log = struct('args',struct('x',[1 1 2 2], 'y', [1 2 1 2]), ...
     'values',[1 2 3 4]);
-[warm_solution, warm_details] = ...    
-    s_oo2.optimize(f, ...
-    'call_log', call_log);
+[warm_solution, warm_details] = optimize(s_oo2, f, 'call_log', call_log);
 
 
 
 %% cross-validation
 x = (1:10)';
-cvf = optunity_cross_validate(@optunity_cv_fun, x);
+cvf = cross_validate(@optunity_cv_fun, x);
 performance = cvf(struct('x',1,'y',2));

@@ -1,4 +1,4 @@
-function optunity_comm_close_subprocess( sock, pid )
+function comm_close_subprocess( sock, pid )
 %CLOSE_SUBPROCESS Closes all communication and waits for subprocess to die.
 
 disconnect(sock);

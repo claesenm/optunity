@@ -1,4 +1,4 @@
-function [ content ] = optunity_comm_readpipe( socket )
+function [ content ] = comm_readpipe( socket )
 %READPIPE Reads data chunks from Optunity over its stdout pipe.
 
 content = '';

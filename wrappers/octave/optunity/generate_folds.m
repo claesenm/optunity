@@ -1,4 +1,4 @@
-function folds = optunity_generate_folds( n, varargin )
+function folds = generate_folds( n, varargin )
 %GENERATE_FOLDS Generates k-fold cross-validation folds.
 %
 %- n: the number of instances in the data set
@@ -20,7 +20,7 @@ defaults = struct('num_instances', n, ...
     'num_iter', 1, ...
     'strata', [], ...
     'clusters', []);
-options = optunity_process_varargin(defaults, varargin);
+options = process_varargin(defaults, varargin);
 
 if isempty(options.strata)
     options = rmfield(options, 'strata');
@@ -32,14 +32,14 @@ end
 assert(options.num_instances >= options.num_folds, ...
     'Number of instances less than number of folds!');
 
-[sock, pid, cleaner] = optunity_comm_launch();
+[sock, pid, cleaner] = comm_launch();
 
 init = struct('generate_folds', options);
-json_request = optunity_comm_json_encode(init);
-optunity_comm_writepipe(sock, json_request);
+json_request = comm_json_encode(init);
+comm_writepipe(sock, json_request);
 
-json_reply = optunity_comm_readpipe(sock);
-reply = optunity_comm_json_decode(json_reply);
+json_reply = comm_readpipe(sock);
+reply = comm_json_decode(json_reply);
 
 if isfield(reply, 'error_msg')
    error(['Error generating folds: ',reply.error_msg]);

@@ -1,0 +1,10 @@
+toolbox >> optunity
+Category Optimization
+ maximize  minimize optimize make_solver Solver
+Category Cross-validation
+ generate_folds cross-validate CrossValidated
+Category Communication
+ comm_launch comm_readpipe comm_writepipe
+ comm_json_encode comm_json_decode comm_close_subprocess
+Category Various
+ manual process_varargin optunity_example optunity_cv_fun

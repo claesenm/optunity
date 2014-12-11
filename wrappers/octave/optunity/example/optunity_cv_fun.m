@@ -1,4 +1,4 @@
-function [ result ] = cv_fun( x_train, x_test, pars )
+function [ result ] = optunity_cv_fun( x_train, x_test, pars )
 
 disp('training set:');
 disp(x_train');

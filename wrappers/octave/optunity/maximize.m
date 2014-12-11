@@ -1,8 +1,9 @@
-function [solution, details, solver] = optunity_minimize(f, num_evals, varargin)
-%MINIMIZE: Minimizes f in num_evals evaluations within box constraints.
+function [solution, details, solver] = maximize(f, num_evals, varargin)
+%MAXIMIZE: Maximizes f in num_evals evaluations within box constraints.
 %
 % This function accepts the following arguments:
 % - f: the objective function to be maximized
+% - num_evals: the number of permitted objective function evaluations
 % - varargin: a list of optional key:value pairs
 %   - solver_name: name of the solver to use (default '')
 %   - parallelize: (boolean) whether or not to parallelize evaluations
@@ -14,7 +15,7 @@ function [solution, details, solver] = optunity_minimize(f, num_evals, varargin)
 %% process varargin
 defaults = struct('solver_name', '', ...
     'parallelize', false);
-options = optunity_process_varargin(defaults, varargin, false);
+options = process_varargin(defaults, varargin, false);
 parallelize = options.parallelize;
 options = rmfield(options, 'parallelize');
 solver_name = options.solver_name;
@@ -28,17 +29,17 @@ for ii=1:numel(fields)
        'invalid box constraints');
 end
 
-%% launch SOAP subprocess
-[sock, pid, cleaner] = optunity_comm_launch();
+[sock, ~, cleaner] = comm_launch();
 
-pipe_send = @(data) optunity_comm_writepipe(sock, optunity_comm_json_encode(data));
-pipe_receive = @() optunity_comm_json_decode(optunity_comm_readpipe(sock));
+pipe_send = @(data) comm_writepipe(sock, comm_json_encode(data));
+pipe_receive = @() comm_json_decode(comm_readpipe(sock));
 
 %% initialize solver
 msg = options;
 msg.num_evals = num_evals;
 msg.solver_name = solver_name;
-msg = struct('minimize', msg);
+
+msg = struct('maximize', msg);
 pipe_send(msg);
 
 %% iteratively send function evaluation results until solved
@@ -78,7 +79,7 @@ end
 
 if isfield(reply, 'error_msg')
     display('Oops ... something went wrong in Optunity');
-    display(['Last request: ', optunity_comm_json_encode(msg)]);
+    display(['Last request: ', comm_json_encode(msg)]);
     error(reply.error_msg);
 end
 
