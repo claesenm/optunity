@@ -6,4 +6,5 @@ Using Other Environments
     :maxdepth: 1
 
     /wrappers/matlab.rst
+    /wrappers/octave.rst
     /wrappers/r.rst

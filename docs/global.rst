@@ -28,6 +28,7 @@
 .. |api-constraints| replace:: :doc:`/api/optunity.constraints`
 
 .. |wrapper-matlab| replace:: :doc:`/wrappers/matlab`
+.. |wrapper-octave| replace:: :doc:`/wrappers/octave`
 .. |wrapper-r| replace:: :doc:`/wrappers/r`
 .. |wrapper-java| replace:: :doc:`/wrappers/java`
 

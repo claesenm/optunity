@@ -33,7 +33,7 @@ typically expensive to evaluate. Tuning examples include optimizing regularizati
 or kernel parameters.
 
 The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
-Optunity is currently also supported in |wrapper-r|, |wrapper-matlab| and Java through Jython.
+Optunity is currently also supported in |wrapper-r|, |wrapper-matlab|, |wrapper-octave| and Java through Jython.
 
 Optunity is free software, using a BSD-style license.
 
@@ -99,6 +99,7 @@ The main contributors to Optunity are:
     - solver implementation
     - communication protocol design & implementation
     - MATLAB wrapper
+    - Octave wrapper
 
 **Jaak Simm**
 

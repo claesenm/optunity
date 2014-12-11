@@ -16,6 +16,7 @@ Installation instructions per environment:
 
 -   :ref:`install-python`
 -   :ref:`install-matlab`
+-   :ref:`install-octave`
 -   :ref:`install-r`
 -   :ref:`install-java`
 
@@ -83,6 +84,28 @@ After these steps, you should be able to run the examples in `<optunity>/wrapper
 
     The MATLAB wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
     `<optunity>/wrappers/matlab` subdirectory it will not work.
+
+.. _install-octave:
+
+Installing Optunity for Octave
+-------------------------------
+
+Optunity requires sockets for communication. In Octave, please install the `sockets` package first (available at Octave-Forge)
+and at http://octave.sourceforge.net/sockets/.
+
+To install Optunity for Octave, you must add `<optunity>/wrappers/octave/` and its subdirectories to your Octave path::
+
+    addpath(genpath('/path/to/optunity/wrappers/octave/'));
+    savepath
+
+After these steps, you should be able to run the examples in `<optunity>/wrappers/octave/optunity/example/optunity_example.m`::
+
+    optunity_example
+
+.. warning::
+
+    The Octave wrapper requires the entire directory structure of Optunity to remain as is. If you only copy the
+    `<optunity>/wrappers/octave` subdirectory it will not work.
 
 
 .. _install-r:
