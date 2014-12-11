@@ -1,5 +1,5 @@
-octave
-=======
+GNU Octave
+============
 
 .. include:: /global.rst
 
