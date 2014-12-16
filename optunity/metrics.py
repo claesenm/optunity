@@ -388,7 +388,7 @@ def error_rate(y, yhat):
     """
     return 1.0 - accuracy(y, yhat)
 
-def roc_auc(ys, yhat, positive=True, presorted=False):
+def roc_auc(ys, yhat, positive=True, presorted=False, return_curve=False):
     """Computes the area under the receiver operating characteristic curve (higher is better).
 
     :param y: true function values
@@ -396,6 +396,8 @@ def roc_auc(ys, yhat, positive=True, presorted=False):
     :param positive: the positive label
     :param presorted: whether or not ys and yhat are already sorted
     :type presorted: bool
+    :param return_curve: whether or not the curve should be returned
+    :type return_curve: bool
 
     >>> roc_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
@@ -405,10 +407,13 @@ def roc_auc(ys, yhat, positive=True, presorted=False):
 
     """
     curve = compute_curve(ys, yhat, _fpr, _recall, positive)
-    return auc(curve)
+    if return_curve:
+        return auc(curve), curve
+    else:
+        return auc(curve)
 
 
-def pr_auc(ys, yhat, positive=True, presorted=False):
+def pr_auc(ys, yhat, positive=True, presorted=False, return_curve=False):
     """Computes the area under the precision-recall curve (higher is better).
 
     :param y: true function values
@@ -416,6 +421,8 @@ def pr_auc(ys, yhat, positive=True, presorted=False):
     :param positive: the positive label
     :param presorted: whether or not ys and yhat are already sorted
     :type presorted: bool
+    :param return_curve: whether or not the curve should be returned
+    :type return_curve: bool
 
     >>> pr_auc([0, 0, 1, 1], [0, 0, 1, 1], 1)
     1.0
@@ -431,7 +438,10 @@ def pr_auc(ys, yhat, positive=True, presorted=False):
     # precision is undefined when no positives are predicted
     # we approximate by using the precision at the lowest recall
     curve[0] = (0.0, curve[1][1])
-    return auc(curve)
+    if return_curve:
+        return auc(curve), curve
+    else:
+        return auc(curve)
 
 def r_squared(y, yhat):
     """Returns the R squared statistic, also known as coefficient of determination (higher is better).
