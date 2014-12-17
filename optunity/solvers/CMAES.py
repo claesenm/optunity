@@ -132,10 +132,10 @@ class CMA_ES(Solver):
         Individual = deap.creator.Individual
 
         if self.lambda_:
-            strategy = deap.cma.Strategy(centroid=self.start.values(),
+            strategy = deap.cma.Strategy(centroid=list(self.start.values()),
                                             sigma=self.sigma, lambda_=self.lambda_)
         else:
-            strategy = deap.cma.Strategy(centroid=self.start.values(),
+            strategy = deap.cma.Strategy(centroid=list(self.start.values()),
                                             sigma=self.sigma)
         toolbox.register("generate", strategy.generate, Individual)
         toolbox.register("update", strategy.update)

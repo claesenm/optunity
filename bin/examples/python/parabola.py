@@ -5,6 +5,7 @@ import numpy as np
 
 # check all available solvers
 solvers = optunity.available_solvers()
+print('Available solvers: ' + ', '.join(solvers))
 logs = {}
 optima = dict([(s, []) for s in solvers])
 
@@ -44,7 +45,8 @@ plt.xlim([-5, 5])
 plt.ylim([-5, 5])
 plt.axis('equal')
 plt.legend(solvers)
-plt.savefig('parabola_solver_traces.png', transparant=True)
+plt.show()
+#plt.savefig('parabola_solver_traces.png', transparant=True)
 plt.clf()
 
 from collections import OrderedDict
@@ -58,6 +60,7 @@ for k, v in optima.items():
 
 plt.barh(np.arange(len(means)), means.values(), height=0.8, xerr=std.values(), alpha=0.5)
 plt.xlabel('number of correct digits')
-plt.yticks(np.arange(len(means))+0.4, means.keys())
+plt.yticks(np.arange(len(means))+0.4, list(means.keys()))
 plt.tight_layout()
-plt.savefig('parabola_solver_precision.png', transparant=True)
+plt.show()
+#plt.savefig('parabola_solver_precision.png', transparant=True)

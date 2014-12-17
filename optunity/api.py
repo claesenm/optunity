@@ -251,7 +251,7 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
             index, _ = max(enumerate(f.call_log.values()), key=operator.itemgetter(1))
         else:
             index, _ = min(enumerate(f.call_log.values()), key=operator.itemgetter(1))
-        solution = operator.itemgetter(index)(f.call_log.keys())._asdict()
+        solution = list(f.call_log.keys())[index]._asdict()
     time = timeit.default_timer() - time
 
     optimum = f.call_log.get(**solution)
