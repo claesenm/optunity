@@ -1,4 +1,4 @@
-# To run Spark in Pythno use:
+# To run Spark with ipython use:
 # IPYTHON=1 .bin/pyspark
 
 from pyspark.mllib.classification import LogisticRegressionWithSGD
@@ -27,7 +27,7 @@ def logistic_l2_accuracy(x_train, x_test, regParam):
     # returning accuracy on x_test
     return yhat.filter(lambda (v, p): v == p).count() / float(x_test.count())
 
-# using default maximize (particle swarm) with 10 evaluations
+# using default maximize (particle swarm) with 10 evaluations, regularization between 0 and 10
 optimal_pars, _, _ = optunity.maximize(logistic_l2_accuracy, num_evals=10, regParam=[0, 10])
 
 # training model with all data for the best parameters
