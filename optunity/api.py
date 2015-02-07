@@ -173,7 +173,7 @@ def maximize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
     assert all([len(v) == 2 and v[0] < v[1]
                 for v in kwargs.values()]), 'Box constraints improperly specified: should be [lb, ub] pairs'
 
-    f = _wrap_hard_box_constraints(f, kwargs, sys.float_info.min)
+    f = _wrap_hard_box_constraints(f, kwargs, -sys.float_info.max)
 
     suggestion = suggest_solver(num_evals, solver_name, **kwargs)
     solver = make_solver(**suggestion)

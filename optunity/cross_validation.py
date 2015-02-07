@@ -302,7 +302,11 @@ class cross_validated_callable(object):
         """ Number of samples in x """
         if _spark_available and isinstance(self._x, pyspark.rdd.RDD):
             return self._x.count()
-        return len(self._x)
+        else:
+            try:
+                return len(self._x)
+            except TypeError:
+                return self._x.shape[0]
 
 
     @property

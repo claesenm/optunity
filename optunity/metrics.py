@@ -138,6 +138,7 @@ def auc(curve):
     """Computes the area under the specified curve.
 
     :param curve: a curve, specified as a list of (x, y) tuples
+    :type curve: [(x, y), ...]
 
     .. seealso:: :func:`optunity.score_functions.compute_curve`
 
@@ -148,7 +149,7 @@ def auc(curve):
         x2, y2 = curve[i + 1]
         if y1 is None:
             y1 = 0.0
-        area += float(y1) * float(x2 - x1) + float(y2 - y1) * float(x2 - x1) / 2
+        area += float(min(y1, y2)) * float(x2 - x1) + math.fabs(float(y2 - y1)) * float(x2 - x1) / 2
 
     return area
 

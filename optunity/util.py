@@ -33,6 +33,17 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import itertools
+
+def nth(iterable, n):
+    """Returns the nth item from iterable."""
+    try:
+        return iterable[n]
+    except TypeError:
+        try:
+            return next(itertools.islice(iterable, n, None))
+        except StopIteration:
+            raise IndexError('index out of range')
 
 
 def DocumentedNamedTuple(docstring, *ntargs):
