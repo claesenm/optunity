@@ -125,7 +125,7 @@ class RandomSearch(Solver):
         def generate_rand_args(len=1):
 #            return [uniform_in_bounds(self.bounds)]
             return [[random.uniform(bounds[0], bounds[1]) for _ in range(len)]
-                    for _, bounds in sorted(self.bounds.items())]
+                    for _, bounds in self.bounds.items()]
 
         best_pars = None
         f = static_key_order(self.bounds.keys())(f)
