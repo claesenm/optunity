@@ -32,8 +32,9 @@
 
 import threading
 import copy
+import functools
 
-__all__ = ['pmap', 'Future']
+__all__ = ['pmap', 'Future', 'create_pmap']
 
 def _fun(f, q_in, q_out):
     while True:
@@ -51,7 +52,7 @@ try:
     import multiprocessing
 
     # http://stackoverflow.com/a/16071616
-    def pmap(f, *args):
+    def pmap(f, *args, **kwargs):
         """Parallel map using multiprocessing.
 
         :param f: the callable
@@ -65,7 +66,8 @@ try:
             Python's multiprocessing library is incompatible with Jython.
 
         """
-        nprocs = multiprocessing.cpu_count()
+        nprocs = kwargs.get('number_of_processes', multiprocessing.cpu_count())
+#        nprocs = multiprocessing.cpu_count()
         q_in = multiprocessing.Queue(1)
         q_out = multiprocessing.Queue()
 
@@ -88,6 +90,10 @@ try:
         else:
             return [x for i, x in sorted(res)]
 
+    def create_pmap(number_of_processes):
+        def pmap_bound(f, *args):
+            return pmap(f, *args, number_of_processes=number_of_processes)
+        return pmap_bound
 
     # http://code.activestate.com/recipes/84317-easy-threading-with-futures/
     class Future:
