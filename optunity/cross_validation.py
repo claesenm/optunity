@@ -75,6 +75,8 @@ def select(collection, indices):
     """
     try:
         return collection[indices, ...]
+    except IndexError: # caused by scipy.sparse in some versions
+        return collection[indices, :]
     except TypeError: # not dealing with numpy or comparable, probably a list
         if _spark_available and isinstance(collection, pyspark.rdd.RDD):
             indexset = set(indices)
