@@ -57,7 +57,7 @@ import inspect
 
 __all__ = ['select', 'random_permutation', 'cross_validated',
            'generate_folds', 'strata_by_labels', 'mean', 'identity',
-           'list_mean']
+           'list_mean', 'mean_and_list']
 
 _spark_available = True
 try:
@@ -235,6 +235,17 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
 
 def mean(x):
     return float(sum(x)) / len(x)
+
+def mean_and_list(x):
+    """Returns a tuple, the first element is the mean of x and the second is x itself.
+
+    This function can be used as an aggregator in :func:`cross_validated`,
+
+    >>> mean_and_list([1,2,3])
+    (2.0, [1, 2, 3])
+
+    """
+    return (mean(x), x)
 
 def list_mean(list_of_measures):
     """Computes means of consequent elements in given list.
