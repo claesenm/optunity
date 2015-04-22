@@ -10,6 +10,7 @@ logs = {}
 optima = dict([(s, []) for s in solvers])
 
 # we run experiments a number of times to estimate each solver's variance
+particle_details = None
 for i in range(200):
     xoff = random.random()
     yoff = random.random()
@@ -22,6 +23,7 @@ for i in range(200):
         optima[solver].append(details.optimum)
         logs[solver] = np.array([details.call_log['args']['x'],
                                  details.call_log['args']['y']])
+        if solver == 'particle swarm': particle_details = details
 
 # plot results
 print('plotting results')
@@ -36,6 +38,7 @@ Z = f(X, Y)
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+plt.figure(1)
 CS = plt.contour(X, Y, Z)
 plt.clabel(CS, inline=1, fontsize=10, alpha=0.5)
 for i, solver in enumerate(solvers):
@@ -45,9 +48,9 @@ plt.xlim([-5, 5])
 plt.ylim([-5, 5])
 plt.axis('equal')
 plt.legend(solvers)
-plt.show()
+plt.draw()
 #plt.savefig('parabola_solver_traces.png', transparant=True)
-plt.clf()
+#plt.clf()
 
 from collections import OrderedDict
 log_optima = OrderedDict()
@@ -58,9 +61,22 @@ for k, v in optima.items():
     means[k] = sum(log_optima[k]) / len(v)
     std[k] = np.std(log_optima[k])
 
+plt.figure(2)
 plt.barh(np.arange(len(means)), means.values(), height=0.8, xerr=std.values(), alpha=0.5)
 plt.xlabel('number of correct digits')
 plt.yticks(np.arange(len(means))+0.4, list(means.keys()))
 plt.tight_layout()
 plt.show()
 #plt.savefig('parabola_solver_precision.png', transparant=True)
+
+
+
+
+num_evals = len(particle_details.call_log['values'])
+best_fitness = [min(particle_details.call_log['values'][:x]) for x in range(1, 1 + num_evals)]
+avg_fitness = [sum(particle_details.call_log['values'][:x]) / x for x in range(1, 1 + num_evals)]
+
+plt.figure(3)
+plt.plot(range(num_evals), best_fitness, 'b')
+plt.plot(range(num_evals), avg_fitness, 'r')
+plt.show()
