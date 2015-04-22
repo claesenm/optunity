@@ -123,3 +123,17 @@ def shrink_bounds(bounds, coverage=0.99):
 
     return dict([(k, shrink(v[0], v[1], coverage))
                  for k, v in bounds.items()])
+
+
+def score(value):
+    """General wrapper around objective function evaluations to get the score.
+
+    :param value: output of the objective function
+    :returns: the score
+
+    If value is a scalar, it is returned immediately. If value is iterable, its first element is returned.
+    """
+    try:
+        return value[0]
+    except TypeError:
+        return value

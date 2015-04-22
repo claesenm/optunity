@@ -38,6 +38,7 @@ import functools
 
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, uniform_in_bounds
+import util
 
 @register_solver('particle swarm',
                  'particle swarm optimization',
@@ -87,7 +88,7 @@ class ParticleSwarm(Solver):
             string += '}'
             return string
 
-    def __init__(self, num_particles, num_generations, max_speed=None, phi1=2.0, phi2=2.0, **kwargs):
+    def __init__(self, num_particles, num_generations, max_speed=None, phi1=1.5, phi2=2.0, **kwargs):
         """
         Initializes a PSO solver.
 
@@ -99,7 +100,7 @@ class ParticleSwarm(Solver):
         :type max_speed: float or None
         :param phi1: parameter used in updating position based on local best
         :type phi1: float
-        :param phi2: parameter used in updating position best on global best
+        :param phi2: parameter used in updating position based on global best
         :type phi2: float
         :param kwargs: box constraints for each hyperparameter
         :type kwargs: {'name': [lb, ub], ...}
@@ -128,7 +129,8 @@ class ParticleSwarm(Solver):
         self._num_generations = num_generations
 
         if max_speed is None:
-            max_speed = 0.5 / num_generations
+            max_speed = 0.7 / num_generations
+#            max_speed = 0.2 / math.sqrt(num_generations)
         self._max_speed = max_speed
         self._smax = [self.max_speed * (b[1] - b[0])
                         for _, b in self.bounds.items()]
@@ -173,16 +175,13 @@ class ParticleSwarm(Solver):
         d = dict(kwargs)
         if num_evals > 1000:
             d['num_particles'] = 100
-            d['num_generations'] = int(math.ceil(float(num_evals) / 100))
         elif num_evals >= 200:
-            d['num_particles'] = 40
-            d['num_generations'] = int(math.ceil(float(num_evals) / 40))
+            d['num_particles'] = 20
         elif num_evals >= 10:
             d['num_particles'] = 10
-            d['num_generations'] = int(math.ceil(float(num_evals) / 10))
         else:
             d['num_particles'] = num_evals
-            d['num_generations'] = 1
+        d['num_generations'] = int(math.ceil(float(num_evals) / d['num_particles']))
         return d
 
     @property
@@ -256,7 +255,7 @@ class ParticleSwarm(Solver):
         for g in range(self.num_generations):
             fitnesses = pmap(evaluate, list(map(self.particle2dict, pop)))
             for part, fitness in zip(pop, fitnesses):
-                part.fitness = fit*fitness
+                part.fitness = fit * util.score(fitness)
                 if not part.best or part.best_fitness < part.fitness:
                     part.best = part.position
                     part.best_fitness = part.fitness

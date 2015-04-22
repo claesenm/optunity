@@ -137,6 +137,7 @@ class RandomSearch(Solver):
 
         tuples = generate_rand_args(self.num_evals)
         scores = pmap(f, *tuples)
+        scores = map(util.score, scores)
 
         if maximize:
             comp = max

@@ -36,6 +36,7 @@ import operator as op
 from .. import functions as fun
 from .solver_registry import register_solver
 from .util import Solver, _copydoc
+import util
 
 @register_solver('nelder-mead',
                  'simplex method for unconstrained optimization',
@@ -110,7 +111,7 @@ class NelderMead(Solver):
         f = fun.static_key_order(sortedkeys)(f)
 
         def func(x):
-            return f(*x)
+            return util.score(f(*x))
 
         xopt = self._solve(func, x0)
         return dict([(k, v) for k, v in zip(sortedkeys, xopt)]), None

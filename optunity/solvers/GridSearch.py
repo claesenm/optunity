@@ -36,6 +36,7 @@ import itertools
 from ..functions import static_key_order
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, shrink_bounds
+import util
 
 # http://stackoverflow.com/a/15978862
 def nth_root(val, n):
@@ -153,6 +154,7 @@ class GridSearch(Solver):
 
         tuples = list(zip(*itertools.product(*list(zip(*self.parameter_tuples.items()))[1])))
         scores = pmap(f, *tuples)
+        scores = map(util.score, scores)
 
         if maximize:
             comp = max

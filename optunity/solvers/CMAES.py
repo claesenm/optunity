@@ -35,6 +35,7 @@ import functools
 
 from .solver_registry import register_solver
 from .util import Solver, _copydoc
+import util
 
 _numpy_available = True
 try:
@@ -142,9 +143,9 @@ class CMA_ES(Solver):
 
         @functools.wraps(f)
         def evaluate(individual):
-            return (f(**dict([(k, v)
+            return (util.score(f(**dict([(k, v)
                                 for k, v in zip(self.start.keys(),
-                                                individual)])),)
+                                                individual)]))),)
         toolbox.register("evaluate", evaluate)
         toolbox.register("map", pmap)
 
