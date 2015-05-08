@@ -33,6 +33,7 @@
 
 import abc
 import random
+import threading
 
 def uniform_in_bounds(bounds):
     """Generates a random uniform sample between ``bounds``.
@@ -117,8 +118,8 @@ def shrink_bounds(bounds, coverage=0.99):
 
     """
     def shrink(lb, ub, coverage):
-        new_range = float(ub-lb)*coverage/2
-        middle = float(ub+lb)/2
+        new_range = float(ub - lb) * coverage / 2
+        middle = float(ub + lb) / 2
         return [middle-new_range, middle+new_range]
 
     return dict([(k, shrink(v[0], v[1], coverage))
@@ -135,5 +136,61 @@ def score(value):
     """
     try:
         return value[0]
-    except TypeError:
+    except (TypeError, IndexError):
         return value
+
+
+class ThreadSafeQueue(object):
+    def __init__(self, lst=None):
+        """
+        Initializes a new object.
+
+        :param lst: initial content
+        :type lst: list or None
+        """
+        if lst: self._content = lst
+        else: self._content = []
+        self._lock = threading.Lock()
+
+    @property
+    def lock(self): return self._lock
+
+    @property
+    def content(self): return self._content
+
+    def append(self, value):
+        """
+        Acquires lock and appends value to the content.
+
+        >>> q1 = ThreadSafeQueue()
+        >>> q1
+        []
+        >>> q1.append(1)
+        [1]
+
+        """
+        with self.lock: self.content.append(value)
+
+    def __iter__(self):
+        for i in self.content:
+            yield i
+
+    def __len__(self): return len(self.content)
+    def __getitem__(self, idx): return self.content[idx]
+    def __repr__(self): return str(self.content)
+
+    def copy(self):
+        """
+        Makes a deep copy of this ThreadSafeQueue.
+
+        >>> q1 = ThreadSafeQueue([1,2,3])
+        >>> q2 = q1.copy()
+        >>> q2.append(4)
+        >>> q1
+        [1, 2, 3]
+        >>> q2
+        [1, 2, 3, 4]
+
+        """
+        return ThreadSafeQueue(self.content[:])
+
