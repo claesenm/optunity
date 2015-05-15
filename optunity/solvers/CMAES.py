@@ -35,7 +35,7 @@ import functools
 
 from .solver_registry import register_solver
 from .util import Solver, _copydoc
-import util
+from . import util
 
 _numpy_available = True
 try:

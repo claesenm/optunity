@@ -36,7 +36,7 @@ import random
 from ..functions import static_key_order
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, shrink_bounds, uniform_in_bounds
-import util
+from . import util
 
 @register_solver('random search',
                  'random parameter tuples sampled uniformly within box constraints',

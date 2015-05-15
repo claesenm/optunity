@@ -36,7 +36,7 @@ import itertools
 from ..functions import static_key_order
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, shrink_bounds
-import util
+from . import util
 
 # http://stackoverflow.com/a/15978862
 def nth_root(val, n):

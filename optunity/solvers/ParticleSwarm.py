@@ -38,7 +38,7 @@ import functools
 
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, uniform_in_bounds
-import util
+from . import util
 
 @register_solver('particle swarm',
                  'particle swarm optimization',

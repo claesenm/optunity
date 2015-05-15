@@ -36,7 +36,7 @@ import operator as op
 from .. import functions as fun
 from .solver_registry import register_solver
 from .util import Solver, _copydoc
-import util
+from . import util
 
 @register_solver('nelder-mead',
                  'simplex method for unconstrained optimization',
