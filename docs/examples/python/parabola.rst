@@ -26,10 +26,12 @@ Note that both |nelder-mead| and |cmaes| started from an initial solution close 
 The results on this toy problem do not generalize directly to a real tuning problem.
 
 .. figure:: parabola_solver_traces.png
+    :width: 400
 
     Solver traces showing the evolution of their search for a single run on the 2D parabola.
 
 .. figure:: parabola_solver_precision.png
+    :width: 400
 
     Log10 of the precision of each solver's optimum, averaged across all runs.
 
