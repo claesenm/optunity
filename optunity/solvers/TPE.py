@@ -68,7 +68,7 @@ class TPE(Solver):
         :param num_evals: number of permitted function evaluations
         :type num_evals: int
         :param seed: the random seed to be used
-        :type num_evals: double
+        :type seed: double
         :param kwargs: box constraints for each hyperparameter
         :type kwargs: {'name': [lb, ub], ...}
 

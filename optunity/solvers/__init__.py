@@ -55,4 +55,5 @@ from .RandomSearch import RandomSearch
 from .NelderMead import NelderMead
 from .ParticleSwarm import ParticleSwarm
 from .CMAES import CMA_ES
-#from .TPE import TPE
+from .TPE import TPE
+from .Sobol import Sobol

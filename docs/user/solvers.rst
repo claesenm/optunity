@@ -23,7 +23,11 @@ The following solvers are available in Optunity:
     /user/solvers/TPE
     /user/solvers/sobol
 
+Optunity's default solver is |pso|.
+
 |gridsearch|, |randomsearch| and |sobol| are completely undirected algorithms and consequently not very efficient. 
-Of these three, |sobol| is most efficient as uses a low-discrepancy quasirandom sequence. |nelder-mead| works well for objective functions that
-are smooth, unimodal and not too noisy (it is good for local search when you have a good idea about optimal regions for your hyperparameters). For general
-searches, |pso| and |cmaes| are most robust. The |tpe| solver is a thin wrapper, exposing Hyperopt's TPE solver in Optunity's familiar API.
+Of these three, |sobol| is most efficient as uses a low-discrepancy quasirandom sequence. 
+
+|nelder-mead| works well for objective functions that are smooth, unimodal and not too noisy (it is good for local search when you have a good idea about optimal regions for your hyperparameters). 
+
+For general searches, |pso| and |cmaes| are most robust. Finally, the |tpe| solver exposes Hyperopt's TPE solver in Optunity's familiar API.
