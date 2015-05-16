@@ -10,19 +10,18 @@ sequences in up to 40 dimensions (e.g. 40 hyperparameters).
 The figures below show the differences between a Sobol sequence and sampling uniformly at random.
 
 .. figure:: sobol.png
-    :alt: 100 points sampled in 2D with a Sobol sequence.
+    :alt: 200 points sampled in 2D with a Sobol sequence.
 
-    100 points sampled in 2D with a Sobol sequence.
+    200 points sampled in 2D with a Sobol sequence.
 
 
 
 .. figure:: random.png
-    :alt: 100 points sampled in 2D uniformly at random.
+    :alt: 200 points sampled in 2D uniformly at random.
 
-    100 points sampled in 2D uniformly at random.
+    200 points sampled in 2D uniformly at random.
 
 The mathematical details on Sobol sequences are available in the following papers: [SOBOL]_, [SOBOL2]_, [ANTONOV]_, [BRATLEY]_, [FOX]_.
-
 
 .. [SOBOL] Ilya Sobol, USSR Computational Mathematics and Mathematical Physics, Volume 16, pages 236-242, 1977.
 
