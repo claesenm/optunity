@@ -61,7 +61,17 @@ class TPE(Solver):
     """
 
     def __init__(self, num_evals=100, seed=None, **kwargs):
-        """blah
+        """
+
+        Initialize the TPE solver.
+
+        :param num_evals: number of permitted function evaluations
+        :type num_evals: int
+        :param seed: the random seed to be used
+        :type num_evals: double
+        :param kwargs: box constraints for each hyperparameter
+        :type kwargs: {'name': [lb, ub], ...}
+
 
         """
         if not _hyperopt_available:
