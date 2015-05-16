@@ -11,6 +11,7 @@ The figures below show the differences between a Sobol sequence and sampling uni
 
 .. figure:: sobol.png
     :alt: 200 points sampled in 2D with a Sobol sequence.
+    :width: 400
 
     200 points sampled in 2D with a Sobol sequence.
 
