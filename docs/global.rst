@@ -17,7 +17,7 @@
 .. |gridsearch| replace:: :doc:`/user/solvers/grid_search`
 .. |randomsearch| replace:: :doc:`/user/solvers/random_search`
 .. |nelder-mead| replace:: :doc:`/user/solvers/nelder-mead`
-.. |tpe| replace:: :doc:`/user/solvers/tpe`
+.. |tpe| replace:: :doc:`/user/solvers/TPE`
 .. |sobol| replace:: :doc:`/user/solvers/sobol`
 
 .. |api-solvers| replace:: :doc:`optunity.solvers`
