@@ -60,6 +60,7 @@ Now we have two LS-SVM models, one tuned with LS-SVM's own algorithms and one us
 their performance is close to equivalent. The figure below shows test set predictions.
 
 .. figure:: regression.png
+    :width: 400
 
     Test set predictions and the true function.
 

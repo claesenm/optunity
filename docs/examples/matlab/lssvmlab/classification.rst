@@ -58,9 +58,11 @@ Now we have two LS-SVM models, one tuned with LS-SVM's own algorithms and one us
 their performance is close to equivalent. The figures below shows test set predictions for both models.
 
 .. figure:: classification_lssvm.png
+    :width: 400
 
     Test set predictions of LS-SVM after tuning with LS-SVMlab.
 
 .. figure:: classification_optunity.png
+    :width: 400
 
     Test set predictions of LS-SVM after tuning with Optunity.
