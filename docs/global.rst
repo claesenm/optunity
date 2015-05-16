@@ -17,6 +17,8 @@
 .. |gridsearch| replace:: :doc:`/user/solvers/grid_search`
 .. |randomsearch| replace:: :doc:`/user/solvers/random_search`
 .. |nelder-mead| replace:: :doc:`/user/solvers/nelder-mead`
+.. |tpe| replace:: :doc:`/user/solvers/tpe`
+.. |sobol| replace:: :doc:`/user/solvers/sobol`
 
 .. |api-solvers| replace:: :doc:`optunity.solvers`
 .. |api-pso| replace:: :class:`optunity.solvers.ParticleSwarm`
@@ -24,6 +26,8 @@
 .. |api-gridsearch| replace:: :class:`optunity.solvers.GridSearch`
 .. |api-randomsearch| replace:: :class:`optunity.solvers.RandomSearch`
 .. |api-nelder-mead| replace:: :class:`optunity.solvers.NelderMead`
+.. |api-tpe| replace:: :class:`optunity.solvers.TPE`
+.. |api-sobol| replace:: :class:`optunity.solvers.Sobol`
 
 .. |api-constraints| replace:: :doc:`/api/optunity.constraints`
 
