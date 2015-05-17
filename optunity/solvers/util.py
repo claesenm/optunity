@@ -43,6 +43,25 @@ def uniform_in_bounds(bounds):
     """
     return map(random.uniform, *zip(*bounds.values()))
 
+def scale_unit_to_bounds(seq, bounds):
+    """
+    Scales all elements in seq (unit hypercube) to the box constraints in bounds.
+
+    :param seq: the sequence in the unit hypercube to scale
+    :type seq: iterable
+    :param bounds: bounds to scale to
+    :type seq: iterable of [lb, ub] pairs
+    :returns: a list of scaled elements of `seq`
+
+    >>> scale_unit_to_bounds([0.0, 0.5, 0.5, 1.0], [[-1.0, 2.0], [-2.0, 0.0], [0.0, 3.0], [0.0, 2.0]])
+    [-1.0, -1.0, 1.5, 2.0]
+
+    """
+    assert(len(seq) == len(bounds))
+    return [float(x) * float(b[1] - b[0]) + b[0]
+            for x, b in zip(seq, bounds)]
+
+
 # python version-independent metaclass usage
 SolverBase = abc.ABCMeta('SolverBase', (object, ), {})
 

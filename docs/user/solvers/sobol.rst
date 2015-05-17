@@ -8,6 +8,7 @@ hypercube with lower discrepancy than completely random sampling (e.g. |randomse
 sequences in up to 40 dimensions (e.g. 40 hyperparameters). 
 
 The figures below show the differences between a Sobol sequence and sampling uniformly at random.
+These figures can be recreated using the code in `bin/examples/python/sobol_vs_random.py`.
 
 .. figure:: sobol.png
     :alt: 200 points sampled in 2D with a Sobol sequence.

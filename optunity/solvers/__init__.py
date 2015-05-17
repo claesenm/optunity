@@ -39,11 +39,19 @@ Main classes in this module:
 * :class:`NelderMead`
 * :class:`ParticleSwarm`
 * :class:`CMA_ES`
+* :class:`TPE`
+* :class:`Sobol`
 
 .. warning::
     :class:`CMA_ES` require DEAP_ and NumPy_.
 
     .. _DEAP: https://code.google.com/p/deap/
+    .. _NumPy: http://www.numpy.org
+
+.. warning::
+    :class:`TPE` require Hyperopt_ and NumPy_.
+
+    .. _Hyperopt: http://jaberg.github.io/hyperopt/
     .. _NumPy: http://www.numpy.org
 
 .. moduleauthor:: Marc Claesen
@@ -56,4 +64,4 @@ from .NelderMead import NelderMead
 from .ParticleSwarm import ParticleSwarm
 from .CMAES import CMA_ES
 from .TPE import TPE
-#from .Sobol import Sobol
+from .Sobol import Sobol

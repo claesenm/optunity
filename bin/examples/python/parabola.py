@@ -11,7 +11,7 @@ optima = dict([(s, []) for s in solvers])
 
 # we run experiments a number of times to estimate each solver's variance
 particle_details = None
-for i in range(200):
+for i in range(100):
     xoff = random.random()
     yoff = random.random()
     def f(x, y):
@@ -27,8 +27,8 @@ for i in range(200):
 
 # plot results
 print('plotting results')
-colors = ['r', 'g', 'b', 'y', 'k', 'y']
-markers = ['x', '+', 'o', 's', 'p']
+colors =  ['r', 'g', 'b', 'y', 'k', 'y', 'r', 'g']
+markers = ['x', '+', 'o', 's', 'p', 'x', '+', 'o']
 
 delta = 0.025
 x = np.arange(-5.0, 5.0, delta)
@@ -42,6 +42,7 @@ plt.figure(1)
 CS = plt.contour(X, Y, Z)
 plt.clabel(CS, inline=1, fontsize=10, alpha=0.5)
 for i, solver in enumerate(solvers):
+    print(solver)
     plt.scatter(logs[solver][0,:], logs[solver][1,:], c=colors[i], marker=markers[i], alpha=0.80)
 
 plt.xlim([-5, 5])
@@ -67,16 +68,4 @@ plt.xlabel('number of correct digits')
 plt.yticks(np.arange(len(means))+0.4, list(means.keys()))
 plt.tight_layout()
 plt.show()
-#plt.savefig('parabola_solver_precision.png', transparant=True)
-
-
-
-
-num_evals = len(particle_details.call_log['values'])
-best_fitness = [min(particle_details.call_log['values'][:x]) for x in range(1, 1 + num_evals)]
-avg_fitness = [sum(particle_details.call_log['values'][:x]) / x for x in range(1, 1 + num_evals)]
-
-plt.figure(3)
-plt.plot(range(num_evals), best_fitness, 'b')
-plt.plot(range(num_evals), avg_fitness, 'r')
-plt.show()
+plt.savefig('parabola_solver_precision.png', transparant=True)

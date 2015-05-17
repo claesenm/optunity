@@ -39,6 +39,7 @@ import functools
 from .solver_registry import register_solver
 from .util import Solver, _copydoc, uniform_in_bounds
 from . import util
+from .Sobol import Sobol
 
 @register_solver('particle swarm',
                  'particle swarm optimization',
@@ -128,6 +129,8 @@ class ParticleSwarm(Solver):
         self._num_particles = num_particles
         self._num_generations = num_generations
 
+        self._sobolseed = random.randint(100,2000)
+
         if max_speed is None:
             max_speed = 0.7 / num_generations
 #            max_speed = 0.2 / math.sqrt(num_generations)
@@ -146,6 +149,12 @@ class ParticleSwarm(Solver):
     @property
     def phi2(self):
         return self._phi2
+
+    @property
+    def sobolseed(self): return self._sobolseed
+
+    @sobolseed.setter
+    def sobolseed(self, value): self._sobolseed = value
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
@@ -210,7 +219,12 @@ class ParticleSwarm(Solver):
 
     def generate(self):
         """Generate a new Particle."""
-        part = ParticleSwarm.Particle(position=array.array('d', uniform_in_bounds(self.bounds)),
+        if len(self.bounds) < Sobol.maxdim():
+            sobol_vector, self.sobolseed = Sobol.i4_sobol(len(self.bounds), self.sobolseed)
+            vector = util.scale_unit_to_bounds(sobol_vector, self.bounds.values())
+        else: vector = uniform_in_bounds(self.bounds)
+
+        part = ParticleSwarm.Particle(position=array.array('d', vector),
                                       speed=array.array('d', map(random.uniform,
                                                                  self.smin, self.smax)),
                                       best=None, fitness=None, best_fitness=None)
