@@ -35,7 +35,12 @@ import operator as op
 import random
 import array
 import functools
-import itertools
+try:
+    # Python 2
+    from itertools import izip_longest
+except ImportError:
+    # Python 3
+    from itertools import zip_longest as izip_longest
 
 from ..functions import static_key_order
 from .solver_registry import register_solver
@@ -184,7 +189,7 @@ class Sobol(Solver):
         abin = to_binary(a)[::-1]
         bbin = to_binary(b)[::-1]
         xor = lambda x, y: '0' if (x == y) else '1'
-        lst = [xor(x, y) for x, y in itertools.izip_longest(abin, bbin, fillvalue='0')]
+        lst = [xor(x, y) for x, y in izip_longest(abin, bbin, fillvalue='0')]
         lst.reverse()
         return int("".join(lst), 2)
 
