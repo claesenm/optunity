@@ -47,6 +47,12 @@ from .solver_registry import register_solver
 from .util import Solver, _copydoc, uniform_in_bounds
 from . import util
 
+try:
+    # Python 2
+    irange = irange
+except NameError:
+    #Python 3
+    irange = range
 
 # Parts of this implementation were obtained from here:
 # obtained from http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html
@@ -270,7 +276,7 @@ class Sobol(Solver):
 
         """
 
-        r = [Sobol.i4_sobol(m, seed)[0] for seed in xrange(skip, skip + n)]
+        r = [Sobol.i4_sobol(m, seed)[0] for seed in irange(skip, skip + n)]
         return r
 
     @staticmethod
@@ -321,7 +327,7 @@ class Sobol(Solver):
     #
     #    Initialize (part of) V.
     #
-            v = [[0] * dim_max for _ in xrange(log_max)]
+            v = [[0] * dim_max for _ in irange(log_max)]
             v[0][0:40] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -374,7 +380,7 @@ class Sobol(Solver):
     #    Initialize row 1 of V.
     #
     #        v[0,0:maxcol] = 1
-            for i in xrange(maxcol):
+            for i in irange(maxcol):
                 v[i][0] = 1
 
     #
@@ -391,7 +397,7 @@ class Sobol(Solver):
     #
     #    Initialize the remaining rows of V.
     #
-            for i in xrange(2 , dim_num+1):
+            for i in irange(2 , dim_num+1):
     #
     #    The bits of the integer POLY(I) gives the form of polynomial I.
     #
@@ -408,8 +414,8 @@ class Sobol(Solver):
     #    Expand this bit pattern to separate components of the logical array INCLUD.
     #
                 j = poly[i-1]
-                includ = [0 for _ in xrange(m)]
-                for k in xrange(m, 0, -1):
+                includ = [0 for _ in irange(m)]
+                for k in irange(m, 0, -1):
                     j2 = math.floor ( j / 2. )
                     includ[k-1] =  (j != 2 * j2 )
                     j = j2
@@ -417,10 +423,10 @@ class Sobol(Solver):
     #    Calculate the remaining elements of row I as explained
     #    in Bratley and Fox, section 2.
     #
-                for j in xrange( m+1, maxcol+1 ):
+                for j in irange( m+1, maxcol+1 ):
                     newv = v[j-m-1][i-1]
                     l = 1
-                    for k in xrange(1, m+1):
+                    for k in irange(1, m+1):
                         l = 2 * l
                         if ( includ[k-1] ):
                             newv = Sobol.bitwise_xor ( int(newv), int(l * v[j-k-1][i-1]) )
@@ -429,14 +435,14 @@ class Sobol(Solver):
     #    Multiply columns of V by appropriate power of 2.
     #
             l = 1
-            for j in xrange( maxcol-1, 0, -1):
+            for j in irange( maxcol-1, 0, -1):
                 l = 2 * l
                 v[j-1][0:dim_num] = map(lambda x: x * l, v[j-1][0:dim_num])
     #
     #    RECIPD is 1/(common denominator of the elements in V).
     #
             recipd = 1.0 / ( 2 * l )
-            lastq = [0 for _ in xrange(dim_num)]
+            lastq = [0 for _ in irange(dim_num)]
 
         seed = int(math.floor ( seed ))
 
@@ -445,7 +451,7 @@ class Sobol(Solver):
 
         if ( seed == 0 ):
             l = 1
-            lastq = [0 for _ in xrange(dim_num)]
+            lastq = [0 for _ in irange(dim_num)]
 
         elif ( seed == seed_save + 1 ):
     #
@@ -457,20 +463,20 @@ class Sobol(Solver):
 
             seed_save = 0
             l = 1
-            lastq = [0 for _ in xrange(dim_num)]
+            lastq = [0 for _ in irange(dim_num)]
 
-            for seed_temp in xrange( int(seed_save), int(seed)):
+            for seed_temp in irange( int(seed_save), int(seed)):
                 l = Sobol.i4_bit_lo0 ( seed_temp )
-                for i in xrange(1 , dim_num+1):
+                for i in irange(1 , dim_num+1):
                     lastq[i-1] = Sobol.bitwise_xor ( int(lastq[i-1]), int(v[l-1][i-1]) )
 
             l = Sobol.i4_bit_lo0 ( seed )
 
         elif ( seed_save + 1 < seed ):
 
-            for seed_temp in xrange( int(seed_save + 1), int(seed) ):
+            for seed_temp in irange( int(seed_save + 1), int(seed) ):
                 l = Sobol.i4_bit_lo0 ( seed_temp )
-                for i in xrange(1, dim_num+1):
+                for i in irange(1, dim_num+1):
                     lastq[i-1] = Sobol.bitwise_xor ( int(lastq[i-1]), int(v[l-1][i-1]) )
 
             l = Sobol.i4_bit_lo0 ( seed )
@@ -482,8 +488,8 @@ class Sobol(Solver):
     #
     #    Calculate the new components of QUASI.
     #
-        quasi = [0 for _ in xrange(dim_num)]
-        for i in xrange( 1, dim_num+1):
+        quasi = [0 for _ in irange(dim_num)]
+        for i in irange( 1, dim_num+1):
             quasi[i-1] = lastq[i-1] * recipd
             lastq[i-1] = Sobol.bitwise_xor ( int(lastq[i-1]), int(v[l-1][i-1]) )
 
