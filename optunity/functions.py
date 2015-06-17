@@ -40,12 +40,14 @@ Main features in this module:
 .. moduleauthor:: Marc Claesen
 """
 
+import inspect
 import itertools
 import collections
 import functools
 import threading
 import operator as op
 
+from . import util
 
 class Args(object):
     """Class to model arguments to a function evaluation.
