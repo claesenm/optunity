@@ -81,7 +81,7 @@ def compute_roc_tuned(x_train, y_train, x_test, y_test):
         return optunity.metrics.roc_auc(y_test, decision_values)
 
     # optimize parameters
-    optimal_pars, _, _ = optunity.maximize_structured(inner_cv, space, 50, pmap=optunity.pmap)
+    optimal_pars, _, _ = optunity.maximize_structured(inner_cv, space, 70, pmap=optunity.pmap)
     print('optimal parameters after tuning %s' % str(optimal_pars))
     # if you are running this in IPython, optunity.pmap will not work
     # more info at: https://github.com/claesenm/optunity/issues/8
