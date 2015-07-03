@@ -229,11 +229,11 @@ class SearchTree(object):
 
 
 
-#hpars = {'kernel': {'linear': {'c': [0, 1]},
-#                    'rbf': {'gamma': [0, 1], 'c': [0, 10]},
-#                    'poly': {'degree': [2, 4], 'c': [0, 2]}
-#                   }
-#        }
+hpars = {'kernel': {'linear': {'c': [0, 1]},
+                    'rbf': {'gamma': [0, 1], 'c': [0, 10]},
+                    'poly': {'degree': [2, 4], 'c': [0, 2]}
+                   }
+        }
 
 #hpars = {'kernel': {'linear': None,
 #                    'rbf': {'gamma': [0, 1]},
@@ -249,11 +249,11 @@ class SearchTree(object):
 #                   }
 #        }
 
+#tree.decode(v2)
+
 #tree = SearchTree(hpars)
 #l = list(tree)
 #v = tree.to_box()
 #v2 = v.copy()
 #v2['kernel'] = 3.5
 #v2['kernel-choice'] = 0.2
-#tree.decode(v2)
-
