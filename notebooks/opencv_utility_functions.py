@@ -138,7 +138,7 @@ def evaluate_model(model, digits, samples, labels):
         if not flag:
             img[...,1:] = 0
         vis.append(img)
-    return mosaic(25, vis)
+    return mosaic(25, vis), float(err)
 
 def preprocess_simple(digits):
     return np.float32(digits).reshape(-1, SZ*SZ) / 255.0

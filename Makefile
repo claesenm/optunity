@@ -13,3 +13,6 @@ wininst:
 
 html:
 	sphinx-build -b html docs/ docs/html/
+
+static-notebooks:
+	cd notebooks && sh notebooks/generate_static_notebooks.sh

@@ -453,7 +453,26 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
     >>> f(a=2)
     [2, 3, 4, 5, 6]
 
+    The number of folds must be less than or equal to the size of the data.
+
+    >>> data = list(range(5))
+    >>> @cross_validated(x=data, num_folds=6)
+    ... def f(x_train, x_test, a):
+    ...     return x_test[0] + a
+    AssertionError
+
+    The number of labels (if specified) must match the number of data instances.
+
+    >>> data = list(range(5))
+    >>> labels = list(range(3))
+    >>> @cross_validated(x=data, y=labels, num_folds=2)
+    ... def f(x_train, x_test, a):
+    ...     return x_test[0] + a
+    AssertionError
+
     """
+    assert(num_folds <= len(x))
+    assert(y is None or len(y) == len(x))
     args = dict(locals())
     def wrapper(f):
         args['f'] = f
