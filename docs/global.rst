@@ -5,6 +5,7 @@
 .. |metrics| replace:: :doc:`/user/metrics`
 .. |api| replace:: :doc:`/api/optunity`
 .. |examples| replace:: :doc:`/examples/index`
+.. |notebooks| replace:: :doc:`/notebooks/index`
 
 .. |maximize| replace:: :func:`optunity.maximize`
 .. |minimize| replace:: :func:`optunity.minimize`
