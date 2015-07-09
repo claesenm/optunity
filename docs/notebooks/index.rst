@@ -12,4 +12,4 @@ To contribute examples, please send us a pull request on Github_.
     :maxdepth: 2
     :glob:
 
-    /notebooks/*
+    /notebooks/notebooks/*
