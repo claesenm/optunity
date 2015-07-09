@@ -16,13 +16,15 @@ offsets.
         xoff = random.random()
         yoff = random.random()
         def f(x, y):
-            return (x - xoff)**2 + (y - yoff - 5)**2
+            return (x - xoff)**2 + (y - yoff)**2
         return f
 We start with the necessary imports.
 
 .. code:: python
 
-    %matplotlib inline # comment this line when running the notebook yourself
+     # comment this line when running the notebook yourself
+    %matplotlib inline
+    
     import math
     import optunity
     import random
@@ -84,6 +86,11 @@ along with contours of the objective function.
     plt.axis('equal')
     plt.legend(solvers)
     plt.show()
+
+
+.. image:: basic-parabola_files/output_12_0.png
+
+
 Now lets see the performance of the solvers across in 100 repeated
 experiments. We will do 100 experiments for each solver and then report
 the resulting statistics. This may take a while to run.
