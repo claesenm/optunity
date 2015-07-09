@@ -1,4 +1,7 @@
 
+Tuning a scikit-learn SVM classifier
+====================================
+
 In this example we will use Optunity to optimize hyperparameters for a
 support vector machine classifier (SVC) in scikit-learn. We will learn a
 model to distinguish digits 8 and 9 in the MNIST data set in two
@@ -55,12 +58,12 @@ First, lets see the performance of an SVC with default hyperparameters.
 
 .. parsed-literal::
 
-    0.6817249486770811
+    0.7838539081885857
 
 
 
 Tune SVC with RBF kernel 
-=========================
+-------------------------
 
 In order to use Optunity to optimize hyperparameters, we start by
 defining the objective function. We will use 5-fold cross-validated area
@@ -110,12 +113,12 @@ Now we can use Optunity to find the hyperparameters that maximize AUROC.
 
 .. parsed-literal::
 
-    Optimal parameters: {'C': 2.7282633076523837, 'gamma': 0.0003793484996538702}
-    AUROC of tuned SVM with RBF kernel: 0.981
+    Optimal parameters: {'C': 5.145039160286679, 'gamma': 0.0011649329771152538}
+    AUROC of tuned SVM with RBF kernel: 0.985
 
 
 Tune SVC without deciding the kernel in advance 
-================================================
+------------------------------------------------
 
 In the previous part we choose to use an RBF kernel. Even though the RBF
 kernel is known to work well for a large variety of problems (and
@@ -169,17 +172,8 @@ hyperparameters!
     print("Optimal parameters" + str(optimal_svm_pars))
     print("AUROC of tuned SVM: %1.3f" % info.optimum)
 
-::
+.. parsed-literal::
 
-
-    ---------------------------------------------------------------------------
-    AttributeError                            Traceback (most recent call last)
-
-    <ipython-input-8-510629d48255> in <module>()
-    ----> 1 optimal_svm_pars, info, _ = optunity.maximize_structured(svm_tuned_auroc, space, num_evals=150)
-          2 print("Optimal parameters" + str(optimal_svm_pars))
-          3 print("AUROC of tuned SVM: %1.3f" % info.optimum)
-
-
-    AttributeError: 'module' object has no attribute 'maximize_structured'
+    Optimal parameters{'kernel': 'rbf', 'C': 7.919921875, 'coef0': None, 'gamma': 0.00107421875, 'degree': None}
+    AUROC of tuned SVM: 0.986
 
