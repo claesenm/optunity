@@ -1,4 +1,7 @@
 
+OpenCV: optical character recognition
+=====================================
+
 We will use OpenCV (http://www.opencv.org/) for optical character
 recognition (OCR) using support vector machine (SVM) classifiers. This
 example is based on OpenCV's digit tutorial (available in
@@ -62,7 +65,7 @@ We preprocess the data and make a train/test split.
 
 
 
-.. image:: opencv-ocr_files/output_6_1.png
+.. image:: opencv-ocr_files/output_7_1.png
 
 
 Now, it's time to construct classifiers. We will use a SVM classifier
@@ -108,7 +111,7 @@ We start with an SVM with default parameters, which in this case means:
 
 
 
-.. image:: opencv-ocr_files/output_9_2.png
+.. image:: opencv-ocr_files/output_10_2.png
 
 
 Next, we will construct a model with optimized hyperparameters. First we
@@ -181,7 +184,7 @@ its test set performance.
 
 
 
-.. image:: opencv-ocr_files/output_15_2.png
+.. image:: opencv-ocr_files/output_16_2.png
 
 
 .. code:: python

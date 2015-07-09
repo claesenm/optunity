@@ -1,15 +1,15 @@
 
-Tuning a scikit-learn SVM classifier
-====================================
+sklearn: SVM classification
+===========================
 
 In this example we will use Optunity to optimize hyperparameters for a
 support vector machine classifier (SVC) in scikit-learn. We will learn a
 model to distinguish digits 8 and 9 in the MNIST data set in two
 settings
 
--  `tune SVM with RBF kernel <#rbf>`__
--  `tune SVM with RBF, polynomial or linear kernel <#all>`__, that is
-   choose the kernel function and its hyperparameters at once
+-  tune SVM with RBF kernel
+-  tune SVM with RBF, polynomial or linear kernel, that is choose the
+   kernel function and its hyperparameters at once
 
 .. code:: python
 

@@ -1,6 +1,6 @@
 
-Cross-validation
-================
+Basic: cross-validation
+=======================
 
 This notebook explores the main elements of Optunity's cross-validation
 facilities, including:

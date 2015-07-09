@@ -1,6 +1,6 @@
 
-Sobol sequences vs. random search
-=================================
+Basic: Sobol sequences
+======================
 
 In this example we will show the difference between a 2-d Sobol sequence
 and sampling uniformly at random in 2 dimensions. We will use the
