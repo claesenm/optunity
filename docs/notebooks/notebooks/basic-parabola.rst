@@ -1,4 +1,7 @@
 
+Minimizing a simple function
+============================
+
 In this example we will use various Optunity solvers to minimize the
 following simple 2d parabola:
 
@@ -117,5 +120,5 @@ the resulting statistics. This may take a while to run.
     plt.show()
 
 
-.. image:: basic-parabola_files/output_13_0.png
+.. image:: basic-parabola_files/output_14_0.png
 

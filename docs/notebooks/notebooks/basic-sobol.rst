@@ -1,4 +1,7 @@
 
+Sobol sequences vs. random search
+=================================
+
 In this example we will show the difference between a 2-d Sobol sequence
 and sampling uniformly at random in 2 dimensions. We will use the
 ``sobol`` and ``random-search`` solvers. The Sobol sequence has lower
@@ -33,7 +36,7 @@ We run the random search solver and Sobol sequence solver.
     plt.show()
 
 
-.. image:: basic-sobol_files/output_5_0.png
+.. image:: basic-sobol_files/output_6_0.png
 
 
 .. code:: python
@@ -46,5 +49,5 @@ We run the random search solver and Sobol sequence solver.
     plt.show()
 
 
-.. image:: basic-sobol_files/output_6_0.png
+.. image:: basic-sobol_files/output_7_0.png
 
