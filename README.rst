@@ -6,6 +6,11 @@
     :target: https://travis-ci.org/claesenm/optunity
     :align: right
 
+.. image:: https://readthedocs.org/projects/optunity/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://readthedocs.org/projects/optunity/
+
 =========
 
 Optunity is a library containing various optimizers for hyperparameter tuning.
