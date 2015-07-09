@@ -30,6 +30,7 @@ The following examples are available as IPython notebooks in the `OPTUNITY/noteb
 .. toctree::
     :maxdepth: 2
     :glob:
+
     /notebooks/notebooks/*
 
 Additional examples:
@@ -37,6 +38,7 @@ Additional examples:
 .. toctree::
     :maxdepth: 2
     :glob:
+
     /examples/python/*
 
 
