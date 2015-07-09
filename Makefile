@@ -19,5 +19,5 @@ static-notebooks:
 
 sphinx-notebooks:
 	cd notebooks && python notebook2sphinx.py --outputs_dir_suffix _files
-	cp notebooks/*.rst docs/notebooks/
-	cp -r notebooks/*_files docs/notebooks/
+	cp notebooks/*.rst docs/notebooks/notebooks/
+	cp -r notebooks/*_files docs/notebooks/notebooks/
