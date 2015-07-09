@@ -456,7 +456,7 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
     The number of folds must be less than or equal to the size of the data.
 
     >>> data = list(range(5))
-    >>> @cross_validated(x=data, num_folds=6)
+    >>> @cross_validated(x=data, num_folds=6) #doctest:+SKIP
     ... def f(x_train, x_test, a):
     ...     return x_test[0] + a
     AssertionError
@@ -465,7 +465,7 @@ def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1
 
     >>> data = list(range(5))
     >>> labels = list(range(3))
-    >>> @cross_validated(x=data, y=labels, num_folds=2)
+    >>> @cross_validated(x=data, y=labels, num_folds=2) #doctest:+SKIP
     ... def f(x_train, x_test, a):
     ...     return x_test[0] + a
     AssertionError
