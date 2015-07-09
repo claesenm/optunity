@@ -55,7 +55,7 @@ First, lets see the performance of an SVC with default hyperparameters.
 
 .. parsed-literal::
 
-    0.7369062164842962
+    0.6817249486770811
 
 
 
@@ -110,8 +110,8 @@ Now we can use Optunity to find the hyperparameters that maximize AUROC.
 
 .. parsed-literal::
 
-    Optimal parameters: {'C': 2.4115966784371956, 'gamma': 0.0008425236216627763}
-    AUROC of tuned SVM with RBF kernel: 0.982
+    Optimal parameters: {'C': 2.7282633076523837, 'gamma': 0.0003793484996538702}
+    AUROC of tuned SVM with RBF kernel: 0.981
 
 
 Tune SVC without deciding the kernel in advance 
@@ -169,8 +169,17 @@ hyperparameters!
     print("Optimal parameters" + str(optimal_svm_pars))
     print("AUROC of tuned SVM: %1.3f" % info.optimum)
 
-.. parsed-literal::
+::
 
-    Optimal parameters{'kernel': 'poly', 'C': 0.94482421875, 'coef0': 1.2373046875, 'gamma': None, 'degree': 3.99072265625}
-    AUROC of tuned SVM: 0.980
+
+    ---------------------------------------------------------------------------
+    AttributeError                            Traceback (most recent call last)
+
+    <ipython-input-8-510629d48255> in <module>()
+    ----> 1 optimal_svm_pars, info, _ = optunity.maximize_structured(svm_tuned_auroc, space, num_evals=150)
+          2 print("Optimal parameters" + str(optimal_svm_pars))
+          3 print("AUROC of tuned SVM: %1.3f" % info.optimum)
+
+
+    AttributeError: 'module' object has no attribute 'maximize_structured'
 
