@@ -1,4 +1,7 @@
 
+Cross-validation
+================
+
 This notebook explores the main elements of Optunity's cross-validation
 facilities, including:
 
@@ -21,9 +24,8 @@ will partition into folds.
 
     data = list(range(6))
     labels = [True] * 3 + [False] * 3
-
 Standard cross-validation 
-==========================
+--------------------------
 
 Each function to be decorated with cross-validation functionality must
 accept the following arguments: - x\_train: training data - x\_test:
@@ -157,7 +159,7 @@ fold), two sets of folds are generated and evaluated.
 
 
 Using strata and clusters
-=========================
+-------------------------
 
 Strata are defined as sets of instances that should be spread out across
 folds as much as possible (e.g. stratify patients by age). Clusters are
@@ -283,7 +285,7 @@ clusters.
 
 
 Aggregators 
-============
+------------
 
 Aggregators are used to combine the scores per fold into a single
 result. The default approach used in cross-validation is to take the
