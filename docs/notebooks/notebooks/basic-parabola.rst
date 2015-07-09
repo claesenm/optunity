@@ -1,6 +1,6 @@
 
-Minimizing a simple function
-============================
+Basic: minimizing a simple function
+===================================
 
 In this example we will use various Optunity solvers to minimize the
 following simple 2d parabola:
