@@ -1,9 +1,11 @@
 
 This notebook explores the main elements of Optunity's cross-validation
-facilities, including: - `standard cross-validation <#standard>`__ -
-`using strata and clusters while constructing
-folds <#strata-clusters>`__ - `using different
-aggregators <#aggregators>`__
+facilities, including:
+
+-  `standard cross-validation <#standard>`__
+-  `using strata and clusters while constructing
+   folds <#strata-clusters>`__
+-  `using different aggregators <#aggregators>`__
 
 We recommend perusing the related documentation for more details.
 
