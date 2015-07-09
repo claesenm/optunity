@@ -25,18 +25,19 @@ To contribute examples, please send us a pull request on Github_.
 Python
 ----------
 
-All of these examples are available as IPython notebooks in the `OPTUNITY/notebooks` folder.
+The following examples are available as IPython notebooks in the `OPTUNITY/notebooks` folder:
 
 .. toctree::
     :maxdepth: 2
     :glob:
-
     /notebooks/notebooks/*
-..
-    .. toctree::
-        :maxdepth: 2
-        :glob:
-        /examples/python/*
+
+Additional examples:
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+    /examples/python/*
 
 
 MATLAB
