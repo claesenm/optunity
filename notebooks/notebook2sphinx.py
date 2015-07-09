@@ -94,7 +94,8 @@ if __name__ == '__main__':
     overwrite = args.overwrite
 
     if not args.source_dir:
-        source_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "source")
+#        source_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "source")
+        source_dir = os.path.dirname(os.path.realpath(__file__))
     else:
         source_dir = args.source_dir
 
@@ -113,7 +114,7 @@ if __name__ == '__main__':
 
             resources = {}
             nb_name = os.path.splitext(os.path.basename(full_path))[0]
-            nb_output_dirs = nb_name + args.outputs_dir_suffix
+            nb_output_dirs = nb_name + args.outputs_dir_suffix[0]
             resources['output_files_dir'] = nb_output_dirs
 
             # Clear old output dir path

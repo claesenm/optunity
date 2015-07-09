@@ -16,3 +16,8 @@ html:
 
 static-notebooks:
 	cd notebooks && sh notebooks/generate_static_notebooks.sh
+
+sphinx-notebooks:
+	cd notebooks && python notebook2sphinx.py --outputs_dir_suffix _files
+	cp notebooks/*.rst docs/notebooks/
+	cp -r notebooks/*_files docs/notebooks/
