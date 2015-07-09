@@ -21,6 +21,7 @@ will partition into folds.
 
     data = list(range(6))
     labels = [True] * 3 + [False] * 3
+
 Standard cross-validation 
 ==========================
 
