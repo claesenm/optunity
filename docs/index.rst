@@ -124,5 +124,6 @@ Indices and tables
     /user/installation
     /user/index
     /examples/index
+    /notebooks/index
     /wrappers/index
     /api/optunity
