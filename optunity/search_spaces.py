@@ -235,6 +235,18 @@ hpars = {'kernel': {'linear': {'c': [0, 1]},
                    }
         }
 
+
+hpars = {'algorithm': {'k-nn': {'k': [1, 10]},
+                        'SVM': {'kernel': {'linear': {'C': [0, 2]},
+                                           'rbf': {'gamma': [0, 1], 'C': [0, 10]},
+                                           'poly': {'degree': [2, 5], 'C': [0, 50], 'coef0': [0, 1]}
+                                          }
+                               },
+                       'naive-bayes': {'alpha': [0, 1]},
+                       'random-forest': {'n_estimators': [100, 300], 'max_features': [5, 100]}
+                       }
+        }
+
 #hpars = {'kernel': {'linear': None,
 #                    'rbf': {'gamma': [0, 1]},
 #                    'poly': {'degree': [2, 4]}
