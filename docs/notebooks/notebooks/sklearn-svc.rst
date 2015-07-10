@@ -17,8 +17,6 @@ settings
     import optunity.metrics
     
     # comment this line if you are running the notebook
-    %matplotlib inline
-    import matplotlib.pyplot as plt
     import sklearn.svm
     import numpy as np
 Create the data set: we use the MNIST data set and will build models to
