@@ -125,6 +125,12 @@ class GridSearch(Solver):
         >>> s['z'] #doctest:+SKIP
         [-0.99, 0.0, 0.99]
 
+
+        Verify that we can effectively make a solver from box.
+
+        >>> s = GridSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> solver = GridSearch(**s)
+
         """
         bounds = shrink_bounds(kwargs)
         num_pars = len(bounds)

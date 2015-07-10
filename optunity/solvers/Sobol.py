@@ -170,6 +170,12 @@ class Sobol(Solver):
         :param kwargs: box constraints
         :type kwargs: {'param': [lb, ub], ...}
 
+
+        Verify that we can effectively make a solver from box.
+
+        >>> s = Sobol.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> solver = Sobol(**s)
+
         """
         d = util.shrink_bounds(kwargs)
         d['num_evals'] = num_evals

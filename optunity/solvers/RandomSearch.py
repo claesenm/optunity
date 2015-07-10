@@ -81,7 +81,7 @@ class RandomSearch(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
-        """Creates a GridSearch solver that uses ``num_evals`` evaluations
+        """Creates a RandomSearch solver that uses ``num_evals`` evaluations
         within given bounds (lb, ub). The bounds are first tightened, resulting in
         new bounds covering 99% of the area.
 
@@ -94,6 +94,11 @@ class RandomSearch(Solver):
         [-0.99, 0.99]
         >>> s['num_evals']
         30
+
+        Verify that we can effectively make a solver from box.
+
+        >>> s = RandomSearch.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> solver = RandomSearch(**s)
 
         """
         d = shrink_bounds(kwargs)

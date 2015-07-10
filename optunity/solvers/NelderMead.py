@@ -83,6 +83,12 @@ class NelderMead(Solver):
 
     @staticmethod
     def suggest_from_seed(num_evals, **kwargs):
+        """Verify that we can effectively make a solver.
+
+        >>> s = NelderMead.suggest_from_seed(30, x=1.0, y=-1.0, z=2.0)
+        >>> solver = NelderMead(**s)
+
+        """
         return kwargs
 
     @property

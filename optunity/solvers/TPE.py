@@ -86,6 +86,13 @@ class TPE(Solver):
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
+        """
+        Verify that we can effectively make a solver from box.
+
+        >>> s = TPE.suggest_from_box(30, x=[0, 1], y=[-1, 0], z=[-1, 1])
+        >>> solver = TPE(**s)
+
+        """
         d = dict(kwargs)
         d['num_evals'] = num_evals
         return d

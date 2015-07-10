@@ -94,6 +94,12 @@ class CMA_ES(Solver):
 
     @staticmethod
     def suggest_from_seed(num_evals, **kwargs):
+        """Verify that we can effectively make a solver.
+
+        >>> s = CMA_ES.suggest_from_seed(30, x=1.0, y=-1.0, z=2.0)
+        >>> solver = CMA_ES(**s)
+
+        """
         fertility = 4 + 3 * math.log(len(kwargs))
         d = dict(kwargs)
         d['num_generations'] = int(math.ceil(float(num_evals) / fertility))
