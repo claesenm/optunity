@@ -64,7 +64,7 @@ def get_default_args(func):
     returns a dictionary of arg_name:default_values for the input function
     """
     if not callable(func):
-        raise TypeError, "%s is not callable" % type(func)
+        raise TypeError("%s is not callable" % type(func))
     if inspect.isfunction(func):
         print('a')
         spec = inspect.getargspec(func)
