@@ -35,7 +35,7 @@ __author__
 
 """
 
-from .api import manual, maximize, minimize, optimize, available_solvers, maximize_structured
+from .api import manual, maximize, minimize, optimize, available_solvers, maximize_structured, minimize_structured
 from .api import wrap_call_log, wrap_constraints, make_solver, suggest_solver
 from .cross_validation import cross_validated, generate_folds
 from .parallel import pmap

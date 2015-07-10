@@ -40,6 +40,7 @@ Main functions in this module:
 * :func:`maximize`
 * :func:`maximize_structured`
 * :func:`minimize`
+* :func:`minimize_structured`
 * :func:`optimize`
 
 We recommend using these functions rather than equivalents found in other places,
@@ -365,6 +366,37 @@ def maximize_structured(f, search_space, num_evals=50, pmap=map):
     suggestion = suggest_solver(num_evals, "particle swarm", **box)
     solver = make_solver(**suggestion)
     solution, details = optimize(solver, f, maximize=True, max_evals=num_evals,
+                                 pmap=pmap, decoder=tree.decode)
+    return solution, details, suggestion
+
+def minimize_structured(f, search_space, num_evals=50, pmap=map):
+    """Basic function minimization routine. Minimizes ``f`` within
+    the given box constraints.
+
+    :param f: the function to be maximized
+    :param num_evals: number of permitted function evaluations
+    :param pmap: the map function to use
+    :type pmap: callable
+    :returns: retrieved maximum, extra information and solver info
+
+    This function will implicitly choose an appropriate solver and
+    its initialization based on ``num_evals`` and the box constraints.
+
+    """
+    tree = search_spaces.SearchTree(search_space)
+    box = tree.to_box()
+
+    # we need to position the call log here
+    # because the function signature used later on is internal logic
+    f = fun.logged(f)
+
+    # wrap the decoder and constraints for the internal search space representation
+    f = tree.wrap_decoder(f)
+    f = _wrap_hard_box_constraints(f, box, sys.float_info.max)
+
+    suggestion = suggest_solver(num_evals, "particle swarm", **box)
+    solver = make_solver(**suggestion)
+    solution, details = optimize(solver, f, maximize=False, max_evals=num_evals,
                                  pmap=pmap, decoder=tree.decode)
     return solution, details, suggestion
 
