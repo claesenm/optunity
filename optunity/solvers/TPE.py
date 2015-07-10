@@ -32,6 +32,7 @@
 
 from .solver_registry import register_solver
 from .util import Solver, _copydoc
+import functools
 
 import random
 
@@ -114,9 +115,8 @@ class TPE(Solver):
                 kwargs = dict([(k, v) for k, v in zip(self.bounds.keys(), args)])
                 return f(**kwargs)
 
-        def algo(*args, **kwargs):
-            seed = self.seed if self.seed else random.randint(0, 9999999999)
-            return hyperopt.tpe.suggest(*args, seed=seed, **kwargs)
+        seed = self.seed if self.seed else random.randint(0, 9999999999)
+        algo = functools.partial(hyperopt.tpe.suggest, seed=seed)
 
         space = [hyperopt.hp.uniform(k, v[0], v[1]) for k, v in self.bounds.items()]
         best = hyperopt.fmin(obj, space=space, algo=algo, max_evals=self.num_evals)
