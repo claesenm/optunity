@@ -38,7 +38,9 @@ Main functions in this module:
 * :func:`suggest_solver`
 * :func:`manual`
 * :func:`maximize`
+* :func:`maximize_structured`
 * :func:`minimize`
+* :func:`minimize_structured`
 * :func:`optimize`
 
 We recommend using these functions rather than equivalents found in other places,
@@ -48,16 +50,14 @@ e.g. :mod:`optunity.solvers`.
 
 """
 
-import functools
 import timeit
 import sys
 import operator
-import collections
-import inspect
 
 # optunity imports
 from . import functions as fun
 from . import solvers
+from . import search_spaces
 from .solvers import solver_registry
 from .util import DocumentedNamedTuple as DocTup
 from .constraints import wrap_constraints
@@ -213,7 +213,7 @@ def minimize(f, num_evals=50, solver_name=None, pmap=map, **kwargs):
     return solution, details, suggestion
 
 
-def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
+def optimize(solver, func, maximize=True, max_evals=0, pmap=map, decoder=None):
     """Optimizes func with given solver.
 
     :param solver: the solver to be used, for instance a result from :func:`optunity.make_solver`
@@ -253,6 +253,9 @@ def optimize(solver, func, maximize=True, max_evals=0, pmap=map):
             index, _ = min(enumerate(f.call_log.values()), key=operator.itemgetter(1))
         solution = list(f.call_log.keys())[index]._asdict()
     time = timeit.default_timer() - time
+
+    # TODO why is this necessary?
+    if decoder: solution = decoder(solution)
 
     optimum = f.call_log.get(**solution)
     num_evals += len(f.call_log)
@@ -333,3 +336,67 @@ def _wrap_hard_box_constraints(f, box, default):
 
     """
     return wrap_constraints(f, default, range_oo=box)
+
+
+def maximize_structured(f, search_space, num_evals=50, pmap=map):
+    """Basic function maximization routine. Maximizes ``f`` within
+    the given box constraints.
+
+    :param f: the function to be maximized
+    :param num_evals: number of permitted function evaluations
+    :param pmap: the map function to use
+    :type pmap: callable
+    :returns: retrieved maximum, extra information and solver info
+
+    This function will implicitly choose an appropriate solver and
+    its initialization based on ``num_evals`` and the box constraints.
+
+    """
+    tree = search_spaces.SearchTree(search_space)
+    box = tree.to_box()
+
+    # we need to position the call log here
+    # because the function signature used later on is internal logic
+    f = fun.logged(f)
+
+    # wrap the decoder and constraints for the internal search space representation
+    f = tree.wrap_decoder(f)
+    f = _wrap_hard_box_constraints(f, box, -sys.float_info.max)
+
+    suggestion = suggest_solver(num_evals, "particle swarm", **box)
+    solver = make_solver(**suggestion)
+    solution, details = optimize(solver, f, maximize=True, max_evals=num_evals,
+                                 pmap=pmap, decoder=tree.decode)
+    return solution, details, suggestion
+
+def minimize_structured(f, search_space, num_evals=50, pmap=map):
+    """Basic function minimization routine. Minimizes ``f`` within
+    the given box constraints.
+
+    :param f: the function to be maximized
+    :param num_evals: number of permitted function evaluations
+    :param pmap: the map function to use
+    :type pmap: callable
+    :returns: retrieved maximum, extra information and solver info
+
+    This function will implicitly choose an appropriate solver and
+    its initialization based on ``num_evals`` and the box constraints.
+
+    """
+    tree = search_spaces.SearchTree(search_space)
+    box = tree.to_box()
+
+    # we need to position the call log here
+    # because the function signature used later on is internal logic
+    f = fun.logged(f)
+
+    # wrap the decoder and constraints for the internal search space representation
+    f = tree.wrap_decoder(f)
+    f = _wrap_hard_box_constraints(f, box, sys.float_info.max)
+
+    suggestion = suggest_solver(num_evals, "particle swarm", **box)
+    solver = make_solver(**suggestion)
+    solution, details = optimize(solver, f, maximize=False, max_evals=num_evals,
+                                 pmap=pmap, decoder=tree.decode)
+    return solution, details, suggestion
+
