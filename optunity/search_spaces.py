@@ -74,6 +74,8 @@ import itertools
 import collections
 import math
 
+DELIM = '|'
+
 class Options(object):
 
     def __init__(self, cases):
@@ -94,40 +96,59 @@ class Options(object):
 
 
 class Node(object):
+    """Models a node within a search space.
+
+    Nodes can be internal or terminal, and may or may not be choices.
+    A choice is a node that models a discrete choice out of k > 1 options.
+
+    """
 
     def __init__(self, key, value):
         self._key = key
         if type(value) is dict:
-            self._content = [Node(k, v) for k, v in sorted(value.items())]
-        else: self._content = value
+            self._value = [Node(k, v) for k, v in sorted(value.items())]
+        else: self._value = value
 
     @property
     def key(self): return self._key
 
     @property
-    def content(self): return self._content
+    def value(self): return self._value
 
     @property
     def terminal(self):
-        if self.content:
-            return not type(self.content[0]) == type(self)
+        """Returns whether or not this Node is terminal.
+
+        A terminal node has a non-dictionary value (numeric, list or None).
+        """
+        if self.value:
+            return not type(self.value[0]) == type(self)
         return True
 
     @property
     def choice(self):
-        """Determines whether this node is a choice."""
-        return self.content is None
+        """Determines whether this node is a choice.
+
+        A choice is a node that models a discrete choice out of k > 1 options.
+        """
+        return self.value is None
 
     def __iter__(self):
+        """Iterates over this node.
+
+        If the node is terminal, yields the key and value.
+        Otherwise, first yields all values and then iterates over the values.
+
+        """
         if self.terminal:
-            yield self.key, self.content
+            yield self.key, self.value
         else:
-            content = list(itertools.chain(*self.content))
+            value = list(itertools.chain(*self.value))
 
-            if any([not x.terminal or x.choice for x in self.content]):
-                content.insert(0, ([], Options([node.key for node in self.content])))
+            if any([not x.terminal or x.choice for x in self.value]):
+                value.insert(0, ([], Options([node.key for node in self.value])))
 
-            for k, v in content:
+            for k, v in value:
                 if type(k) is list: key = [self.key] + k
                 else: key = [self.key, k]
                 yield key, v
@@ -157,10 +178,11 @@ class SearchTree(object):
     def to_box(self):
         if not self.vectordict:
             for k, v in self:
-                key = '-'.join(k)
+                key = DELIM.join(k)
                 if type(v) is Options:
-                    self.vectordict[key] = [0.0, float(len(v))]
-                    self.vectorcontent[key] = v
+                    if len(v) > 1: # options of length one aren't really options
+                        self.vectordict[key] = [0.0, float(len(v))]
+                        self.vectorcontent[key] = v
                 elif v is None:
                     pass
                 else:
@@ -178,7 +200,7 @@ class SearchTree(object):
         while idx < len(items):
 
             k, v = items[idx]
-            keylist = k.split('-')
+            keylist = k.split(DELIM)
 
             if currently_decoding_nested and len(keylist) >= len(currently_decoding_nested):
                 if not all(map(lambda t: t[0] == t[1], zip(currently_decoding_nested, keylist))):
@@ -206,8 +228,8 @@ class SearchTree(object):
 
                 option_idx = int(math.floor(v))
                 option = content[option_idx]
-                result["-".join(keylist[len(currently_decoding_nested)-1:])] = option
-                currently_decoding_nested.extend([k, option])
+                result[DELIM.join(keylist[len(currently_decoding_nested):])] = option
+                currently_decoding_nested.extend([keylist[-1], option])
 
                 idx += 1
 
@@ -229,23 +251,32 @@ class SearchTree(object):
 
 
 
-hpars = {'kernel': {'linear': {'c': [0, 1]},
-                    'rbf': {'gamma': [0, 1], 'c': [0, 10]},
-                    'poly': {'degree': [2, 4], 'c': [0, 2]}
-                   }
-        }
+#hpars = {'kernel': {'linear': {'c': [0, 1]},
+#                    'rbf': {'gamma': [0, 1], 'c': [0, 10]},
+#                    'poly': {'degree': [2, 4], 'c': [0, 2]}
+#                   }
+#        }
 
 
-hpars = {'algorithm': {'k-nn': {'k': [1, 10]},
-                        'SVM': {'kernel': {'linear': {'C': [0, 2]},
-                                           'rbf': {'gamma': [0, 1], 'C': [0, 10]},
-                                           'poly': {'degree': [2, 5], 'C': [0, 50], 'coef0': [0, 1]}
-                                          }
-                               },
-                       'naive-bayes': {'alpha': [0, 1]},
-                       'random-forest': {'n_estimators': [100, 300], 'max_features': [5, 100]}
-                       }
-        }
+#hpars = {'algorithm': {'k-nn': {'k': [1, 10]},
+#                       'SVM': {'kernel': {'linear': {'C': [0, 2]},
+#                                           'rbf': {'gamma': [0, 1], 'C': [0, 10]},
+#                                           'poly': {'degree': [2, 5], 'C': [0, 50], 'coef0': [0, 1]}
+#                                          }
+#                               },
+#                       'naive-bayes': None,
+#                       'random-forest': {'n_estimators': [100, 300], 'max_features': [5, 100]}
+#                       }
+#        }
+
+
+#algorithm   knn - k
+#            svm - kernel    linear  - C
+#                            rbf     - C, gamma
+#                            poly    - C, degree, coef0
+#            nb  -   alpha
+#            rf  -   n_estimators, max_features
+
 
 #hpars = {'kernel': {'linear': None,
 #                    'rbf': {'gamma': [0, 1]},
@@ -265,7 +296,13 @@ hpars = {'algorithm': {'k-nn': {'k': [1, 10]},
 
 #tree = SearchTree(hpars)
 #l = list(tree)
+#print('============================')
+#print('list')
+#print("\n".join(map(str, l)))
 #v = tree.to_box()
+#print('============================')
+#print('box')
+#print("\n".join(map(str, v.items())))
 #v2 = v.copy()
 #v2['kernel'] = 3.5
 #v2['kernel-choice'] = 0.2
