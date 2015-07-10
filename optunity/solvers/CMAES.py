@@ -95,9 +95,11 @@ class CMA_ES(Solver):
     @staticmethod
     def suggest_from_seed(num_evals, **kwargs):
         """Verify that we can effectively make a solver.
+        The doctest has to be skipped from automated builds, because DEAP may not be available
+        and yet we want documentation to be generated.
 
         >>> s = CMA_ES.suggest_from_seed(30, x=1.0, y=-1.0, z=2.0)
-        >>> solver = CMA_ES(**s)
+        >>> solver = CMA_ES(**s) #doctest:+SKIP
 
         """
         fertility = 4 + 3 * math.log(len(kwargs))
