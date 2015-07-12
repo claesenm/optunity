@@ -63,6 +63,8 @@ as its required range may be different.
 
 Main features in this module:
 
+TODO
+
 * :func:`logged`
 * :func:`max_evals`
 
@@ -155,6 +157,59 @@ class Node(object):
 
 
 class SearchTree(object):
+    """Tree structure to model a search space.
+
+    Fairly elaborate unit test.
+
+    >>> space = {'a': {'b0': {'c0': {'d0': {'e0': [0, 10], 'e1': [-2, -1]},
+    ...                              'd1': {'e2': [-3, -1]},
+    ...                              'd2': None
+    ...                              },
+    ...                       'c1': [0.0, 1.0],
+    ...                      },
+    ...                'b1': {'c2': [-2.0, -1.0]},
+    ...                'b2': None
+    ...               }
+    ...          }
+    >>> tree = SearchTree(space)
+    >>> b = tree.to_box()
+    >>> print(b['a'] == [0.0, 3.0] and
+    ...       b['a|b0|c0'] == [0.0, 3.0] and
+    ...       b['a|b0|c1'] == [0.0, 1.0] and
+    ...       b['a|b1|c2'] == [-2.0, -1.0] and
+    ...       b['a|b0|c0|d0|e0'] == [0, 10] and
+    ...       b['a|b0|c0|d0|e1'] == [-2, -1] and
+    ...       b['a|b0|c0|d1|e2'] == [-3, -1])
+    True
+
+    >>> d = tree.decode({'a': 2.5})
+    >>> d['a'] == 'b2'
+    True
+
+    >>> d = tree.decode({'a': 1.5, 'a|b1|c2': -1.5})
+    >>> print(d['a'] == 'b1' and
+    ...       d['c2'] == -1.5)
+    True
+
+    >>> d = tree.decode({'a': 0.5, 'a|b0|c0': 1.7, 'a|b0|c0|d1|e2': -1.2})
+    >>> print(d['a'] == 'b0' and
+    ...       d['c0'] == 'd1' and
+    ...       d['e2'] == -1.2)
+    True
+
+    >>> d = tree.decode({'a': 0.5, 'a|b0|c0': 2.7})
+    >>> print(d['a'] == 'b0' and
+    ...       d['c0'] == 'd2')
+    True
+
+    >>> d = tree.decode({'a': 0.5, 'a|b0|c0': 0.7, 'a|b0|c0|d0|e0': 2.3, 'a|b0|c0|d0|e1': -1.5})
+    >>> print(d['a'] == 'b0' and
+    ...       d['c0'] == 'd0' and
+    ...       d['e0'] == 2.3 and
+    ...       d['e1'] == -1.5)
+    True
+
+    """
 
     def __init__(self, d):
         self._content = [Node(k, v) for k, v in sorted(d.items())]
@@ -249,8 +304,6 @@ class SearchTree(object):
 
 
 
-
-
 #hpars = {'kernel': {'linear': {'c': [0, 1]},
 #                    'rbf': {'gamma': [0, 1], 'c': [0, 10]},
 #                    'poly': {'degree': [2, 4], 'c': [0, 2]}
@@ -268,15 +321,6 @@ class SearchTree(object):
 #                       'random-forest': {'n_estimators': [100, 300], 'max_features': [5, 100]}
 #                       }
 #        }
-
-
-#algorithm   knn - k
-#            svm - kernel    linear  - C
-#                            rbf     - C, gamma
-#                            poly    - C, degree, coef0
-#            nb  -   alpha
-#            rf  -   n_estimators, max_features
-
 
 #hpars = {'kernel': {'linear': None,
 #                    'rbf': {'gamma': [0, 1]},
@@ -306,3 +350,4 @@ class SearchTree(object):
 #v2 = v.copy()
 #v2['kernel'] = 3.5
 #v2['kernel-choice'] = 0.2
+
