@@ -50,6 +50,20 @@ please refer to the expert functions listed below or to submodules.
     Adheres to a prespecified upper bound on the number of function evaluations.
     The solution will be within given box constraints. Optunity determines
     the best solver and its configuration for you.
+- :func:`optunity.maximize_structured`: maximizes the objective function with a structured search space
+    This function extends the functionality of `optunity.maximize` by allowing you to specify a structured
+    search space, that is a search space where the existence of some hyperparameters are contingent upon
+    some discrete choices.
+    Adheres to a prespecified upper bound on the number of function evaluations.
+    The solution will be within given box constraints. Optunity determines
+    the best solver and its configuration for you.
+- :func:`optunity.minimize_structured`: minimizes the objective function with a structured search space
+    This function extends the functionality of `optunity.minimize` by allowing you to specify a structured
+    search space, that is a search space where the existence of some hyperparameters are contingent upon
+    some discrete choices.
+    Adheres to a prespecified upper bound on the number of function evaluations.
+    The solution will be within given box constraints. Optunity determines
+    the best solver and its configuration for you.
 - :func:`optunity.manual`: prints a basic manual (general or solver specific)
     Prints a basic manual of Optunity and a list of all registered solvers.
     If a solver name is specified, its manual will be shown.
