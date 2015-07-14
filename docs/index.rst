@@ -7,6 +7,11 @@
 .. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
     :target: https://travis-ci.org/claesenm/optunity
 
+.. image:: https://readthedocs.org/projects/optunity/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://readthedocs.org/projects/optunity/
+
 .. image:: https://img.shields.io/pypi/dm/Optunity.svg
     :target: https://pypi.python.org/pypi/optunity
 
@@ -14,6 +19,8 @@
     :target: https://pypi.python.org/pypi/optunity
 
 .. include:: /global.rst
+
+==========
 
 Optunity is a library containing various optimizers for hyperparameter tuning.
 Hyperparameter tuning is a recurrent problem in many machine learning tasks,
