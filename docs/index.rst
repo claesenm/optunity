@@ -1,6 +1,8 @@
 .. image:: /logo.png
     :alt: Optunity
 
+==========
+
 
 .. image:: https://travis-ci.org/claesenm/optunity.svg?branch=master
     :target: https://travis-ci.org/claesenm/optunity
@@ -10,9 +12,6 @@
 
 .. image:: https://img.shields.io/pypi/v/Optunity.svg
     :target: https://pypi.python.org/pypi/optunity
-
-
-==========
 
 .. include:: /global.rst
 
