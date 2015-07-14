@@ -48,4 +48,4 @@ __all__ = ['manual', 'maximize', 'minimize', 'optimize',
            'wrap_call_log', 'wrap_constraints', 'make_solver',
            'suggest_solver', 'cross_validated', 'generate_folds',
            'pmap', 'available_solvers',
-           'maximize_structured']
+           'maximize_structured', 'minimize_structured']
