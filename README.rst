@@ -11,6 +11,13 @@
     :scale: 100%
     :target: https://readthedocs.org/projects/optunity/
 
+.. image:: https://img.shields.io/pypi/dm/Optunity.svg           
+    :target: https://pypi.python.org/pypi/optunity
+
+.. image:: https://img.shields.io/pypi/v/Optunity.svg            
+    :target: https://pypi.python.org/pypi/optunity
+
+
 =========
 
 Optunity is a library containing various optimizers for hyperparameter tuning.
