@@ -18,8 +18,6 @@ for support vector regression, more specifically:
     import optunity
     import optunity.metrics
     import sklearn.svm
-    import matplotlib.pylab as plt
-    import time
 We start by creating the data set. We use sklearn's diabetes data.
 
 .. code:: python
@@ -70,7 +68,7 @@ estimate of MSE for an SVR with default hyperparameters.
 
 .. parsed-literal::
 
-    6056.311654865084
+    6190.481497665955
 
 
 
@@ -112,16 +110,16 @@ cross-validation.
 
 .. parsed-literal::
 
-    optimal hyperparameters: {'C': 8103.600260416671, 'coef0': 0.5978059895833331, 'degree': 4.797399399165802}
-    optimal hyperparameters: {'C': 19755.083174237032, 'coef0': 0.4450483090495349, 'degree': 4.6829006570233025}
-    optimal hyperparameters: {'C': 8680.403645833334, 'coef0': 0.47259114583333317, 'degree': 3.0486328125000006}
+    optimal hyperparameters: {'C': 12078.673881034498, 'coef0': 0.5011052085197018, 'degree': 4.60890281463418}
+    optimal hyperparameters: {'C': 14391.165364583334, 'coef0': 0.17313151041666666, 'degree': 2.35826171875}
+    optimal hyperparameters: {'C': 11713.456382191061, 'coef0': 0.49836486667796476, 'degree': 4.616077904035152}
 
 
 
 
 .. parsed-literal::
 
-    3122.5387612208156
+    3047.035965991627
 
 
 
@@ -162,16 +160,16 @@ twice-iterated 5-fold cross-validation.
 
 .. parsed-literal::
 
-    optimal hyperparameters: {'C': 81.98731244487078, 'gamma': 4.895475395394894}
-    optimal hyperparameters: {'C': 52.067311507783465, 'gamma': 6.5244315086089815}
-    optimal hyperparameters: {'C': 26.993648162210402, 'gamma': 25.997204804202134}
+    optimal hyperparameters: {'C': 21.654003906250026, 'gamma': 16.536188056152554}
+    optimal hyperparameters: {'C': 80.89867187499999, 'gamma': 3.2346692538501784}
+    optimal hyperparameters: {'C': 19.35431640625002, 'gamma': 22.083848774716085}
 
 
 
 
 .. parsed-literal::
 
-    2982.6835697931674
+    2990.8572696483493
 
 
 
@@ -244,17 +242,18 @@ hyperparameterization.
 
 .. parsed-literal::
 
-    optimal hyperparameters: {'kernel': 'rbf', 'C': 36.396896096116805, 'gamma': 10.015489219932745}
-    optimal hyperparameters: {'kernel': 'rbf', 'C': 25.6858037455125, 'gamma': 17.48771066406458}
-    optimal hyperparameters: {'kernel': 'rbf', 'C': 93.31245007796964, 'gamma': 7.082799132257288}
+    optimal hyperparameters: {'kernel': 'rbf', 'C': 33.70116043112164, 'gamma': 16.32317353448437}
+    optimal hyperparameters: {'kernel': 'rbf', 'C': 58.11404170763237, 'gamma': 26.45349823062099}
+    optimal hyperparameters: {'kernel': 'poly', 'C': 14964.421875843143, 'coef0': 0.5127175861493205, 'degree': 4.045210787998622}
 
 
 
 
 .. parsed-literal::
 
-    3001.3258583571483
+    3107.625560844859
 
 
 
-Looks like an RBF kernel was indeed the best choice!
+It looks like the RBF and polynomial kernel are competitive for this
+problem.
