@@ -39,6 +39,7 @@ from .api import manual, maximize, minimize, optimize, available_solvers, maximi
 from .api import wrap_call_log, wrap_constraints, make_solver, suggest_solver
 from .cross_validation import cross_validated, generate_folds
 from .parallel import pmap
+from .functions import call_log2dataframe
 
 __author__ = "Marc Claesen, Jaak Simm and Dusan Popovic"
 __version__ = "1.0.0"
@@ -47,5 +48,5 @@ __revision__ = "1.0.1"
 __all__ = ['manual', 'maximize', 'minimize', 'optimize',
            'wrap_call_log', 'wrap_constraints', 'make_solver',
            'suggest_solver', 'cross_validated', 'generate_folds',
-           'pmap', 'available_solvers',
+           'pmap', 'available_solvers', 'call_log2dataframe',
            'maximize_structured', 'minimize_structured']

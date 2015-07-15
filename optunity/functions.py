@@ -49,6 +49,12 @@ import operator as op
 
 from . import util
 
+try:
+    import pandas
+    _pandas_available = True
+except:
+    _pandas_available = False
+
 class Args(object):
     """Class to model arguments to a function evaluation.
     Objects of this class are hashable and can be used as dict keys.
@@ -364,6 +370,29 @@ def static_key_order(keys):
             return f(**dict([(k, v) for k, v in zip(keys, args)]))
         return wrapped_f
     return wrapper
+
+
+def call_log2dataframe(log):
+    """Converts a call log into a pandas data frame.
+    This function errors if you don't have pandas available.
+
+    :param log: call log to be converted, as returned by e.g. `optunity.minimize`
+    :returns: a pandas data frame capturing the same information as the call log
+
+    """
+    if not _pandas_available:
+        raise NotImplementedError('This function requires pandas')
+
+    args = log['args']
+    values = log['values']
+    hpar_names = args.keys()
+
+    # construct a list of dictionaries
+    zipped= zip(zip(*args.values()), values)
+    dictlist = [dict([(k, v) for k, v in zip(hpar_names, args)] + [('value', value)])
+                for args, value in zipped]
+    df = pandas.DataFrame(dictlist)
+    return df
 
 
 if __name__ == '__main__':
