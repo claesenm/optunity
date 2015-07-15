@@ -70,7 +70,7 @@ estimate of MSE for an SVR with default hyperparameters.
 
 .. parsed-literal::
 
-    6100.237626940242
+    6056.311654865084
 
 
 
@@ -112,16 +112,16 @@ cross-validation.
 
 .. parsed-literal::
 
-    optimal hyperparameters: {'C': 19868.74221087047, 'coef0': 0.45679573424872666, 'degree': 4.879991987802887}
-    optimal hyperparameters: {'C': 14136.347474716942, 'coef0': 0.13972510935921983, 'degree': 2.7560546874999994}
-    optimal hyperparameters: {'C': 13402.57161458333, 'coef0': 0.4447460937500003, 'degree': 3.312242362741492}
+    optimal hyperparameters: {'C': 8103.600260416671, 'coef0': 0.5978059895833331, 'degree': 4.797399399165802}
+    optimal hyperparameters: {'C': 19755.083174237032, 'coef0': 0.4450483090495349, 'degree': 4.6829006570233025}
+    optimal hyperparameters: {'C': 8680.403645833334, 'coef0': 0.47259114583333317, 'degree': 3.0486328125000006}
 
 
 
 
 .. parsed-literal::
 
-    3095.2745346802844
+    3122.5387612208156
 
 
 
@@ -162,16 +162,16 @@ twice-iterated 5-fold cross-validation.
 
 .. parsed-literal::
 
-    optimal hyperparameters: {'C': 19.08662689915651, 'gamma': 17.702242473189145}
-    optimal hyperparameters: {'C': 67.48642799529746, 'gamma': 6.483072916666674}
-    optimal hyperparameters: {'C': 39.601226927358795, 'gamma': 10.795909203898383}
+    optimal hyperparameters: {'C': 81.98731244487078, 'gamma': 4.895475395394894}
+    optimal hyperparameters: {'C': 52.067311507783465, 'gamma': 6.5244315086089815}
+    optimal hyperparameters: {'C': 26.993648162210402, 'gamma': 25.997204804202134}
 
 
 
 
 .. parsed-literal::
 
-    3060.918626604345
+    2982.6835697931674
 
 
 
@@ -216,6 +216,7 @@ Now we do nested cross-validation again.
                 model = sklearn.svm.SVR(kernel=kernel, C=C, gamma=gamma)
             else: 
                 raise ArgumentError("Unknown kernel function: %s" % kernel)
+            model.fit(x_train, y_train)
     
             predictions = model.predict(x_test)
             return optunity.metrics.mse(y_test, predictions)
@@ -241,143 +242,19 @@ hyperparameterization.
 
     compute_mse_all_tuned()
 
-::
+.. parsed-literal::
+
+    optimal hyperparameters: {'kernel': 'rbf', 'C': 36.396896096116805, 'gamma': 10.015489219932745}
+    optimal hyperparameters: {'kernel': 'rbf', 'C': 25.6858037455125, 'gamma': 17.48771066406458}
+    optimal hyperparameters: {'kernel': 'rbf', 'C': 93.31245007796964, 'gamma': 7.082799132257288}
 
 
-    ---------------------------------------------------------------------------
-    AttributeError                            Traceback (most recent call last)
-
-    <ipython-input-15-d88731cf8f17> in <module>()
-    ----> 1 compute_mse_all_tuned()
-    
-
-    /data/svn/claesenm/python/optunity/optunity/cross_validation.pyc in __call__(self, *args, **kwargs)
-        401                     kwargs['y_train'] = select(self.y, rows_train)
-        402                     kwargs['y_test'] = select(self.y, rows_test)
-    --> 403                 scores.append(self.f(**kwargs))
-        404         return self.reduce(scores)
-        405 
 
 
-    <ipython-input-14-1ef61cf64223> in compute_mse_all_tuned(x_train, y_train, x_test, y_test)
-         18 
-         19     # optimize parameters
-    ---> 20     optimal_pars, _, _ = optunity.minimize_structured(tune_cv, num_evals=150, search_space=space)
-         21     print("optimal hyperparameters: " + str(optimal_pars))
-         22 
+.. parsed-literal::
+
+    3001.3258583571483
 
 
-    /data/svn/claesenm/python/optunity/optunity/api.pyc in minimize_structured(f, search_space, num_evals, pmap)
-        398     solver = make_solver(**suggestion)
-        399     solution, details = optimize(solver, f, maximize=False, max_evals=num_evals,
-    --> 400                                  pmap=pmap, decoder=tree.decode)
-        401     return solution, details, suggestion
-        402 
 
-
-    /data/svn/claesenm/python/optunity/optunity/api.pyc in optimize(solver, func, maximize, max_evals, pmap, decoder)
-        243     time = timeit.default_timer()
-        244     try:
-    --> 245         solution, report = solver.optimize(f, maximize, pmap=pmap)
-        246     except fun.MaximumEvaluationsException:
-        247         # early stopping because maximum number of evaluations is reached
-
-
-    /data/svn/claesenm/python/optunity/optunity/solvers/ParticleSwarm.pyc in optimize(self, f, maximize, pmap)
-        268 
-        269         for g in range(self.num_generations):
-    --> 270             fitnesses = pmap(evaluate, list(map(self.particle2dict, pop)))
-        271             for part, fitness in zip(pop, fitnesses):
-        272                 part.fitness = fit * util.score(fitness)
-
-
-    /data/svn/claesenm/python/optunity/optunity/solvers/ParticleSwarm.pyc in evaluate(d)
-        257         @functools.wraps(f)
-        258         def evaluate(d):
-    --> 259             return f(**d)
-        260 
-        261         if maximize:
-
-
-    /data/svn/claesenm/python/optunity/optunity/functions.pyc in wrapped_f(*args, **kwargs)
-        341             else:
-        342                 wrapped_f.num_evals += 1
-    --> 343                 return f(*args, **kwargs)
-        344         wrapped_f.num_evals = 0
-        345         return wrapped_f
-
-
-    /data/svn/claesenm/python/optunity/optunity/constraints.pyc in wrapped_f(*args, **kwargs)
-        148         def wrapped_f(*args, **kwargs):
-        149             try:
-    --> 150                 return f(*args, **kwargs)
-        151             except ConstraintViolation:
-        152                 return default
-
-
-    /data/svn/claesenm/python/optunity/optunity/constraints.pyc in wrapped_f(*args, **kwargs)
-        126             if violations:
-        127                 raise ConstraintViolation(violations, *args, **kwargs)
-    --> 128             return f(*args, **kwargs)
-        129         wrapped_f.constraints = constraints
-        130         return wrapped_f
-
-
-    /data/svn/claesenm/python/optunity/optunity/constraints.pyc in func(*args, **kwargs)
-        263         @functools.wraps(f)
-        264         def func(*args, **kwargs):
-    --> 265             return f(*args, **kwargs)
-        266     return func
-        267 
-
-
-    /data/svn/claesenm/python/optunity/optunity/search_spaces.pyc in wrapped(**kwargs)
-        223         def wrapped(**kwargs):
-        224             decoded = self.decode(kwargs)
-    --> 225             return f(**decoded)
-        226         return wrapped
-        227 
-
-
-    /data/svn/claesenm/python/optunity/optunity/functions.pyc in wrapped_f(*args, **kwargs)
-        286         value = wrapped_f.call_log.get(*args, **kwargs)
-        287         if value is None:
-    --> 288             value = f(*args, **kwargs)
-        289             wrapped_f.call_log.insert(value, *args, **kwargs)
-        290         return value
-
-
-    /data/svn/claesenm/python/optunity/optunity/cross_validation.pyc in __call__(self, *args, **kwargs)
-        401                     kwargs['y_train'] = select(self.y, rows_train)
-        402                     kwargs['y_test'] = select(self.y, rows_test)
-    --> 403                 scores.append(self.f(**kwargs))
-        404         return self.reduce(scores)
-        405 
-
-
-    <ipython-input-14-1ef61cf64223> in tune_cv(x_train, y_train, x_test, y_test, kernel, C, gamma, degree, coef0)
-         14             raise ArgumentError("Unknown kernel function: %s" % kernel)
-         15 
-    ---> 16         predictions = model.predict(x_test)
-         17         return optunity.metrics.mse(y_test, predictions)
-         18 
-
-
-    /usr/lib/python2.7/dist-packages/sklearn/svm/base.pyc in predict(self, X)
-        280         y_pred : array, shape (n_samples,)
-        281         """
-    --> 282         X = self._validate_for_predict(X)
-        283         predict = self._sparse_predict if self._sparse else self._dense_predict
-        284         return predict(X)
-
-
-    /usr/lib/python2.7/dist-packages/sklearn/svm/base.pyc in _validate_for_predict(self, X)
-        383     def _validate_for_predict(self, X):
-        384         X = atleast2d_or_csr(X, dtype=np.float64, order="C")
-    --> 385         if self._sparse and not sp.isspmatrix(X):
-        386             X = sp.csr_matrix(X)
-        387         if self._sparse:
-
-
-    AttributeError: 'SVR' object has no attribute '_sparse'
-
+Looks like an RBF kernel was indeed the best choice!
