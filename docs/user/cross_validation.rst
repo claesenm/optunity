@@ -126,31 +126,7 @@ For notational simplicity we assume a problem without labels here.
     The inner folds are regenerated in every iteration (since we are redefining ``inner_cv`` each time). 
     The inner folds will therefore be different each time. The outer folds remain static, unless ``regenerate_folds=True`` is passed.
 
-Below we illustrate a more complete example of nested cv, which includes hyperparameter
-optimization with :func:`optunity.maximize`. Assume we have access to the following functions
-``svm=svm_train(x, y, c, g)`` and ``predictions=svm_predict(svm, x)``. Where ``c`` and ``g``
-are hyperparameters to be optimized for accuracy:
-
-.. code-block:: python
-
-    @opt.cross_validated(x=data, y=labels, num_folds=3)
-    def nested_cv(x_train, y_train, x_test, y_test):
-
-        @opt.cross_validated(x=x_train, y=y_train, num_folds=3)
-        def inner_cv(x_train, y_train, x_test, y_test, c, g):
-            svm = svm_train(x_train, y_train, c, g)
-            predictions = svm_predict(svm, x_test)
-            return opt.score_functions.accuracy(y_test, predictions)
-
-        optimal_parameters, _, _ = opt.maximize(inner_cv, num_evals=100, c=[0, 10], g=[0, 10])
-        optimal_svm = svm_train(x_train, y_train, **optimal_parameters)
-        predictions = svm_predict(optimal_svm, x_test)
-        return opt.score_functions.accuracy(y_test, predictions)
-
-    overall_accuracy = nested_cv()
-
-.. note::
-    You are free to use different score and aggregation functions in the inner and outer cv.
+A complete example of nested cross-validation is available in :doc:`/notebooks/notebooks/basic-nested-cv`.
 
 Aggregators
 ----------------
