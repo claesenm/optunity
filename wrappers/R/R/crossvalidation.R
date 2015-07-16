@@ -103,8 +103,8 @@ cv.setup <- function(x, y=NULL, score, num_folds=5, num_iter=1,
 #' @details 
 #' There are two modes for f, depending on cv.setup's score parameter, if:
 #' \itemize{
-#'   \item{score=a_score_function}{f should perform train-predict: train model on xtrain and ytrain, then return predictions on xtest}
-#'   \item{score='user.score'}{f should perform train-predict-score: train model on xtrain and ytrain, then make predictions on xtest, finally return score based on ytest.}
+#'   \item{score=a_score_function}{ f should perform train-predict: train model on xtrain and ytrain, then return predictions on xtest}
+#'   \item{score='user.score'}{ f should perform train-predict-score: train model on xtrain and ytrain, then make predictions on xtest, finally return score based on ytest.}
 #' }
 #' @export
 #' @examples
