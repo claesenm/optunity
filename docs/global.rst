@@ -1,5 +1,6 @@
 .. |constraints| replace:: :doc:`/user/constraints`
 .. |cross_validation| replace:: :doc:`/user/cross_validation`
+.. |structured_search_spaces| replace:: :doc:`/user/structured_search_spaces`
 .. |solvers| replace:: :doc:`/user/solvers`
 .. |score_functions| replace:: :doc:`/user/metrics`
 .. |metrics| replace:: :doc:`/user/metrics`

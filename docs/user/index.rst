@@ -16,6 +16,7 @@ function. A solver determines a good set of hyperparameters.
     * |cross_validation|
     * |score_functions|
     * |constraints|
+    * |structured_search_spaces|
 
 Optunity consists of a set of core functions that are offered in each environment,
 which we will now discuss briefly. Clicking on a function will take you to its Python
