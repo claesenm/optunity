@@ -153,4 +153,5 @@ throughout the documentation:
     /user/cross_validation
     /user/score_functions
     /user/constraints
+    /user/structured_search_spaces
     /user/decorators
