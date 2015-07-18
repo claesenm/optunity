@@ -35,6 +35,12 @@ some helpful facilities such as cross-validation and a plethora of score functio
 The Optunity library is implemented in Python and allows straightforward
 integration in other machine learning environments, including R and MATLAB.
 
+If you have any comments, suggestions you can get in touch with us at gitter:
+
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/claesenm/optunity
+   :target: https://gitter.im/claesenm/optunity?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 To get started with Optunity on Linux, issue the following commands::
 
     git clone https://github.com/claesenm/optunity.git
@@ -61,7 +67,3 @@ The main contributors to Optunity are:
 
 * Jaak Simm: R wrapper.
 
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/claesenm/optunity
-   :target: https://gitter.im/claesenm/optunity?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
