@@ -48,13 +48,15 @@ or kernel parameters.
 The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
 Optunity is currently also supported in |wrapper-r|, |wrapper-matlab|, |wrapper-octave| and Java through Jython.
 
-Optunity is free software, using a BSD-style license.
 
 If you have any problems, comments or suggestions you can get in touch with us at gitter:
 
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/claesenm/optunity
    :target: https://gitter.im/claesenm/optunity?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
+
+Optunity is free software, using a BSD-style license.
 
 Example
 -----------
