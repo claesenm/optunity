@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name = 'Optunity',
-    version = '1.0.1',
+    version = '1.1.0',
     author = 'Marc Claesen',
     author_email = 'marc.claesen@esat.kuleuven.be',
     packages = ['optunity', 'optunity.tests', 'optunity.solvers'],
