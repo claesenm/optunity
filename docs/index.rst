@@ -121,15 +121,13 @@ The main contributors to Optunity are:
     - communication protocol design & implementation
     - MATLAB wrapper
     - Octave wrapper
+    - Python, MATLAB and Octave examples
 
 **Jaak Simm**
 
     - communication protocol design
     - R wrapper
-
-**Dusan Popovic**
-
-    - code examples
+    - R examples
 
 Indices and tables
 ------------------
