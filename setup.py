@@ -1,4 +1,5 @@
 from distutils.core import setup
+import setuptools
 
 setup(
     name = 'Optunity',
@@ -19,11 +20,16 @@ setup(
                    'License :: OSI Approved :: BSD License',
                    'Topic :: Scientific/Engineering',
                    'Topic :: Scientific/Engineering :: Artificial Intelligence',
-                   'Topic :: Scientific/Engineering :: Information Analysis'
+                   'Topic :: Scientific/Engineering :: Information Analysis',
+                   'Programming Language :: Python :: 2.7',
+                   'Programming Language :: Python :: 3',
+                   'Programming Language :: Python :: 3.2',
+                   'Programming Language :: Python :: 3.3',
+                   'Programming Language :: Python :: 3.4'
                    ],
     platforms = ['any'],
     keywords = ['machine learning', 'parameter tuning',
                 'hyperparameter optimization', 'meta-optimization',
-                'direct search', 'model selection'
+                'direct search', 'model selection', 'particle swarm optimization'
                 ],
 )
