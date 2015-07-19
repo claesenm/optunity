@@ -21,3 +21,12 @@ sphinx-notebooks:
 	cd notebooks && python notebook2sphinx.py --outputs_dir_suffix _files
 	cp notebooks/*.rst docs/notebooks/notebooks/
 	cp -r notebooks/*_files docs/notebooks/notebooks/
+
+wheel:
+	python setup.py bdist_wheel --universal
+
+sdist:
+	python setup.py sdist
+
+upload:
+	python setup.py sdist bdist_wheel upload
