@@ -12,7 +12,22 @@ Suppose we want to optimize the kernel, choosing from the following options:
 * polynomial kernel :math:`\kappa_{poly}(u, v) = (u^T v + coef0)^{degree}`: 2 hyperparameters (degree and coef0)
 * RBF kernel :math:`\kappa_{RBF}(u, v) = exp(-\gamma * |u-v|^2)` 1 hyperparameter (gamma)
 
-To optimize a structured search space, we have to define it first, which can be defined as follows (Python syntax):
+Structured search spaces can be specified based on basic building blocks, that generalize the standard way of specifying box constraints:
+
+* hyperparameters within box constraints: specified as dictionary entries, where key=parameter name and value=box constraints (list)
+* discrete choices: specified as a dictionary, where each entry represents a choice, that is key=option name and value has two options
+  * a new dictionary of conditional hyperparameters, if any
+  * None, to indicate a choice which doesn't imply further hyperparameterization
+
+Structured search spaces can be nested to form any graph-like search space. It's worth noting that the addition of discrete choices naturally generalizes Optunity's search space definition in `optunity.minimize` and `optunity.maximize`,
+since box constraints are specified as keyword arguments there, so Python's `kwargs` to these functions effectively follows the exact same structure, e.g.:
+
+.. code::
+
+    _ = optunity.minimize(fun, num_evals=1, A=[0, 1], B=[-1, 2])
+    # kwargs = {A: [0, 1], B: [-1, 2]}
+
+When we put this all together, the SVM kernel search space which can be defined as follows (Python syntax):
 
 .. code::
 
