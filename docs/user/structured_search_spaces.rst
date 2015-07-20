@@ -30,7 +30,7 @@ Suppose we want to optimize the kernel, choosing from the following options:
 * polynomial kernel :math:`\kappa_{poly}(u, v) = (u^T v + coef0)^{degree}`: 2 hyperparameters (degree and coef0)
 * RBF kernel :math:`\kappa_{RBF}(u, v) = exp(-\gamma * |u-v|^2)` 1 hyperparameter (gamma)
 
-When we put this all together, the SVM kernel search space which can be defined as follows (Python syntax):
+When we put this all together, the SVM kernel search space can be defined as follows (Python syntax):
 
 .. code::
 
