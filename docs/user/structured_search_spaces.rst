@@ -6,11 +6,11 @@ Some hyperparameter optimization problems have a hierarchical nature, comprising
 A common example is optimizing a kernel, without choosing a certain family of kernel functions in advance (e.g. polynomial, RBF, linear, ...).
 
 Optunity provides the functions :func:`optunity.maximize_structured` and :func:`optunity.minimize_structured` for such structured search spaces. 
-Structured search spaces can be specified based on basic building blocks, that generalize the standard way of specifying box constraints:
+Structured search spaces can be specified as nested dictionaries, which generalize the standard way of specifying box constraints:
 
-* hyperparameters within box constraints: specified as dictionary entries, where `key=parameter name` and `value=box constraints (list)`
+* hyperparameters within box constraints: specified as dictionary entries, where `key=parameter name` and `value=box constraints (list)`.
 * discrete choices: specified as a dictionary, where each entry represents a choice, that is `key=option name` and `value` has two options
-    - a new dictionary of conditional hyperparameters, if any
+    - a new dictionary of conditional hyperparameters, following the same rules
     - `None`, to indicate a choice which doesn't imply further hyperparameterization
 
 Structured search spaces can be nested to form any graph-like search space. It's worth noting that the addition of discrete choices naturally generalizes Optunity's search space definition in :func:`optunity.minimize` and :func:`optunity.maximize`,
