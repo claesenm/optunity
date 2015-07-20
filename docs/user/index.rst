@@ -105,6 +105,7 @@ to the objective function, please consult :doc:`this page </user/constraints`.
     /user/cross_validation
     /user/metrics
     /user/constraints
+    /user/structured_search_spaces
 
 Terminology
 ------------
