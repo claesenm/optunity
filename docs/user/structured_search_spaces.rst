@@ -8,8 +8,8 @@ A common example is optimizing a kernel, without choosing a certain family of ke
 Optunity provides the functions :func:`optunity.maximize_structured` and :func:`optunity.minimize_structured` for such structured search spaces. 
 Structured search spaces can be specified as nested dictionaries, which generalize the standard way of specifying box constraints:
 
-* hyperparameters within box constraints: specified as dictionary entries, where `key=parameter name` and `value=box constraints (list)`.
-* discrete choices: specified as a dictionary, where each entry represents a choice, that is `key=option name` and `value` has two options
+- hyperparameters within box constraints: specified as dictionary entries, where `key=parameter name` and `value=box constraints (list)`.
+- discrete choices: specified as a dictionary, where each entry represents a choice, that is `key=option name` and `value` has two options
     - a new dictionary of conditional hyperparameters, following the same rules
     - `None`, to indicate a choice which doesn't imply further hyperparameterization
 
