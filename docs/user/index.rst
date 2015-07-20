@@ -96,7 +96,7 @@ evaluations via this interface (turned off by default due to problems in IPython
     by specifying an appropriate ``pmap`` argument (cfr. :func:`optunity.parallel.pmap`).
 
 More details about our solvers can be found :doc:`here </user/solvers>`. To learn about adding constraints
-to the objective function, please consult :doc:`this page </user/constraints`.
+to the objective function, please consult :doc:`this page </user/constraints>`.
 
 .. toctree::
     :hidden:
