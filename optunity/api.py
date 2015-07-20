@@ -375,7 +375,7 @@ def minimize_structured(f, search_space, num_evals=50, pmap=map):
     the given box constraints.
 
     :param f: the function to be maximized
-    :param search_space: the search space (see dedicated documentation for details)
+    :param search_space: the search space (see :doc:`/user/structured_search_spaces` for details)
     :param num_evals: number of permitted function evaluations
     :param pmap: the map function to use
     :type pmap: callable
