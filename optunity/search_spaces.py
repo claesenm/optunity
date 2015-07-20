@@ -61,13 +61,6 @@ as its required range may be different.
                         }
              }
 
-Main features in this module:
-
-TODO
-
-* :func:`logged`
-* :func:`max_evals`
-
 .. moduleauthor:: Marc Claesen
 """
 
