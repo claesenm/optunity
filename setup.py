@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name = 'Optunity',
-    version = '1.1.0',
+    version = '1.1.1',
     author = 'Marc Claesen',
     author_email = 'marc.claesen@esat.kuleuven.be',
     packages = ['optunity', 'optunity.tests', 'optunity.solvers'],
