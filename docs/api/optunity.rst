@@ -18,6 +18,7 @@ Optunity API
         optunity.metrics
         optunity.constraints
         optunity.functions
+        optunity.search_spaces
 
     **Standalone process**
 

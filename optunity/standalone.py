@@ -51,7 +51,7 @@ This standalone subprocess can communicate through stdin/stdout or sockets. To u
 
     .. code::
 
-        python -m optunity.standalone <PORT>
+        python -m optunity.standalone <PORT> <HOST>
 
 
 - **standalone as server**: launch with 'server' as first command line argument. The port number that is being listened on will be printed on stdout.

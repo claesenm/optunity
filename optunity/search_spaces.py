@@ -32,7 +32,9 @@
 
 """
 
-Functionality to deal with exotic search spaces, with conditional hyperparameters.
+Functionality to deal with structured search spaces, in which the existence of some hyperparameters is contingent on some discrete choice(s).
+
+For more information on the syntax and modalities of defining structured search spaces, please refer to :doc:`/user/structured_search_spaces`.
 
 A search space is defined as a dictionary mapping strings to nodes. Each node is one of the following:
 
@@ -40,26 +42,24 @@ A search space is defined as a dictionary mapping strings to nodes. Each node is
     2. 2-element list or tuple, containing (lb, ub) for the associated hyperparameter.
     3. None, to indicate a terminal node that has no numeric value associated to it.
 
-A simple example search space is that for SVM, where we want to optimize the kernel function and (optionally)
-its hyperparameterization.
+Internally, structured search spaces are encoded as a vector, based on the following rules:
 
-.. code:
+    * a standard hyperparameter with box constraints is a single dimension
+    * when a choice must be maded, this is encoded as a single dimension (regardless of the amount of options), with values in the range [0, num_choices]
+    * choice options without additional hyperparameters (i.e., None nodes) do not require further coding
+
+For example, consider an SVM kernel family, choosing between linear and RBF. This is specified as follows:
+
+.. code::
+
     search = {'kernel': {'linear': None,
-                        'rbf': {'gamma': [0, 1]},
-                        'poly': {'degree': [2, 4]}
-                        },
-              'c': [0, 1]
-             }
-
-Alternatively, it is possible to optimize the regularization parameter 'c' for every choice of kernel separately,
-as its required range may be different.
-
-.. code:
-    search = {'kernel': {'linear': {'c': [0, 1]},
-                         'rbf': {'gamma': [0, 1], 'c': [0, 2]},
-                         'poly': {'degree': [2, 4], 'c': [0, 3]}
+                         'rbf': {'gamma': [0, 3]}
                         }
              }
+
+In vector format, this is encoded as a vector with 2 entries :math:`[kernel \in [0, 2],\ gamma \in [0, 3]]`.
+
+The main API of this module is the SearchTree class.
 
 .. moduleauthor:: Marc Claesen
 """
@@ -224,6 +224,18 @@ class SearchTree(object):
                 yield k, v
 
     def to_box(self):
+        """
+        Creates a set of box constraints to define the given search space.
+
+        :returns: a set of box constraints (e.g. dictionary, with box constraint values)
+
+        Use these box constraints to initialize a solver, which will then implicitly work in the
+        vector representation of the search space.
+
+        To evaluate such vector representations, decorate the objective function with :func:`optunity.search_spaces.SearchTree.decode`
+        of the same object.
+
+        """
         if not self.vectordict:
             for k, v in self:
                 key = DELIM.join(k)
@@ -240,6 +252,18 @@ class SearchTree(object):
         return dict([(k, v) for k, v in self.vectordict.items()])
 
     def decode(self, vd):
+        """
+        Decodes a vector representation (as a dictionary) into a result dictionary.
+
+        :param vd: vector representation
+        :type vd: dict
+        :returns: dict containing the decoded representation.
+
+        * Choices are given as key:value pairs.
+        * Active hyperparameters have numeric values.
+        * Inactive hyperparameters have value None.
+
+        """
         result = {}
         currently_decoding_nested = []
         items = sorted(vd.items())
@@ -288,7 +312,13 @@ class SearchTree(object):
         return result
 
     def wrap_decoder(self, f):
-        """Wraps a function to automatically decode arguments based on given SearchTree."""
+        """
+
+        Wraps a function to automatically decode arguments based on given SearchTree.
+
+        Use in conjunction with :func:`optunity.search_spaces.SearchTree.to_box`.
+
+        """
         @functools.wraps(f)
         def wrapped(**kwargs):
             decoded = self.decode(kwargs)
