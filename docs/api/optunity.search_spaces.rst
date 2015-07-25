@@ -1,4 +1,4 @@
-optunity.search_spaces module
+Structured search spaces
 =============================
 
 .. automodule:: optunity.search_spaces
