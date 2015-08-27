@@ -403,6 +403,12 @@ class cross_validated_callable(object):
                 scores.append(self.f(**kwargs))
         return self.reduce(scores)
 
+    def __getattr__(self, name):
+        # http://stackoverflow.com/a/11195604
+        if name.startswith('func_'):
+            return getattr(self.f, name)
+        raise AttributeError
+
 
 def cross_validated(x, num_folds=10, y=None, strata=None, folds=None, num_iter=1,
                     regenerate_folds=False, clusters=None, aggregator=mean):
