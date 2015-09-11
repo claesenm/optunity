@@ -41,6 +41,7 @@ Main features in this module:
 .. moduleauthor:: Marc Claesen
 """
 
+import functools
 from . import functions
 
 def constr_ub_o(field, bounds, *args, **kwargs):
@@ -245,7 +246,7 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     for constr_name, pars in kwargs.items():
         constr_fun = jt[constr_name]
         for field, bounds in pars.items():
-            constraints.append(functions.partial(constr_fun,
+            constraints.append(functools.partial(constr_fun,
                                                  field=field,
                                                  bounds=bounds))
     if custom:
