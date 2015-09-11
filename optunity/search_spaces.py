@@ -238,7 +238,8 @@ class SearchTree(object):
         """
         if not self.vectordict:
             for k, v in self:
-                key = DELIM.join(k)
+                if type(k) is list: key = DELIM.join(k)
+                else: key = k
                 if type(v) is Options:
                     if len(v) > 1: # options of length one aren't really options
                         self.vectordict[key] = [0.0, float(len(v))]
