@@ -42,6 +42,7 @@ Main features in this module:
 """
 
 import functools
+from . import functions
 
 def constr_ub_o(field, bounds, *args, **kwargs):
     """Models ``args.field < bounds``."""
@@ -119,7 +120,7 @@ def constrained(constraints):
 
     """
     def wrapper(f):
-        @functools.wraps(f)
+        @functions.wraps(f)
         def wrapped_f(*args, **kwargs):
             violations = [c for c in wrapped_f.constraints
                           if not c(*args, **kwargs)]
@@ -144,7 +145,7 @@ def violations_defaulted(default):
 
     """
     def wrapper(f):
-        @functools.wraps(f)
+        @functions.wraps(f)
         def wrapped_f(*args, **kwargs):
             try:
                 return f(*args, **kwargs)
@@ -254,13 +255,13 @@ def wrap_constraints(f, default=None, ub_o=None, ub_c=None,
     # wrap function
     if default is None:
         @constrained(constraints)
-        @functools.wraps(f)
+        @functions.wraps(f)
         def func(*args, **kwargs):
             return f(*args, **kwargs)
     else:
         @violations_defaulted(default)
         @constrained(constraints)
-        @functools.wraps(f)
+        @functions.wraps(f)
         def func(*args, **kwargs):
             return f(*args, **kwargs)
     return func

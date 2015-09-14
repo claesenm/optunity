@@ -41,20 +41,26 @@ Main features in this module:
 .. moduleauthor:: Marc Claesen
 """
 
-import inspect
-import itertools
 import collections
 import functools
 import threading
 import operator as op
 
-from . import util
 
 try:
     import pandas
     _pandas_available = True
 except:
     _pandas_available = False
+
+# http://stackoverflow.com/a/28752007
+def wraps(obj, attr_names=functools.WRAPPER_ASSIGNMENTS):
+    """Safe version of , that can deal with missing attributes
+    such as missing __module__ and __name__.
+    """
+    return functools.wraps(obj, assigned=(name for name in attr_names
+                                          if hasattr(obj, name)))
+
 
 class Args(object):
     """Class to model arguments to a function evaluation.
@@ -279,7 +285,7 @@ def logged(f):
     >>> print(f.call_log)
     {'pos_0': 1} --> 1
     >>> @logged
-    ... @functools.wraps(f)
+    ... @wraps(f)
     ... def f2(x): return f(x)
     >>> print(f2.call_log)
     {'pos_0': 1} --> 1
@@ -288,7 +294,7 @@ def logged(f):
     if hasattr(f, 'call_log'):
         return f
 
-    @functools.wraps(f)
+    @wraps(f)
     def wrapped_f(*args, **kwargs):
         value = wrapped_f.call_log.get(*args, **kwargs)
         if value is None:
@@ -301,7 +307,7 @@ def logged(f):
 
 def negated(f):
     """Decorator to negate f such that f'(x) = -f(x)."""
-    @functools.wraps(f)
+    @wraps(f)
     def wrapped_f(*args, **kwargs):
         return -f(*args, **kwargs)
     return wrapped_f
@@ -341,7 +347,7 @@ def max_evals(max_evals):
 
     """
     def wrapper(f):
-        @functools.wraps(f)
+        @wraps(f)
         def wrapped_f(*args, **kwargs):
             if wrapped_f.num_evals >= max_evals:
                 raise MaximumEvaluationsException(max_evals)
@@ -366,7 +372,7 @@ def static_key_order(keys):
 
     """
     def wrapper(f):
-        @functools.wraps(f)
+        @wraps(f)
         def wrapped_f(*args):
             return f(**dict([(k, v) for k, v in zip(keys, args)]))
         return wrapped_f
