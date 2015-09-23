@@ -597,7 +597,7 @@ lists? Because you can perform multiple cross-validation runs by setting
 num\_iter appropriately and then append num\_iter lists of test samples
 to the outer most list. Note that the test samples for a given fold are
 the idicies that you provide and then the train samples for that fold
-are all of the indicies from all other test sets joined together. If not
+are all of the indices from all other test sets joined together. If not
 done carefully this may lead to duplicated samples in a train set and
 also samples that fall in both train and test sets of a fold if a
 datapoint is in multiple folds' test sets.
@@ -608,7 +608,7 @@ datapoint is in multiple folds' test sets.
     labels = [True] * 3 + [False] * 3
     
     fold1 = [[0, 3], [1, 4], [2, 5]]
-    fold2 = [[0, 5], [1, 4], [0, 3]] # notice what happens when the indicies are not unique
+    fold2 = [[0, 5], [1, 4], [0, 3]] # notice what happens when the indices are not unique
     folds = [fold1, fold2]
     
     @optunity.cross_validated(x=data, y=labels, folds=folds, num_folds=3, num_iter=2)
