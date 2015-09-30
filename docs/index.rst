@@ -47,7 +47,7 @@ or kernel parameters. The figure below shows an example response surface,
 in which we optimized the hyperparameters of an SVM with RBF kernel (click for more info).
 
 .. image:: local_minima.png
-    :target: /notebooks/notebooks/local_minima.rst
+    :target: /notebooks/notebooks/local-optima.rst
 
 The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
 Optunity is currently also supported in |wrapper-r|, |wrapper-matlab|, |wrapper-octave| and Java through Jython.
