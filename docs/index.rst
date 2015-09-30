@@ -43,10 +43,14 @@ and a plethora of score functions.
 From an optimization point of view, the tuning problem can be considered as 
 follows: the objective function is non-convex, non-smooth and 
 typically expensive to evaluate. Tuning examples include optimizing regularization 
-or kernel parameters. The figure below shows an example response surface,
-in which we optimized the hyperparameters of an SVM with RBF kernel (click for more info).
+or kernel parameters. 
+
+The figure below shows an example response surface, in which we optimized the 
+hyperparameters of an SVM with RBF kernel. This specific example is available at
+:doc:`/notebooks/notebooks/local-optima`.
 
 .. image:: local_minima.png
+    :alt: SVM hyperparameter response surface
     :target: /notebooks/notebooks/local-optima.rst
 
 The Optunity library is implemented in Python and allows straightforward integration in other machine learning environments. 
