@@ -67,3 +67,4 @@ The main contributors to Optunity are:
 
 * Jaak Simm: R wrapper.
 
+* Vilen Jumutc: Julia wrapper.
