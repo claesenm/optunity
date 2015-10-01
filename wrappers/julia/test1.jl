@@ -17,3 +17,9 @@ result = minimize(testit2, num_evals=10000, x=[-2,2], y=[-2,2], z=[-3,3])
 @test_approx_eq_eps result[1]["x"]  0.0 .2
 @test_approx_eq_eps result[1]["y"] -2.0 .2
 @test_approx_eq_eps result[1]["z"]  2.0 .2
+
+result = minimize(testit2, num_evals=10000, solver_name="nelder-mead", x=[-2,2], y=[-2,2], z=[-3,3])
+
+@test_approx_eq_eps result[1]["x"]  0.6 .1
+@test_approx_eq_eps result[1]["y"] -2.0 .1
+@test_approx_eq_eps result[1]["z"]  1.1 .1
