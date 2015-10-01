@@ -1,6 +1,7 @@
 using PyCall
 
 @pyimport optunity
+include("nogc.jl")
 
 map_args = args -> map(e -> e[1], args)
 
@@ -23,9 +24,9 @@ function wrap_call(f::Function,all_args)
 end
 
 function minimize(f::Function;kws...)
-	optunity.minimize(wrap_call(f,map_args(kws));kws...)
+	@nogc optunity.minimize(wrap_call(f,map_args(kws));kws...)
 end
 
 function maximize(f::Function;kws...)
-	optunity.maximize(wrap_call(f,map_args(kws));kws...)
+	@nogc optunity.maximize(wrap_call(f,map_args(kws));kws...)
 end

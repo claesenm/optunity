@@ -1,5 +1,4 @@
 tests = ["test1", "test2"]
-include("optunity.jl")
 
 print_with_color(:blue, "Running tests:\n")
 
