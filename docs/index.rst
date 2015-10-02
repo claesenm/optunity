@@ -136,6 +136,10 @@ The main contributors to Optunity are:
     - R wrapper
     - R examples
 
+**Vilen Jumutc**
+
+    - Julia wrapper
+
 Indices and tables
 ------------------
 

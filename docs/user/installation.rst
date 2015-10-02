@@ -125,7 +125,7 @@ Subsequently, clone the git repository and then issue the following commands::
     R CMD INSTALL optunity_<version number>.tar.gz
 
 
-.. _install-julia
+.. _install-julia:
 
 Installing Optunity for Julia
 -----------------------------
