@@ -24,9 +24,11 @@ function wrap_call(f::Function,all_args)
 end
 
 function minimize(f::Function;kws...)
-	@nogc optunity.minimize(wrap_call(f,map_args(kws));kws...)
+	results = @nogc optunity.minimize(wrap_call(f,map_args(kws));kws...)
+	results[1], results[2]
 end
 
 function maximize(f::Function;kws...)
-	@nogc optunity.maximize(wrap_call(f,map_args(kws));kws...)
+	results = @nogc optunity.maximize(wrap_call(f,map_args(kws));kws...)
+	results[1], results[2]
 end
