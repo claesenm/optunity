@@ -7,4 +7,5 @@ Using Other Environments
 
     /wrappers/matlab.rst
     /wrappers/octave.rst
+    /wrappers/julia.rst
     /wrappers/r.rst

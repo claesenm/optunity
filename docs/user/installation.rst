@@ -18,6 +18,7 @@ Installation instructions per environment:
 -   :ref:`install-matlab`
 -   :ref:`install-octave`
 -   :ref:`install-r`
+-   :ref:`install-julia`
 -   :ref:`install-java`
 
 If you encounter any difficulties during installation, please open an issue at |issues|.
@@ -122,6 +123,26 @@ Subsequently, clone the git repository and then issue the following commands::
     cd optunity/wrappers
     R CMD build R/
     R CMD INSTALL optunity_<version number>.tar.gz
+
+
+.. _install-julia
+
+Installing Optunity for Julia
+-----------------------------
+
+First install all dependencies. In Julia console issue the following command:
+
+.. code-block:: julia
+    
+    Pkg.add("PyCall")
+
+After this essential package is installed please issue the following command:
+
+.. code-block:: julia
+
+    include("<optunity>/wrappers/julia/optunity.jl")
+
+where <optunity> stands for the root of the working copy of Optunity. 
 
 .. _install-java:
 
