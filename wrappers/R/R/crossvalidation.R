@@ -393,7 +393,7 @@ accuracy <- function(ytrue, yhat) {
 auc_roc <- function(ytrue, yscore, decreasing=TRUE, top=1.0) {
   if (length(ytrue) != length(yscore)) {
     stop(sprintf("length of ytrue(%d) should be the same as length of ycore(%d).", 
-                 length(true), length(yscore) ))
+                 length(ytrue), length(yscore) ))
   }
   tryCatch( {
     pred <- ROCR::prediction(yscore,  ytrue)
