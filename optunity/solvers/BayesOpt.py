@@ -83,8 +83,14 @@ class BayesOpt(Solver):
         self._seed = seed
         self._bounds = kwargs
         self._num_evals = num_evals
-        self._lb = np.array(map(lambda x: x[1][0], sorted(kwargs.items())))
-        self._ub = np.array(map(lambda x: x[1][1], sorted(kwargs.items())))
+        # bayesopt does not support open intervals,
+        # while optunity uses open intervals
+        # so we manually shrink the bounding box slightly (yes, this is a dirty fix)
+        delta = 0.001
+        self._lb = np.array(map(lambda x: float(x[1][0] + delta * (x[1][1] - x[1][0])),
+                                sorted(kwargs.items())))
+        self._ub = np.array(map(lambda x: float(x[1][1] - delta * (x[1][1] - x[1][0])),
+                                sorted(kwargs.items())))
 
     @staticmethod
     def suggest_from_box(num_evals, **kwargs):
@@ -122,11 +128,14 @@ class BayesOpt(Solver):
     @_copydoc(Solver.optimize)
     def optimize(self, f, maximize=True, pmap=map):
 
-        seed = self.seed if self.seed else random.randint(0, 9999999999)
+        seed = self.seed if self.seed else random.randint(0, 9999)
         params = {'n_iterations': self.num_evals,
-                  'random_seed': self.seed}
+                  'random_seed': seed,
+                  'n_iter_relearn': 3}
         n_dimensions = len(self.lb)
 
+        print('lb %s' % str(self.lb))
+        print('ub %s' % str(self.ub))
 
         if maximize:
             def obj(args):
