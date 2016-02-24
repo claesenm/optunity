@@ -20,6 +20,7 @@
 .. |randomsearch| replace:: :doc:`/user/solvers/random_search`
 .. |nelder-mead| replace:: :doc:`/user/solvers/nelder-mead`
 .. |tpe| replace:: :doc:`/user/solvers/TPE`
+.. |bayesopt| replace:: :doc:`/user/solvers/BayesOpt`
 .. |sobol| replace:: :doc:`/user/solvers/sobol`
 
 .. |api-solvers| replace:: :doc:`optunity.solvers`
@@ -29,6 +30,7 @@
 .. |api-randomsearch| replace:: :class:`optunity.solvers.RandomSearch`
 .. |api-nelder-mead| replace:: :class:`optunity.solvers.NelderMead`
 .. |api-tpe| replace:: :class:`optunity.solvers.TPE`
+.. |api-bayesopt| replace:: :class:`optunity.solvers.BayesOpt`
 .. |api-sobol| replace:: :class:`optunity.solvers.Sobol`
 
 .. |api-constraints| replace:: :doc:`/api/optunity.constraints`

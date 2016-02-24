@@ -41,6 +41,7 @@ Main classes in this module:
 * :class:`CMA_ES`
 * :class:`TPE`
 * :class:`Sobol`
+* :class:`BayesOpt`
 
 .. warning::
     :class:`CMA_ES` require DEAP_ and NumPy_.
@@ -54,6 +55,12 @@ Main classes in this module:
     .. _Hyperopt: http://jaberg.github.io/hyperopt/
     .. _NumPy: http://www.numpy.org
 
+.. warning::
+    :class:`BayesOpt` require BayesOpt_ and NumPy_.
+
+    .. _BayesOpt: http://rmcantin.bitbucket.org/html/
+    .. _NumPy: http://www.numpy.org
+
 .. moduleauthor:: Marc Claesen
 
 """
@@ -65,3 +72,4 @@ from .ParticleSwarm import ParticleSwarm
 from .CMAES import CMA_ES
 from .TPE import TPE
 from .Sobol import Sobol
+from .BayesOpt import BayesOpt
