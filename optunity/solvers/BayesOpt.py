@@ -57,6 +57,8 @@ class BayesOpt(Solver):
 
     Please refer to |bayesopt| for details about this algorithm.
 
+    .. note: This solver will always output some text upon running. This is caused internally by BayesOpt, which provides no way to disable all output.
+
     .. [BO2014] Martinez-Cantin, Ruben. "BayesOpt: A Bayesian optimization library for nonlinear optimization, experimental design and bandits." The Journal of Machine Learning Research 15.1 (2014): 3735-3739.
 
     """
@@ -131,7 +133,8 @@ class BayesOpt(Solver):
         seed = self.seed if self.seed else random.randint(0, 9999)
         params = {'n_iterations': self.num_evals,
                   'random_seed': seed,
-                  'n_iter_relearn': 3}
+                  'n_iter_relearn': 3,
+                  'verbose_level': 0}
         n_dimensions = len(self.lb)
 
         print('lb %s' % str(self.lb))

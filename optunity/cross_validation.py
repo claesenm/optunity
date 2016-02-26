@@ -234,7 +234,12 @@ def generate_folds(num_rows, num_folds=10, strata=None, clusters=None):
     return folds
 
 def mean(x):
-    return float(sum(x)) / len(x)
+    try:
+        # is x a SciPy like object?
+        return float(sum(x)) / x.shape[0]
+    except AttributeError:
+        # x is a regular list or something similar
+        return float(sum(x)) / len(x)
 
 def mean_and_list(x):
     """Returns a tuple, the first element is the mean of x and the second is x itself.
