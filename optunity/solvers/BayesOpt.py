@@ -57,7 +57,10 @@ class BayesOpt(Solver):
 
     Please refer to |bayesopt| for details about this algorithm.
 
-    .. note: This solver will always output some text upon running. This is caused internally by BayesOpt, which provides no way to disable all output.
+    .. note::
+
+        This solver will always output some text upon running.
+        This is caused internally by BayesOpt, which provides no way to disable all output.
 
     .. [BO2014] Martinez-Cantin, Ruben. "BayesOpt: A Bayesian optimization library for nonlinear optimization, experimental design and bandits." The Journal of Machine Learning Research 15.1 (2014): 3735-3739.
 
