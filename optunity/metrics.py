@@ -348,8 +348,8 @@ def precision(y, yhat, positive=True):
     :returns: number of true positive predictions / number of positive predictions
 
     """
-    TP, FP, _, _ = contingency_table(y, yhat, positive)
-    return _precision(TP, FP)
+    table = contingency_table(y, yhat, positive)
+    return _precision(table)
 
 def recall(y, yhat, positive=True):
     """Returns the recall (higher is better).
@@ -361,8 +361,8 @@ def recall(y, yhat, positive=True):
     :returns: number of true positive predictions / number of true positives
 
     """
-    TP, _, _, FN = contingency_table(y, yhat, positive)
-    return _recall(TP, FN)
+    table = contingency_table(y, yhat, positive)
+    return _recall(table)
 
 def npv(y, yhat, positive=True):
     """Returns the negative predictive value (higher is better).
