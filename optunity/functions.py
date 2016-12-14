@@ -225,13 +225,13 @@ class CallLog(object):
 
         """
         if self.data:
-            args = dict([(k, []) for k in list(self.keys())[0].keys()])
+            args = collections.defaultdict(list)
             values = []
             for k, v in self.data.items():
                 for key, value in k:
                     args[key].append(value)
                 values.append(v)
-            return {'args': args, 'values': values}
+            return {'args': dict(args), 'values': values}
         else:
             return {'args': {}, 'values': []}
 
