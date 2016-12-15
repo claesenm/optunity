@@ -149,6 +149,12 @@ def auc(curve):
         x2, y2 = curve[i + 1]
         if y1 is None:
             y1 = 0.0
+	if y2 is None:
+	    y2 = 0.0
+	if x1 is None:
+	    x1 = 0.0
+	if x2 is None:
+	    x2 = 0.0
         area += float(min(y1, y2)) * float(x2 - x1) + math.fabs(float(y2 - y1)) * float(x2 - x1) / 2
 
     return area
