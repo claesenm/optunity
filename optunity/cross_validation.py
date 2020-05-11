@@ -104,7 +104,7 @@ def strata_by_labels(labels):
     :param labels: iterable, identical values will end up in identical strata
     :returns: the strata, as a list of lists
     """
-    return [list(zip(*g)[0])
+    return [list(zip(*g))[0]
             for _, g in it.groupby(enumerate(labels), op.itemgetter(1))]
 
 def _fold_sizes(num_rows, num_folds):
