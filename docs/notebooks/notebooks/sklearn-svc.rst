@@ -127,7 +127,7 @@ results are somewhat stable.
 
 .. code:: python
 
-    df.sort('value', ascending=False)[:10]
+    df.sort_values('value', ascending=False)[:10]
 
 
 
@@ -277,7 +277,7 @@ the call log.
 .. code:: python
 
     df = optunity.call_log2dataframe(info.call_log)
-    df.sort('value', ascending=False)
+    df.sort_values('value', ascending=False)
 
 
 
