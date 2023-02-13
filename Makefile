@@ -23,10 +23,10 @@ sphinx-notebooks:
 	cp -r notebooks/*_files docs/notebooks/notebooks/
 
 wheel:
-	python setup.py bdist_wheel --universal
+	python -m build -w
 
 sdist:
-	python setup.py sdist
+	python -m build -s
 
-upload:
-	python setup.py sdist bdist_wheel upload
+upload: wheel sdist
+	twine upload ./dist/*
