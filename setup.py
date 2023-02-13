@@ -9,6 +9,10 @@ setup(
     packages = ['optunity', 'optunity.tests', 'optunity.solvers'],
     scripts = [],
     url = 'http://www.optunity.net',
+    project_urls = {
+        "Source Code": "https://github.com/claesenm/optunity",
+        "Bug Tracker": "https://github.com/claesenm/optunity/issues",
+        },
     license = 'LICENSE.txt',
     description = 'Optimization routines for hyperparameter tuning.',
     long_description = open('README.rst').read(),
