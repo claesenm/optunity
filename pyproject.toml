@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Optunity"
+version = "1.1.1"
+authors = [{name = "Marc Claesen", email = "marc.claesen@esat.kuleuven.be"}]
+license = {text = "LICENSE.txt"}
+description = "Optimization routines for hyperparameter tuning."
+keywords = [
+    "machine learning",
+    "parameter tuning",
+    "hyperparameter optimization",
+    "meta-optimization",
+    "direct search",
+    "model selection",
+    "particle swarm optimization",
+]
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "License :: OSI Approved :: BSD License",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.2",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+]
+
+[project.urls]
+Homepage = "http://www.optunity.net"
+"Source Code" = "https://github.com/claesenm/optunity"
+"Bug Tracker" = "https://github.com/claesenm/optunity/issues"
+
+[tool.setuptools]
+packages = [
+    "optunity",
+    "optunity.tests",
+    "optunity.solvers",
+]
+platforms = ["any"]
+include-package-data = false
+
+[tool.distutils.bdist_wheel]
+universal = 1
