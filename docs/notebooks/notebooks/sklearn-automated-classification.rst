@@ -118,7 +118,7 @@ curve in 5-fold cross-validation.
             model = KNeighborsClassifier(n_neighbors=int(n_neighbors))
             model.fit(x_train, y_train)
         elif algorithm == 'SVM':
-            model = train_svm(x_train, y_train, kernel, C, gamma, degree, coef0)
+            model = train_svm(x_train, y_train, kernel, C, gamma, int(degree or 0), coef0)
         elif algorithm == 'naive-bayes':
             model = GaussianNB()
             model.fit(x_train, y_train)
